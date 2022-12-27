@@ -1,4 +1,3 @@
-import logo from './logo.svg';
 import './App.css';
 import { 
   JqlTests_RootCats, 
@@ -9,9 +8,11 @@ import {
   JqlTests_AuthUpsert
  } from './Tests/test_jql';
 
+ import { ManualReact } from './Tests/ManualReact';
+
 function App() {
   return (
-    <JqlTests_RootCats />
+    <ManualReact />
   );
 }
 {/*    <div className="App">
