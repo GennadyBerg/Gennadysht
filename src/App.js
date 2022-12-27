@@ -1,9 +1,21 @@
 import logo from './logo.svg';
 import './App.css';
+import { 
+  JqlTests_RootCats, 
+  JqlTests_RetrieveRootCats,
+  JqlTests_AuthLogin,
+  JqlTests_Goods,
+  JqlTests_GoodFindOne,
+  JqlTests_AuthUpsert
+ } from './Tests/test_jql';
 
 function App() {
   return (
-    <div className="App">
+    <JqlTests_RootCats />
+  );
+}
+{/*    <div className="App">
+      
       <header className="App-header">
         <img src={logo} className="App-logo" alt="logo" />
         <p>
@@ -18,8 +30,6 @@ function App() {
           Learn React
         </a>
       </header>
-    </div>
-  );
-}
-
+  </div>
+*/}
 export default App;

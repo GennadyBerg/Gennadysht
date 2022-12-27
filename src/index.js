@@ -1,9 +1,18 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
+import App from './App.js';
 import reportWebVitals from './reportWebVitals';
+import { 
+  JqlTests_RootCats, 
+  JqlTests_RetrieveRootCats,
+  JqlTests_AuthLogin,
+  JqlTests_Goods,
+  JqlTests_GoodFindOne,
+  JqlTests_AuthUpsert
+ } from './Tests/test_jql';
 
+ JqlTests_AuthUpsert();
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
