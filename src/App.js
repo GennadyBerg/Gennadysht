@@ -1,3 +1,4 @@
+import logo from './logo.svg';
 import './App.css';
 import { 
   JqlTests_RootCats, 
@@ -7,8 +8,7 @@ import {
   JqlTests_GoodFindOne,
   JqlTests_AuthUpsert
  } from './Tests/test_jql';
-
- import { ManualReact } from './Tests/ManualReact';
+import{ManualReact} from "./Tests/ManualReact"
 
 function App() {
   return (
