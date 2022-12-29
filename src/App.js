@@ -8,11 +8,12 @@ import {
   JqlTests_GoodFindOne,
   JqlTests_AuthUpsert
  } from './Tests/test_jql';
-import{ManualReact} from "./Tests/ManualReact"
+import { LoginForm, GoodExample } from "./Components";
+
 
 function App() {
   return (
-    <ManualReact />
+    <GoodExample />
   );
 }
 {/*    <div className="App">
