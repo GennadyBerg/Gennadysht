@@ -1,10 +1,10 @@
 import React, { Component, useState } from 'react';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Button from '@mui/material/Button';
-import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link, CardActionArea, Card, CardContent, CardMedia, Divider } from '@mui/material';
-import { Box } from '@mui/system';
+import { styled, alpha } from '@mui/material/styles';
+import { Container, Avatar, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper } from '@mui/material';
+//CssBaseline, TextField, FormControlLabel, Checkbox, Link, Divider
 import { getFullImageUrl } from "./../utills";
-
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 const GoodExample = () => {
     return <Good good={
         {
@@ -20,121 +20,130 @@ const GoodExample = () => {
                     "url": "images/58c6157d51d8c2430c4dd41b6d0132f4"
                 }
             ]
-
         }
     } />
 }
+const ExpandMore = styled(props => {
+    const { expand, ...other } = props;
+    return <IconButton {...other} />;
+})(({ theme, expand }) => ({
+    transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
+    marginLeft: 'auto',
+    transition: theme.transitions.create('transform', { duration: theme.transitions.duration.shortest })
+}))
+const Image = (url) => {
+    let fullUrl = getFullImageUrl(url);
+    return <img src={fullUrl} alt="Description of image" />
+}
+
+const AvatarGroupOriented = styled((props) => {
+    const { vertical, ...other } = props;
+    return <AvatarGroup {...other} />;
+})(({ theme, vertical }) => (vertical && {
+    display: 'flex',
+    flexDirection: 'column',
+    marginLeft: 10,
+    '& >:first-child': {
+        marginTop: 10,
+    },
+    '& >*': {
+        marginLeft: 1,
+        marginTop: theme.spacing(1),
+    },
+    ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
+}));
+
+const AvatarAnimated = styled((props) => {
+    const { selected, ...other } = props;
+    return <Avatar {...other} />;
+})(({ theme, selected }) => ({
+    //width: theme.spacing(10),
+    //height: theme.spacing(10),
+    transition: theme.transitions.create('transform', {
+        duration: theme.transitions.duration.shortest,
+    }),
+    transform: selected && 'scale(1.1)',
+    '&:hover': {
+        transform: 'scale(1.1)',
+    },
+    backgroundColor: selected && alpha(theme.palette.primary.main, 0.5),
+    boxShadow: selected && `0 0 0 1px ${alpha(theme.palette.primary.main, 0.5)}`,
+    avatarImage: {
+        objectFit: 'contain',
+    },
+}));
+
 const Good = ({ good }) => {
-    let [index, setIndex] = useState('');
-    index = +index;
-    if (index > good.images.length - 1)
-        index = 0;
-    let image = good.images[index];
+    let [currentImageIndex, setCurrentImageIndex] = useState(0);
+    let [expanded, setExpanded] = useState(false);
+    const handleExpandClick = () => setExpanded(!expanded);
     return (
-        <Container maxWidth="sm">
-            <Box>
-                <Grid >
-                    <CardActionArea>
-                        <Card sx={{ display: 'flex' }}>
-                            <Grid gap={3}>
-                                <Grid>
-                                    <Box>
-                                        <CardMedia
-                                            component="img"
-                                            sx={{ maxWidth: 160, display: { xs: 'none', sm: 'block' } }}
-                                            image={getFullImageUrl(image)}
-                                            alt={"no image"}
-                                        />
-                                    </Box>
+        <Container maxWidth='md'>
+            <Card variant='outlined'>
+                <Grid container spacing={5}>
+                    <Grid item xs={1}>
+                        <AvatarGroupOriented variant='rounded' vertical>
+                            {
+                                good.images.map((image, index) => (
+                                    <AvatarAnimated selected={index === currentImageIndex} variant='rounded' key={index} src={getFullImageUrl(image)}
+                                        onClick={() => setCurrentImageIndex(index)} />
+                                ))
+                            }
+                        </AvatarGroupOriented>
+                    </Grid>
+                    <Grid item xs>
+                        <CardActionArea>
+                            <Grid container spacing={2}>
+                                <Grid item xs={4}>
+                                    <CardMedia
+                                        component="img"
+                                        sx={{ height: 300, padding: "1em 1em 0 1em", objectFit: "contain" }}
+                                        image={getFullImageUrl(good.images[currentImageIndex])}
+                                        title={good.name}
+                                    />
                                 </Grid>
-                                <Grid >
-                                    <Box sx={{ display: 'flex', gap: 3 }} justifyContent="center" >
-                                        {
-                                            good.images.map((img, index) =>
-                                                <Avatar maxWidth={24} sx={{ objectFit: "contain" }}
-                                                    onClick={() => setIndex(index)}>
-                                                    <CardMedia
-                                                        component="img"
-                                                        image={getFullImageUrl(img)}
-                                                        alt={"no image"}
-                                                    />
-                                                </Avatar>)
-                                        }
-                                    </Box>
+                                <Grid item xs={8}>
+                                    <CardContent>
+                                        <Typography gutterBottom variant='h5' component='h2'>
+                                            {good.name}
+                                        </Typography>
+                                        <Typography gutterBottom variant='body2' color='textSecondary' component='p'>
+                                            {`Price: $${good.price}`}
+                                        </Typography>
+                                    </CardContent>
                                 </Grid>
                             </Grid>
-                            <Grid >
-                                <CardContent sx={{ flex: 1 }}>
-                                    <Typography component="h2" variant="h2" gutterBottom>
-                                        {good.name}
-                                    </Typography>
-                                    <Typography variant="h5" color="secondary" gutterBottom>
-                                        {`Price: ${good.price} $`}
-                                    </Typography>
-                                </CardContent>
-                            </Grid>
-                        </Card>
-                    </CardActionArea >
-                    <Grid maxWidth="sm">
-                        <Box>
-                            <Divider light />
-                            <Typography variant="subtitle1" paragraph gutterBottom>
-                                {good.description}
-                            </Typography>
-                        </Box>
+                        </CardActionArea>
                     </Grid>
                 </Grid>
-            </Box>
+                <CardActions>
+                    <Typography sx={{marginLeft:70}}>
+                        Description:
+                    </Typography>
+                    <ExpandMore
+                        expand={expanded}
+                        onClick={handleExpandClick}
+                        aria-expanded={expanded}
+                        aria-label='showMore'
+                    >
+                        <ExpandMoreIcon />
+                    </ExpandMore>
+                    <Button size='small' color='primary'>
+                        Add to cart
+                    </Button>
+                </CardActions>
+                <Collapse in={expanded} timeout='auto' unmountOnExit>
+                    <Typography paragraph  sx={{marginLeft:1}}>
+                        Description:
+                    </Typography>
+                    <Typography paragraph align='justify' sx={{marginLeft:2, marginRight:2}}>
+                        {good.description}
+                    </Typography>
+                </Collapse>
+            </Card>
         </Container>
     )
 }
-/*
-        <Component>
-            <Grid item xs={12} md={6}>
-                <CardActionArea component="a" href="#">
-                    <Card sx={{ display: 'flex' }}>
-                        <CardMedia
-                            component="img"
-                            sx={{ width: 160, display: { xs: 'none', sm: 'block' } }}
-                            image={getFullImageUrl(image)}
-                            alt={"no image"}
-                        />
-                        <CardContent sx={{ flex: 1 }}>
-                            <Typography component="h2" variant="h5">
-                                {good.name}
-                            </Typography>
-                            <Typography variant="subtitle1" color="text.secondary">
-                                {good.date}
-                            </Typography>
-                            <Typography variant="subtitle1" paragraph>
-                                {good.description}
-                            </Typography>
-                            <Typography variant="subtitle1" color="primary">
-                                Continue reading...
-                            </Typography>
-                        </CardContent>
 
-                    </Card>
-                </CardActionArea >
-            </Grid>
-        </Component>
-*/
-const GoodCard = ({ good }) => {
-    let [index, setIndex] = useState('');
-    index = +index;
-    if (index > good.images.length - 1)
-        index = 0;
-    let image = good.images[index];
-    return <div className='GoodCard'>
-        <h4>
-            {good.name}
-        </h4>
-        {/*<button onClick={()=>setIndex(changeIndex(good.images,index,-1))}>{'<'}</button>
-        <button onClick={()=>setIndex(changeIndex(good.images,index,1))}>{'>'}</button>*/}
 
-        <img onClick={() => setIndex(index + 1)}
-            src={getFullImageUrl(image)} style={{ maxWidth: '160px', maxHeight: '160px' }} />
-    </div>
-
-}
 export { Good, GoodExample };
