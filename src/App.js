@@ -1,19 +1,26 @@
 import logo from './logo.svg';
 import './App.css';
-import { 
-  JqlTests_RootCats, 
+import {
+  JqlTests_RootCats,
   JqlTests_RetrieveRootCats,
   JqlTests_AuthLogin,
   JqlTests_Goods,
   JqlTests_GoodFindOne,
   JqlTests_AuthUpsert
- } from './Tests/test_jql';
-import { LoginForm, GoodExample } from "./Components";
+} from './Tests/test_jql';
+import { LoginForm, GoodExample, GoodsList, goodsExample, Category, exampleCategory, OrderGood, exampleOrderGood, Order, exampleOrder } from "./Components";
 
 
 function App() {
   return (
+    <>
+      {/*<GoodsList goods={goodsExample} />
     <GoodExample />
+      <Category category={exampleCategory} />
+      <OrderGood orderGood={exampleOrderGood}/>*/}
+      <Order order={exampleOrder} />
+    </>
+
   );
 }
 {/*    <div className="App">

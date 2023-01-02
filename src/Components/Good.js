@@ -5,6 +5,7 @@ import { Container, Avatar, Typography, Grid, CardActionArea, Card, CardContent,
 //CssBaseline, TextField, FormControlLabel, Checkbox, Link, Divider
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { Box } from '@mui/system';
 const GoodExample = () => {
     return <Good good={
         {
@@ -73,20 +74,24 @@ const AvatarAnimated = styled((props) => {
     },
 }));
 
-const Good = ({ good }) => {
+const Good = ({ good, maxWidth, showAddToCard = true }) => {
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
+    maxWidth = maxWidth ?? 'md';
     return (
-        <Container maxWidth='md'>
+        <Container maxWidth={maxWidth}>
             <Card variant='outlined'>
-                <Grid container spacing={5}>
+                <Grid container spacing={maxWidth == 'xs' ? 7 : 5}>
                     <Grid item xs={1}>
                         <AvatarGroupOriented variant='rounded' vertical>
                             {
-                                good.images.map((image, index) => (
+                                good.images?.map((image, index) => (
                                     <AvatarAnimated selected={index === currentImageIndex} variant='rounded' key={index} src={getFullImageUrl(image)}
-                                        onClick={() => setCurrentImageIndex(index)} />
+                                        onClick={() => {
+                                            let a = '';
+                                            setCurrentImageIndex(index)
+                                        }} />
                                 ))
                             }
                         </AvatarGroupOriented>
@@ -98,7 +103,7 @@ const Good = ({ good }) => {
                                     <CardMedia
                                         component="img"
                                         sx={{ height: 300, padding: "1em 1em 0 1em", objectFit: "contain" }}
-                                        image={getFullImageUrl(good.images[currentImageIndex])}
+                                        image={good.images?.length > 0 ? getFullImageUrl(good.images[currentImageIndex]) : ''}
                                         title={good.name}
                                     />
                                 </Grid>
@@ -117,9 +122,6 @@ const Good = ({ good }) => {
                     </Grid>
                 </Grid>
                 <CardActions>
-                    <Typography sx={{marginLeft:70}}>
-                        Description:
-                    </Typography>
                     <ExpandMore
                         expand={expanded}
                         onClick={handleExpandClick}
@@ -128,15 +130,19 @@ const Good = ({ good }) => {
                     >
                         <ExpandMoreIcon />
                     </ExpandMore>
-                    <Button size='small' color='primary'>
-                        Add to cart
-                    </Button>
+                    {
+                        showAddToCard && (
+                            <Button size='small' color='primary'>
+                                Add to cart
+                            </Button>
+                        )
+                    }
                 </CardActions>
                 <Collapse in={expanded} timeout='auto' unmountOnExit>
-                    <Typography paragraph  sx={{marginLeft:1}}>
+                    <Typography paragraph sx={{ marginLeft: 1 }}>
                         Description:
                     </Typography>
-                    <Typography paragraph align='justify' sx={{marginLeft:2, marginRight:2}}>
+                    <Typography paragraph align='justify' sx={{ marginLeft: 2, marginRight: 2 }}>
                         {good.description}
                     </Typography>
                 </Collapse>
