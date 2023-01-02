@@ -5,3 +5,4 @@ export {Category, exampleCategory} from './Category';
 export {OrderGood, exampleOrderGood} from './OrderGood';
 export {OrderGoodsList, exampleOrderGoodsList} from './OrderGoodsList'
 export {Order, exampleOrder} from './Order';
+export {OrderList, exampleOrderList} from './OrderList'

@@ -1,12 +1,14 @@
 import React, { Component, useState } from 'react';
 import Button from '@mui/material/Button';
-import { styled, alpha } from '@mui/material/styles';
+import { alpha } from '@mui/material/styles';
 import { Container, Avatar, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper, List, ListItem, Box } from '@mui/material';
 //CssBaseline, TextField, FormControlLabel, Checkbox, Link, Divider
 import { getFullImageUrl } from "../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Good } from './Good';
 import { OrderGood } from './OrderGood';
+import { Table, TableBody, TableContainer, TableHead, TableRow, TableCell } from "@mui/material";
+import { StyledTableCell } from './StyledTableElements';
 
 let exampleOrderGoodsList = [
     {
@@ -143,18 +145,56 @@ let exampleOrderGoodsList = [
     },
 ];
 
-const OrderGoodsList = ({ orderGoods }) => {
+const OrderGoodsList = ({ orderGoods, tax_rate=0 }) => {
+    function ccyFormat(num) {
+        return `${num.toFixed(2)}`;
+    }
+    function subtotal(items) {
+        return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
+      }
+      const invoiceSubtotal = subtotal(orderGoods);
+      const invoiceTaxes = tax_rate * invoiceSubtotal;
+      const invoiceTotal = invoiceTaxes + invoiceSubtotal;
+   
     return (
-        <Container maxWidth='lg'>
-            <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                {
-                    orderGoods.map(orderGood => {
-                        return (
-                            <OrderGood key={orderGood._id} orderGood={orderGood} maxWidth='xs' />
-                        )
-                    })}
-            </Box>
-        </Container>
+        <>
+            <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 700 }} aria-label="customized table">
+                    <TableHead>
+                        <TableRow>
+                            <StyledTableCell align="right">#</StyledTableCell>
+                            <StyledTableCell></StyledTableCell>
+                            <StyledTableCell>Name</StyledTableCell>
+                            <StyledTableCell align="right">Price ($)</StyledTableCell>
+                            <StyledTableCell align="right">Count</StyledTableCell>
+                            <StyledTableCell align="right">Total</StyledTableCell>
+                        </TableRow>
+                    </TableHead>
+                    <TableBody>
+                        {
+                            orderGoods.map((orderGood, index) => {
+                                return (
+                                    <OrderGood key={orderGood._id} orderGood={orderGood} orderGoodNum={index} maxWidth='xs' />
+                                )
+                            })
+                        }
+                        <TableRow>
+                            <TableCell rowSpan={3} />
+                            <TableCell colSpan={2}>Subtotal</TableCell>
+                            <TableCell align="right">{ccyFormat(invoiceSubtotal)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell>Tax</TableCell>
+                            <TableCell align="right">{`${(tax_rate * 100).toFixed(0)} %`}</TableCell>
+                            <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
+                        </TableRow>
+                        <TableRow>
+                            <TableCell colSpan={2}>Total</TableCell>
+                            <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
+                        </TableRow>                    </TableBody>
+                </Table>
+            </TableContainer>
+        </>
     )
 }
 export { exampleOrderGoodsList, OrderGoodsList };

@@ -1,11 +1,12 @@
 import React, { Component, useState } from 'react';
 import Button from '@mui/material/Button';
-import { styled, alpha } from '@mui/material/styles';
-import { Container, Avatar, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper } from '@mui/material';
 //CssBaseline, TextField, FormControlLabel, Checkbox, Link, Divider
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { Box } from '@mui/system';
+import { AvatarAnimated } from './AvatarAnimated';
 const GoodExample = () => {
     return <Good good={
         {
@@ -32,10 +33,6 @@ const ExpandMore = styled(props => {
     marginLeft: 'auto',
     transition: theme.transitions.create('transform', { duration: theme.transitions.duration.shortest })
 }))
-const Image = (url) => {
-    let fullUrl = getFullImageUrl(url);
-    return <img src={fullUrl} alt="Description of image" />
-}
 
 const AvatarGroupOriented = styled((props) => {
     const { vertical, ...other } = props;
@@ -54,26 +51,6 @@ const AvatarGroupOriented = styled((props) => {
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
 
-const AvatarAnimated = styled((props) => {
-    const { selected, ...other } = props;
-    return <Avatar {...other} />;
-})(({ theme, selected }) => ({
-    //width: theme.spacing(10),
-    //height: theme.spacing(10),
-    transition: theme.transitions.create('transform', {
-        duration: theme.transitions.duration.shortest,
-    }),
-    transform: selected && 'scale(1.1)',
-    '&:hover': {
-        transform: 'scale(1.1)',
-    },
-    backgroundColor: selected && alpha(theme.palette.primary.main, 0.5),
-    boxShadow: selected && `0 0 0 1px ${alpha(theme.palette.primary.main, 0.5)}`,
-    avatarImage: {
-        objectFit: 'contain',
-    },
-}));
-
 const Good = ({ good, maxWidth, showAddToCard = true }) => {
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
@@ -89,7 +66,6 @@ const Good = ({ good, maxWidth, showAddToCard = true }) => {
                                 good.images?.map((image, index) => (
                                     <AvatarAnimated selected={index === currentImageIndex} variant='rounded' key={index} src={getFullImageUrl(image)}
                                         onClick={() => {
-                                            let a = '';
                                             setCurrentImageIndex(index)
                                         }} />
                                 ))

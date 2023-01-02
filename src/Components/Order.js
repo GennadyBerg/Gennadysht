@@ -5,6 +5,7 @@ import { OrderGoodsList } from "./OrderGoodsList"
 let exampleOrder = {
     "_id": "62cdc9b3b74e1f5f2ec1a0e9",
     "total": 3383,
+    "createdAt": "1657653683000",
     "orderGoods": [
         {
             "_id": "62cdc9b3b74e1f5f2ec1a0e6",
@@ -64,7 +65,7 @@ const Order = ({ order }) => {
                         Order# {order._id}
                     </Typography>
                     <Typography gutterBottom variant='body2' color='textSecondary' component='p'>
-                        {`Total: $${order.total}`}
+                        {`Created at: ${new Date(+order.createdAt).toLocaleString()}`}
                     </Typography>
                     <OrderGoodsList orderGoods={order.orderGoods} />
                 </Box>
