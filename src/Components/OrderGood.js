@@ -4,7 +4,7 @@ import { getFullImageUrl } from "./../utills";
 import { AvatarImage } from "./AvatarAnimated";
 import { styled } from '@mui/material/styles';
 import { StyledTableCell, StyledTableRow } from "./StyledTableElements";
-
+import "./orderGood.css"
 
 let exampleOrderGood = {
     "_id": "62cdc9b3b74e1f5f2ec1a0e7",

@@ -8,7 +8,7 @@ import {
   JqlTests_GoodFindOne,
   JqlTests_AuthUpsert
 } from './Tests/test_jql';
-import { LoginForm, GoodExample, GoodsList, goodsExample, Category, exampleCategory, OrderGood, exampleOrderGood, Order, exampleOrder, OrderList, exampleOrderList } from "./Components";
+import { LoginForm, GoodExample, GoodsList, goodsExample, Category, exampleCategory, OrderGood, exampleOrderGood, Order, exampleOrder, OrderList, exampleOrderList, exampleOrderGoodsList, OrderGoodsList } from "./Components";
 
 
 function App() {
@@ -18,8 +18,9 @@ function App() {
     <GoodExample />
       <Category category={exampleCategory} />
       <OrderGood orderGood={exampleOrderGood}/>
-      <Order order={exampleOrder} />*/}
-      <OrderList orders={exampleOrderList} />
+      <Order order={exampleOrder} />
+      <OrderList orders={exampleOrderList} />*/}
+      <OrderGoodsList orderGoods={exampleOrderGoodsList} />
     </>
 
   );
