@@ -8,11 +8,11 @@ export function promiseReducer(state = {}, action) {                   // дис
     }
     return state;
 }
-const actionPending = (name) => ({ type: 'PROMISE', name: name, status: 'PENDING' });
-const actionFulfilled = (name, payload) => ({ type: 'PROMISE', name: name, payload: payload, status: 'FULFILLED' });
-const actionRejected = (name, error) => ({ type: 'PROMISE', name: name, error: error, status: 'REJECTED' });
+export const actionPending = (name) => ({ type: 'PROMISE', name: name, status: 'PENDING' });
+export const actionFulfilled = (name, payload) => ({ type: 'PROMISE', name: name, payload: payload, status: 'FULFILLED' });
+export const actionRejected = (name, error) => ({ type: 'PROMISE', name: name, error: error, status: 'REJECTED' });
 export const actionPromise = (name, promise) => {
-    return /*actionPromiseInt = async (dispatch) => {
+    return async (dispatch) => {
         dispatch(actionPending(name)) //сигнализируем redux, что промис начался
         try {
             let payload = await promise //ожидаем промиса
@@ -25,5 +25,5 @@ export const actionPromise = (name, promise) => {
             console.log(error.message);
             dispatch(actionRejected(name, error)) //в случае ошибки - сигнализируем redux, что промис несложился
         }
-    }*/
+    }
 }

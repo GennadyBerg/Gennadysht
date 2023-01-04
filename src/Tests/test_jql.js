@@ -1,6 +1,6 @@
-import { gqlRootCats, gqlCategoryFindOne } from "../jql/gqlCategories"
-import { actionLogin, actionAuthUpsert } from "../jql/gqlAuth"
-import { gqlGoodFind, gqlGoodFindOne } from "../jql/gqlGoods"
+import { gqlRootCats, gqlCategoryFindOne } from "../jql_actions/gqlCategories"
+import { actionLogin, actionAuthUpsert } from "../jql_actions/gqlAuth"
+import { gqlGoodFind, gqlGoodFindOne } from "../jql_actions/gqlGoods"
 
 
 

@@ -1,3 +1,7 @@
+import { gql } from "../utills/gql";
+import {actionPromise} from "../reducers";
+import {actionCartClear} from '../reducers';
+
 const orderUpsert = (order, id = null) => {
     const orderUpsertQuery = `mutation OrderUpsert($order: OrderInput) {
                             OrderUpsert(order: $order) {
@@ -6,11 +10,14 @@ const orderUpsert = (order, id = null) => {
                         }`;
     return gql(orderUpsertQuery, { order: { "_id": id, "orderGoods": order } });
 }
+export const actionOrderUpsert = (order, id) =>
+    actionPromise('orderUpsert', orderUpsert(order, id));
+
 const orderFullUpsert = (then) => {
-    return gqlFullOrderUpsert = async (dispatch, getState) => {
+    return async (dispatch, getState) => {
         let state = getState();
         let order = [];
-        for (cartItem of Object.values(state.cartReducer)) {
+        for (let cartItem of Object.values(state.cartReducer)) {
             //{count: 3, good: {_id: "xxxx" }}
             order.push({ good: { _id: cartItem.good._id }, count: cartItem.count });
         }
@@ -20,7 +27,6 @@ const orderFullUpsert = (then) => {
             let promiseResult = orderUpsert(order);
             let res = await promiseResult;
             if (res && res.errors && res.errors.length > 0) {
-                addErrorAlert(res.errors[0].message);
                 throw res.errors[0];
             }
             dispatch(actionCartClear());
@@ -30,6 +36,10 @@ const orderFullUpsert = (then) => {
         //проверьте что token - строка и отдайте его в actionAuthLogin
     }
 }
+export const actionOrderFullUpsert = (then) =>
+    actionPromise('orderUpsert', orderFullUpsert(then));
+
+
 const gqlFindOrders = () => {
     const findOrdersQuery = `query OrderFind {
                             OrderFind(query: "[{}]") {
@@ -45,6 +55,6 @@ const gqlFindOrders = () => {
                             }`;
     return gql(findOrdersQuery);
 }
-const actionFindOrders = () =>
+export const actionFindOrders = () =>
     actionPromise('orders', gqlFindOrders());
 

@@ -1,11 +1,8 @@
-const addErrorAlert = (error) => {
-    console.log(`ERROR ${error}`);
-}
 function jwtDecode(token) {                         // расщифровки токена авторизации
     if (!token || typeof token != "string")
         return undefined;
     let tokenArr = token.split(".");
-    if (tokenArr.length != 3)
+    if (tokenArr.length !== 3)
         return undefined;
     try {
         let tokenJsonStr = atob(tokenArr[1]);
@@ -13,11 +10,10 @@ function jwtDecode(token) {                         // расщифровки т
         return tokenJson;
     }
     catch (error) {
-        addErrorAlert(error.message);
         return undefined;
     }
 }
-function combineReducers(reducers) {
+/*function combineReducers(reducers) {
     function totalReducer(totalState = {}, action) {
         const newTotalState = {} //объект, который будет хранить только новые состояния дочерних редьюсеров
 
@@ -38,7 +34,7 @@ function combineReducers(reducers) {
     }
 
     return totalReducer
-}
+}*/
 
 function getGql(url) {
     return function gql(query, vars = undefined) {
@@ -65,25 +61,23 @@ function getGql(url) {
                 .then(res => {
                     try {
                         if (!res.ok) {
-                            addErrorAlert(res.statusText);
                             throw Error(res.statusText);
                         }
                         return res.json();
                     }
                     catch (error) {
-                        addErrorAlert(error.message);
                         throw error;
                     }
 
                 });
         }
         catch (error) {
-            addErrorAlert(error.message);
             throw error;
         }
     }
 }
-export const gql = getGql("http://shop-roles.node.ed.asmer.org.ua/graphql");
+const gql = getGql("http://shop-roles.node.ed.asmer.org.ua/graphql");
 
+export { gql, jwtDecode }
 //export default gql;
 

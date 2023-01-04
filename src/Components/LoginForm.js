@@ -3,6 +3,8 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Button from '@mui/material/Button';
 import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
 import { Box } from '@mui/system';
+import { connect } from 'react-redux';
+import { actionFullLogin } from '../jql_actions';
 
 const LoginForm = ({ onLogin }) => {
     const [login, setLogin] = useState('');
@@ -57,7 +59,7 @@ const LoginForm = ({ onLogin }) => {
                     fullWidth
                     type="submit"
                     disabled={!isButtonActive}
-                    onClick={() => { onLogin({ login, password }) }}>
+                    onClick={() => { onLogin( login, password ) }}>
                     Login...
                 </Button>
                 <Grid container>
@@ -76,5 +78,6 @@ const LoginForm = ({ onLogin }) => {
         </Container>
     )
 }
+const CLoginForm = connect(null, {onLogin: actionFullLogin})(LoginForm)
 
-export { LoginForm };
+export { CLoginForm };

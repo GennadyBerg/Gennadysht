@@ -1,4 +1,6 @@
-import {gql} from "./../utills/gql";
+import {gql} from "../utills";
+import {actionAuthLogin} from '../reducers';
+
 
 export const actionLogin = (login, password) => {
     const upsertQuery = `query login($login:String, $password:String){
@@ -7,8 +9,9 @@ export const actionLogin = (login, password) => {
 
     return gql(upsertQuery, { login: login, password: password });
 }
-/*export const actionFullLogin = (login, password) => {
-    return gqlFullLogin = async (dispatch) => {
+
+export const actionFullLogin = (login, password) => {
+    return async (dispatch) => {
         try {
             delete localStorage.authToken;
             //dispatch возвращает то, что вернул thunk, возвращаемый actionLogin, а там промис, 
@@ -19,17 +22,13 @@ export const actionLogin = (login, password) => {
                 let token = Object.values(res.data)[0];
                 if (token && typeof token == 'string')
                     return dispatch(actionAuthLogin(token));
-                else
-                    addErrorAlert("User not found");
             }
         }
         catch (error) {
-            addErrorAlert(error.message);
             throw error;
         }
-        //проверьте что token - строка и отдайте его в actionAuthLogin
     }
-}*/
+}
 ////////////////////////////////////////
 export const actionAuthUpsert = (login, password) => {
     const loginQuery = `mutation UserRegistration($login: String, $password: String) {

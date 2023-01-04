@@ -1,4 +1,6 @@
-import {gql} from "./../utills/gql";
+import { gql } from "../utills/gql";
+import {actionPromise} from "../reducers";
+
 export const gqlGoodFindOne = (id) => {
     const catQuery = `
                 query GoodFindOne($q: String) {
@@ -10,7 +12,10 @@ export const gqlGoodFindOne = (id) => {
                 `;
     return gql(catQuery, { q: `[{\"_id\": \"${id}\"}]` });
 }
-export const gqlGoodFind = (id) => {
+export const actionGoodFindOne = (id) =>
+    actionPromise('goodFindOne', gqlGoodFindOne(id));
+
+export const gqlGoodFind = () => {
     const catQuery = `
                 query GoodFind($q: String) {
                     GoodFind(query: $q) {
@@ -21,5 +26,5 @@ export const gqlGoodFind = (id) => {
                 `;
     return gql(catQuery, { q: `[{\"name\": \"//\"}]` });
 }
-/*const actionGoodFindOne = (id) =>
-    actionPromise('goodFindOne', gqlGoodFindOne(id));*/
+export const actionGoodFind = () =>
+    actionPromise('goodFind', gqlGoodFind());

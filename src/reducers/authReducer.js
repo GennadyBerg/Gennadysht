@@ -1,3 +1,5 @@
+import {jwtDecode} from '../utills';
+
 export function authReducer(state = {}, action) {                   // диспетчер обработки login
     if (action) {
         if (action.type === 'AUTH_LOGIN') {
@@ -11,7 +13,6 @@ export function authReducer(state = {}, action) {                   // дисп�
                 localStorage.authToken = newState.token;
             else
                 delete localStorage.authToken;
-            window.onhashchange();
             return newState;
         }
         else if (action.type === 'AUTH_LOGOUT') {
@@ -19,11 +20,10 @@ export function authReducer(state = {}, action) {                   // дисп�
             newState.token = undefined;
             newState.payload = undefined;
             delete localStorage.authToken;
-            window.onhashchange();
             return newState;
         }
     }
     return state;
 }
-const actionAuthLogin = token => ({ type: 'AUTH_LOGIN', token });
-const actionAuthLogout = () => ({ type: 'AUTH_LOGOUT' });
+export const actionAuthLogin = token => ({ type: 'AUTH_LOGIN', token });
+export const actionAuthLogout = () => ({ type: 'AUTH_LOGOUT' });

@@ -1,5 +1,5 @@
-import {gql} from "./../utills/gql";
-import {actionPromise} from "./../reducers/promiseReducer";
+import {gql} from "../utills/gql";
+import {actionPromise} from "../reducers";
 
 export const gqlRootCats = () => {
     const catQuery = `query roots {
@@ -8,7 +8,7 @@ export const gqlRootCats = () => {
                             }}`;
     return gql(catQuery);
 }
-const actionRootCats = () =>
+export const actionRootCats = () =>
     actionPromise('rootCats', gqlRootCats());
 export const gqlCategoryFindOne = (id) => {
     const catQuery = `query CategoryFindOne($q: String) {
@@ -23,5 +23,5 @@ export const gqlCategoryFindOne = (id) => {
         }`;
     return gql(catQuery, { q: `[{\"_id\": \"${id}\"}]` });
 }
-const actionCategoryFindOne = (id) =>
+export const actionCategoryFindOne = (id) =>
     actionPromise('catFindOne', gqlCategoryFindOne(id));
