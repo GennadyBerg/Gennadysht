@@ -1,4 +1,3 @@
-import * as React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -8,10 +7,20 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MyLink } from './MyLink';
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
+import { useTheme } from '@emotion/react';
 
 export function MainAppBar() {
-    const [auth, setAuth] = useState({});
-    let isLoggedIn = auth.token && true;
+    const token = useSelector(state => state.auth?.token)
+
+    const theme = useTheme();
+    const [open, setOpen] = useState(false);
+  
+    const handleDrawerOpen = () => {
+      setOpen(true);
+    };
+
+    let isLoggedIn = token && true;
     return (
         <Box sx={{ flexGrow: 1 }}>
             <AppBar position="static">
@@ -21,6 +30,7 @@ export function MainAppBar() {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
+                        onClick={handleDrawerOpen}
                         sx={{ mr: 2 }}
                     >
                         <MenuIcon />
@@ -46,3 +56,5 @@ export function MainAppBar() {
         </Box>
     );
 }
+
+export const CLogout = connect(null, { onLogout: actionAuthLogout })(Logout)
