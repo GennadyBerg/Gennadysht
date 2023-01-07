@@ -7,8 +7,9 @@ import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MyLink } from './MyLink';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
+import { Logout } from '@mui/icons-material';
 
 export function MainAppBar() {
     const token = useSelector(state => state.auth?.token)
@@ -57,4 +58,3 @@ export function MainAppBar() {
     );
 }
 
-export const CLogout = connect(null, { onLogout: actionAuthLogout })(Logout)

@@ -1,7 +1,6 @@
 import { jwtDecode } from '../utills';
 import { history } from "../App";
 
-
 export function authReducer(state = {}, action) {                   // диспетчер обработки login
     if (action) {
         if (action.type === 'AUTH_LOGIN') {
@@ -15,9 +14,7 @@ export function authReducer(state = {}, action) {                   // дисп�
                 localStorage.authToken = newState.token;
             else
                 delete localStorage.authToken;
-            //let history = useHistory();
-            history.push('/');
-            //window.location = "/";
+            setTimeout(() => history.push('/'), 100);
             return newState;
         }
         else if (action.type === 'AUTH_LOGOUT') {
@@ -32,3 +29,5 @@ export function authReducer(state = {}, action) {                   // дисп�
 }
 export const actionAuthLogin = token => ({ type: 'AUTH_LOGIN', token });
 export const actionAuthLogout = () => ({ type: 'AUTH_LOGOUT' });
+
+export const actionAuthLoginThunk = token => dispatch => dispatch(actionAuthLogin(token));

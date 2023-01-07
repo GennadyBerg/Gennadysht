@@ -4,7 +4,8 @@ import Button from '@mui/material/Button';
 import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
 import { Box } from '@mui/system';
 import { connect } from 'react-redux';
-import { actionFullLogin } from '../jql_actions';
+import { actionFullLogin } from '../jql';
+import { actionAuthLoginThunk } from '../reducers';
 
 const LoginForm = ({ onLogin }) => {
     const [login, setLogin] = useState('');
@@ -78,6 +79,6 @@ const LoginForm = ({ onLogin }) => {
         </Container>
     )
 }
-const CLoginForm = connect(null, {onLogin: actionFullLogin})(LoginForm)
+const CLoginForm = connect(null, {onLogin: actionAuthLoginThunk})(LoginForm)
 
 export { CLoginForm };
