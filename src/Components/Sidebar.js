@@ -18,6 +18,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import { actionSetSidebar } from '../reducers/frontEndReducer';
+import { connect } from 'react-redux';
 /*
                 <List>
                     {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
@@ -44,13 +46,13 @@ import MailIcon from '@mui/icons-material/Mail';
                     ))}
                 </List>
 */
-export function Sidebar(props) {
-    let MenuComponent = props.menuComponent;
-    let drawerWidth = props.drawerWidth || 100;
+function Sidebar(props) {
+    let {drawerWidth, menuComponent, opened, openSidebar} = props;
+    let MenuComponent = menuComponent;
+    drawerWidth = drawerWidth || 100;
     const theme = useTheme();
-    const [open, setOpen] = useState(false);
     const handleDrawerClose = () => {
-        setOpen(false);
+        openSidebar(false);
     };
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
@@ -73,7 +75,7 @@ export function Sidebar(props) {
                 }}
                 variant="persistent"
                 anchor="left"
-                open={open}
+                open={opened}
             >
                 <DrawerHeader>
                     <IconButton onClick={handleDrawerClose}>
@@ -87,3 +89,4 @@ export function Sidebar(props) {
         </>);
 }
 
+export const CSidebar = connect(state => ({ opened: state.frontend.sidebar.opened }), { openSidebar: actionSetSidebar })(Sidebar);

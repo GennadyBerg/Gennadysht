@@ -14,7 +14,7 @@ export function authReducer(state = {}, action) {                   // дисп�
                 localStorage.authToken = newState.token;
             else
                 delete localStorage.authToken;
-            setTimeout(() => history.push('/'), 100);
+            history.push('/');
             return newState;
         }
         else if (action.type === 'AUTH_LOGOUT') {

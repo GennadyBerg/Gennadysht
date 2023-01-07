@@ -8,4 +8,4 @@ export { Order, exampleOrder } from './Order';
 export { OrderList, exampleOrderList } from './OrderList';
 export { MyLink } from './MyLink';
 export { CLogout } from './Logout';
-export { MainAppBar } from './MainAppBar';
+export { CMainAppBar } from './MainAppBar';

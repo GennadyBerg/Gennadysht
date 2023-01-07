@@ -6,19 +6,15 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MyLink } from './MyLink';
-import { useState } from 'react';
-import { connect, useSelector } from 'react-redux';
+import { connect } from 'react-redux';
 import { useTheme } from '@emotion/react';
-import { Logout } from '@mui/icons-material';
+import { actionSetSidebar } from '../reducers/frontEndReducer';
 
-export function MainAppBar() {
-    const token = useSelector(state => state.auth?.token)
-
+const MainAppBar = ({ token, openSidebar }) => {
     const theme = useTheme();
-    const [open, setOpen] = useState(false);
-  
+
     const handleDrawerOpen = () => {
-      setOpen(true);
+        openSidebar(true);
     };
 
     let isLoggedIn = token && true;
@@ -41,14 +37,14 @@ export function MainAppBar() {
                     {
                         !isLoggedIn &&
                         <>
-                            <Button color="inherit" href="/login">Login</Button>
-                            <Button color="inherit" href="/register">Register</Button>
+                            <MyLink to="/login"><Button color="inherit">Login</Button></MyLink>
+                            <MyLink to="/register"><Button color="inherit">Register</Button></MyLink>
                         </>
                     }
                     {
                         isLoggedIn &&
                         <>
-                            <Button color="inherit" href="/logout">Logout</Button>
+                            <MyLink to="/logout"><Button color="inherit">Logout</Button></MyLink>
                         </>
                     }
                     <Button color="inherit">Cart</Button>
@@ -58,3 +54,4 @@ export function MainAppBar() {
     );
 }
 
+export const CMainAppBar = connect(state => ({ token: state.auth?.token, sidebarOpened: state.frontend.sidebar.opened }), { openSidebar: actionSetSidebar }) (MainAppBar);

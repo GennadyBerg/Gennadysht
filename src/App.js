@@ -1,47 +1,31 @@
-import React, { useEffect, useState } from 'react';
+
 import { Router, Route, Switch, useParams } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider, connect, useSelector } from 'react-redux';
-import './App.css';
-import { authReducer, promiseReducer, actionAuthLogin, actionAuthLoginThunk } from './reducers';
-import { CLoginForm, GoodExample, GoodsList, goodsExample, Category, exampleCategory, OrderGood, exampleOrderGood, Order, exampleOrder, OrderList, exampleOrderList, exampleOrderGoodsList, OrderGoodsList } from "./Components";
-import { MainAppBar } from './Components';
+import { Provider} from 'react-redux';
+import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer } from './reducers';
+import { CLoginForm, CMainAppBar } from "./Components";
 import { CLogout } from './Components';
-import { Sidebar } from './Components/Sidebar';
+import { CSidebar } from './Components/Sidebar';
 import thunk from 'redux-thunk';
 
-
-export const store = createStore(combineReducers({ promise: promiseReducer, auth: authReducer }), applyMiddleware(thunk));
-store.subscribe(() => console.log(store.getState()))
-
-
+import './App.css';
 
 export const history = createBrowserHistory();
-console.log(useParams)
 
-//store.dispatch(actionRootCats())
-//store.dispatch(actionAuthLogin(localStorage.authToken));
+export const store = createStore(combineReducers({ promise: promiseReducer, auth: authReducer, frontend: frontEndReducer }), applyMiddleware(thunk));
+store.subscribe(() => console.log(store.getState()))
 
+//console.log(useParams)
+store.dispatch(actionAuthLogin(localStorage.authToken));
+console.log('TTTTT' + performance.now())
 
-/*
-const CCatMenu = connect(state => ({ cats: state.promise?.rootCats?.payload || [] }), { onLogin: actionFullLogin })(CatMenu)
-*/
 
 const NotFound = () =>
   <div>
     <h1>404 not found</h1>
   </div>
 
-const Test = () => {
-  let state = useSelector(state => state);
-  let stateAuth = state.auth;
-  let [auth, setAuth] = useState('');
-  if (stateAuth != auth) {
-    auth = auth;
-  }
-  return <div />
-}
 
 const Main = () =>
   <div>
@@ -49,19 +33,15 @@ const Main = () =>
   </div>
 
 
-store.dispatch(actionAuthLoginThunk(localStorage.authToken));
-console.log(performance.now())
-
 function App() {
 
   return (
     <>
       <Router history={history}>
         <Provider store={store}>
-          <Test />
           <div className="App">
-            <MainAppBar />
-            <Sidebar menuComponent={() => <div>TEST!!!!!!</div>} />
+            <CMainAppBar />
+            <CSidebar menuComponent={() => <div>TEST!!!!!!</div>} />
             <Switch>
               <Route path="/" component={Main} exact />
               <Route path="/login" component={CLoginForm} />

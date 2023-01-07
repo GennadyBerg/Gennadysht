@@ -5,7 +5,7 @@ import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel
 import { Box } from '@mui/system';
 import { connect } from 'react-redux';
 import { actionFullLogin } from '../jql';
-import { actionAuthLoginThunk } from '../reducers';
+import { MyLink } from './MyLink';
 
 const LoginForm = ({ onLogin }) => {
     const [login, setLogin] = useState('');
@@ -54,15 +54,16 @@ const LoginForm = ({ onLogin }) => {
                     control={<Checkbox value="remember" color="primary" />}
                     label="Remember me"
                 />
-                <Button
+                <MyLink
+                    component="button"
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
                     fullWidth
                     type="submit"
                     disabled={!isButtonActive}
-                    onClick={() => { onLogin( login, password ) }}>
+                    onClick={() => onLogin( login, password )}>
                     Login...
-                </Button>
+                </MyLink>
                 <Grid container>
                     <Grid item xs>
                         <Link href="#" variant='body2'>
@@ -79,6 +80,6 @@ const LoginForm = ({ onLogin }) => {
         </Container>
     )
 }
-const CLoginForm = connect(null, {onLogin: actionAuthLoginThunk})(LoginForm)
+const CLoginForm = connect(null, { onLogin: actionFullLogin })(LoginForm)
 
 export { CLoginForm };
