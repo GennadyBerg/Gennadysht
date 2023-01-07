@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Router, Route, Switch, useParams } from 'react-router-dom';
-import createHistory from "history/createBrowserHistory";
+import { createBrowserHistory } from "history";
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider, connect, useSelector } from 'react-redux';
 import './App.css';
-import { authReducer, promiseReducer, actionAuthLogin } from './reducers';
+import { authReducer, promiseReducer, actionAuthLogin, actionAuthLoginThunk } from './reducers';
 import { CLoginForm, GoodExample, GoodsList, goodsExample, Category, exampleCategory, OrderGood, exampleOrderGood, Order, exampleOrder, OrderList, exampleOrderList, exampleOrderGoodsList, OrderGoodsList } from "./Components";
 import { MainAppBar } from './Components';
 import { CLogout } from './Components';
@@ -17,7 +17,7 @@ store.subscribe(() => console.log(store.getState()))
 
 
 
-export const history = createHistory()
+export const history = createBrowserHistory();
 console.log(useParams)
 
 //store.dispatch(actionRootCats())
@@ -49,7 +49,7 @@ const Main = () =>
   </div>
 
 
-store.dispatch(actionAuthLogin(localStorage.authToken));
+store.dispatch(actionAuthLoginThunk(localStorage.authToken));
 console.log(performance.now())
 
 function App() {
