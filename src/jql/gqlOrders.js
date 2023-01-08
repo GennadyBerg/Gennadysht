@@ -40,9 +40,11 @@ export const actionOrderFullUpsert = (then) =>
     actionPromise('orderUpsert', orderFullUpsert(then));
 
 
-const gqlFindOrders = () => {
-    const findOrdersQuery = `query OrderFind {
-                            OrderFind(query: "[{}]") {
+export const gqlFindOrders = (fromPage, pageSize) => {
+    
+    let params = { q: `[{}, {\"skip\":[${fromPage * pageSize}], \"limit\":[${pageSize}]}]` };
+    const findOrdersQuery = `query OrderFind($q: String) {
+                            OrderFind(query: $q) {
                                 _id total
                                 orderGoods {
                                     _id price count total createdAt
@@ -53,8 +55,24 @@ const gqlFindOrders = () => {
                                 }
                             }
                             }`;
-    return gql(findOrdersQuery);
+    return gql(findOrdersQuery, params);
 }
-export const actionFindOrders = () =>
-    actionPromise('orders', gqlFindOrders());
 
+
+/*
+    const gqlFindOrders = (fromPage, pageSize) => {
+        const findOrdersQuery = `query OrderFind {
+                                OrderFind(query: "[{}]") {
+                                    _id total
+                                    orderGoods {
+                                        _id price count total createdAt
+                                        good {
+                                            name 
+                                            images { url }
+                                        }
+                                    }
+                                }
+                                }`;
+        return gql(findOrdersQuery);
+    }
+*/    

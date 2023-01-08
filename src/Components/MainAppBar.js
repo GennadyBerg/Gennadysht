@@ -13,10 +13,6 @@ import { actionSetSidebar } from '../reducers/frontEndReducer';
 const MainAppBar = ({ token, openSidebar }) => {
     const theme = useTheme();
 
-    const handleDrawerOpen = () => {
-        openSidebar(true);
-    };
-
     let isLoggedIn = token && true;
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -27,7 +23,7 @@ const MainAppBar = ({ token, openSidebar }) => {
                         edge="start"
                         color="inherit"
                         aria-label="menu"
-                        onClick={handleDrawerOpen}
+                        onClick={() => openSidebar(true)}
                         sx={{ mr: 2 }}
                     >
                         <MenuIcon />
@@ -45,6 +41,7 @@ const MainAppBar = ({ token, openSidebar }) => {
                         isLoggedIn &&
                         <>
                             <MyLink to="/logout"><Button color="inherit">Logout</Button></MyLink>
+                            <MyLink to="/orders"><Button color="inherit">Orders</Button></MyLink>
                         </>
                     }
                     <Button color="inherit">Cart</Button>

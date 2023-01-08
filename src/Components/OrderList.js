@@ -1,4 +1,4 @@
-import React, { Component, useState } from 'react';
+import React, { Component, useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { alpha } from '@mui/material/styles';
 import { Container, Avatar, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper, List, ListItem, Box, Link, TablePagination } from '@mui/material';
@@ -11,6 +11,9 @@ import { Table, TableBody, TableContainer, TableHead, TableRow, TableCell } from
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
 import { visuallyHidden } from '@mui/utils';
 import TableSortLabel from '@mui/material/TableSortLabel';
+import { COrdersPagination } from './Pagination';
+import { actionFindOrders } from '../reducers';
+import { connect } from 'react-redux';
 
 let exampleOrderList = [
     {
@@ -934,26 +937,16 @@ function descendingComparator(a, b, orderBy) {
     }
     return 0;
 }
-const OrderList = ({ orders }) => {
-    const [order, setOrder] = React.useState('asc');
+const OrderList = ({ orders, fromPage = 0, pageSize = 5, loadData }) => {
+    /*const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);
+    const [rowsPerPage, setRowsPerPage] = React.useState(5);*/
 
-    const handleRequestSort = (event, property) => {
-        const isAsc = orderBy === property && order === 'asc';
-        setOrder(isAsc ? 'desc' : 'asc');
-        setOrderBy(property);
-    };
+    useEffect(() => {
+        loadData(fromPage, pageSize)
+    }, [fromPage, pageSize]);
 
-    const handleChangePage = (event, newPage) => {
-        setPage(newPage);
-    };
-
-    const handleChangeRowsPerPage = (event) => {
-        setRowsPerPage(parseInt(event.target.value, 10));
-        setPage(0);
-    };
 
     let headCells = [
         {
@@ -1035,11 +1028,10 @@ const OrderList = ({ orders }) => {
                                 }
                             </TableRow>
                         </TableHead>
-                        <TableBody>
-                            {
-                                orders
-                                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                                    .map((order, index) => {
+                        {orders?.length > 0 && (
+                            <TableBody>
+                                {
+                                    orders.map((order, index) => {
                                         return (
                                             <StyledTableRow>
                                                 <StyledTableCell align="right" >
@@ -1077,21 +1069,39 @@ const OrderList = ({ orders }) => {
                                             </StyledTableRow>
                                         )
                                     })
-                            }
-                        </TableBody>
+                                }
+                            </TableBody>
+                        )}
+                        <COrdersPagination />
                     </Table>
                 </TableContainer>
-                <TablePagination
-                    rowsPerPageOptions={[5, 10, 25]}
-                    component="div"
-                    count={exampleOrderList.length}
-                    rowsPerPage={rowsPerPage}
-                    page={page}
-                    onPageChange={handleChangePage}
-                    onRowsPerPageChange={handleChangeRowsPerPage}
-                />
             </Container>
         </>
     )
+
+    /*
+                    <TablePagination
+                        rowsPerPageOptions={[5, 10, 25]}
+                        component="div"
+                        count={exampleOrderList.length}
+                        rowsPerPage={rowsPerPage}
+                        page={page}
+                        onPageChange={handleChangePage}
+                        onRowsPerPageChange={handleChangeRowsPerPage}
+                    />
+    */
 }
-export { exampleOrderList, OrderList };
+
+const COrdersList = connect(
+    state => {
+        let a = '';
+        return (
+            {
+                orders: state.promise.orders?.payload,
+                fromPage: state.frontend.ordersPaging.fromPage,
+                pageSize: state.frontend.ordersPaging.pageSize,
+            })
+    },
+    { loadData: actionFindOrders })(OrderList);
+
+export { COrdersList };

@@ -2,14 +2,16 @@
 import { Router, Route, Switch, useParams } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { createStore, combineReducers, applyMiddleware } from 'redux';
-import { Provider} from 'react-redux';
-import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer } from './reducers';
-import { CLoginForm, CMainAppBar } from "./Components";
+import { Provider } from 'react-redux';
+import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats } from './reducers';
+import { CLoginForm, CMainAppBar, COrdersList } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import thunk from 'redux-thunk';
+import { CRootCats } from './Components';
 
 import './App.css';
+import { CCategory } from './Components/Category';
 
 export const history = createBrowserHistory();
 
@@ -18,6 +20,7 @@ store.subscribe(() => console.log(store.getState()))
 
 //console.log(useParams)
 store.dispatch(actionAuthLogin(localStorage.authToken));
+store.dispatch(actionRootCats());
 console.log('TTTTT' + performance.now())
 
 
@@ -41,9 +44,11 @@ function App() {
         <Provider store={store}>
           <div className="App">
             <CMainAppBar />
-            <CSidebar menuComponent={() => <div>TEST!!!!!!</div>} />
+            <CSidebar menuComponent={() => <CRootCats />} />
             <Switch>
               <Route path="/" component={Main} exact />
+              <Route path="/orders" component={COrdersList} />
+              <Route path="/category/:_id" component={CCategory} />
               <Route path="/login" component={CLoginForm} />
               <Route path="/logout" component={CLogout} />
               <Route path="*" component={NotFound} />
