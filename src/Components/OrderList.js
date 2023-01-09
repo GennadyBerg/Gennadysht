@@ -1,21 +1,13 @@
-import React, { Component, useEffect, useState } from 'react';
-import Button from '@mui/material/Button';
-import { alpha } from '@mui/material/styles';
-import { Container, Avatar, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper, List, ListItem, Box, Link, TablePagination } from '@mui/material';
-//CssBaseline, TextField, FormControlLabel, Checkbox, Link, Divider
-import { getFullImageUrl } from "../utills";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Good } from './Good';
-import { OrderGood } from './OrderGood';
-import { Table, TableBody, TableContainer, TableHead, TableRow, TableCell } from "@mui/material";
+import React, { useEffect } from 'react';
+import { Container, Typography, Paper, Link } from '@mui/material';
+import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
-import { visuallyHidden } from '@mui/utils';
-import TableSortLabel from '@mui/material/TableSortLabel';
 import { COrdersPagination } from './Pagination';
 import { actionFindOrders, actionOrdersCount } from '../reducers';
 import { connect } from 'react-redux';
+import { COrdersSearchInput } from './SearchInput';
 
-function stableSort(array, comparator) {
+/*function stableSort(array, comparator) {
     const stabilizedThis = array.map((el, index) => [el, index]);
     stabilizedThis.sort((a, b) => {
         const order = comparator(a[0], b[0]);
@@ -39,18 +31,22 @@ function descendingComparator(a, b, orderBy) {
         return 1;
     }
     return 0;
-}
-const OrderList = ({ orders, fromPage = 0, pageSize = 5, loadData, loadOrdersCount }) => {
+}*/
+const OrderList = ({ orders, searchStr, fromPage = 0, pageSize = 5, loadData, loadOrdersCount }) => {
     /*const [order, setOrder] = React.useState('asc');
     const [orderBy, setOrderBy] = React.useState('calories');
     const [page, setPage] = React.useState(0);
     const [rowsPerPage, setRowsPerPage] = React.useState(5);*/
 
     useEffect(() => {
-        loadData(fromPage, pageSize);
-        loadOrdersCount();
-    }, [fromPage, pageSize]);
+        loadData(fromPage, pageSize, searchStr);
+        loadOrdersCount(searchStr);
+    }, [fromPage, pageSize, searchStr]);
 
+    /*<StyledTableCell align={headCell.align}>{headCell.label}</StyledTableCell>*/
+    /*    const createSortHandler = (property) => (event) => {
+            onRequestSort(event, property);
+          };*/
 
     let headCells = [
         {
@@ -94,13 +90,10 @@ const OrderList = ({ orders, fromPage = 0, pageSize = 5, loadData, loadOrdersCou
             align: "right"
         },
     ]
-    {/*<StyledTableCell align={headCell.align}>{headCell.label}</StyledTableCell>*/ }
-    /*    const createSortHandler = (property) => (event) => {
-            onRequestSort(event, property);
-          };*/
     return (
         <>
             <Container maxWidth="lg">
+                <COrdersSearchInput />
                 <TableContainer component={Paper} >
                     <Table sx={{ overflow: 'scroll' }} >
                         <TableHead>
@@ -137,7 +130,7 @@ const OrderList = ({ orders, fromPage = 0, pageSize = 5, loadData, loadOrdersCou
                                 {
                                     orders.map((order, index) => {
                                         return (
-                                            <StyledTableRow>
+                                            <StyledTableRow key={order._id}>
                                                 <StyledTableCell align="right" >
                                                     <Typography>
                                                         {(fromPage * pageSize) + index + 1}.
@@ -198,10 +191,10 @@ const OrderList = ({ orders, fromPage = 0, pageSize = 5, loadData, loadOrdersCou
 
 const COrdersList = connect(
     state => {
-        let a = '';
         return (
             {
                 orders: state.promise.orders?.payload,
+                searchStr: state.frontend.ordersSearchStr,
                 fromPage: state.frontend.ordersPaging.fromPage,
                 pageSize: state.frontend.ordersPaging.pageSize,
             })

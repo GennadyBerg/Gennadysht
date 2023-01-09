@@ -1,6 +1,6 @@
 import { gql } from "../utills/gql";
-import {actionPromise} from "../reducers";
-import {actionCartClear} from '../reducers';
+import { actionPromise } from "../reducers";
+import { actionCartClear } from '../reducers';
 
 const orderUpsert = (order, id = null) => {
     const orderUpsertQuery = `mutation OrderUpsert($order: OrderInput) {
@@ -40,9 +40,21 @@ export const actionOrderFullUpsert = (then) =>
     actionPromise('orderUpsert', orderFullUpsert(then));
 
 
+const createQuery = (searchStr, searchFieldNames) => {
+    if (!searchStr)
+        return `{${searchStr ?? ''}}`;
+    let result = {};
+    for (let searchFieldName of searchFieldNames) {
+        result[searchFieldName] = searchFieldName === '_id' ? searchStr : `/${searchStr}/`;
+    }
+    return JSON.stringify(result);
+}
+
+const createOrderSearch = query => createQuery(query, ["_id"]);
+
 export const gqlFindOrders = (fromPage, pageSize, query = '') => {
-    
-    let params = { q: `[{${query ?? ''}}, {\"skip\":[${fromPage * pageSize}], \"limit\":[${pageSize}]}]` };
+    query = createOrderSearch(query);
+    let params = { q: `[${query}, {\"skip\":[${fromPage * pageSize}], \"limit\":[${pageSize}]}]` };
     const findOrdersQuery = `query OrderFind($q: String) {
                             OrderFind(query: $q) {
                                 _id total
@@ -59,7 +71,8 @@ export const gqlFindOrders = (fromPage, pageSize, query = '') => {
 }
 
 export const gqlOrdersCount = (query = '') => {
-    const catQuery = `query OrdersCount { OrderCount(query: "[{${query ?? ''}}]") }`;
+    query = createOrderSearch(query);
+    const catQuery = `query OrdersCount { OrderCount(query: "[${query}]") }`;
     return gql(catQuery);
 }
 
@@ -79,4 +92,4 @@ export const gqlOrdersCount = (query = '') => {
                                 }`;
         return gql(findOrdersQuery);
     }
-*/    
+*/

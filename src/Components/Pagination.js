@@ -5,6 +5,7 @@ import { actionFindOrders, actionOrdersCount } from '../reducers';
 import { actionSetOrdersPaging } from '../reducers/frontEndReducer';
 
 const Pagination = ({ allEntitiesCount, changePage, changePageFE, changeRowsPerPage, changeRowsPerPageFE }) => {
+    allEntitiesCount = allEntitiesCount ?? 0;
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(5);
     const handleChangePage = (event, newPage) => {
