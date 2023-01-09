@@ -21,4 +21,3 @@ export const gqlCategoryFindOne = (id) => {
         }`;
     return gql(catQuery, { q: `[{\"_id\": \"${id}\"}]` });
 }
-

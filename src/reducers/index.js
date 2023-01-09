@@ -4,4 +4,4 @@ export { cartReducer, actionCartAdd, actionCartClear, actionCartDel, actionCartS
 export { localStoredReducer, } from "./localStoredReducer";
 export { frontEndReducer, } from "./frontEndReducer";
 export { actionRootCats, actionCategoryFindOne } from './categoryReducer';
-export { actionFindOrders } from './ordersReducer';
+export { actionFindOrders, actionOrdersCount } from './ordersReducer';
