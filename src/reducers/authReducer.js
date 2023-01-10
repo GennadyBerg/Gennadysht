@@ -1,7 +1,32 @@
 import { jwtDecode } from '../utills';
 import { history } from "../App";
+import { createSlice } from '@reduxjs/toolkit';
 
-export function authReducer(state = {}, action) {                   // диспетчер обработки login
+const authReducerSlice = createSlice({
+    name: "auth",
+    initialState: {},
+    reducers: {
+        login(state, action) {
+            state.payload = jwtDecode(action.token);
+            if (!state.payload) {
+                state.token = undefined;
+            }
+            if (state.token)
+                localStorage.authToken = state.token;
+            else
+                delete localStorage.authToken;
+            history.push('/');
+            return state;
+        },
+        logout(state, action) {
+            state.token = undefined;
+            state.payload = undefined;
+            delete localStorage.authToken;
+            return state;
+        }
+    }
+});
+/*export function authReducer(state = {}, action) {                   // диспетчер обработки login
     if (action) {
         if (action.type === 'AUTH_LOGIN') {
             let newState = { ...state };
@@ -31,3 +56,9 @@ export const actionAuthLogin = token => ({ type: 'AUTH_LOGIN', token });
 export const actionAuthLogout = () => ({ type: 'AUTH_LOGOUT' });
 
 export const actionAuthLoginThunk = token => dispatch => dispatch(actionAuthLogin(token));
+*/
+let authReducer = authReducerSlice.reducer;
+let actionAuthLogin = authReducerSlice.actions.login;
+let actionAuthLogout = authReducerSlice.actions.logout;
+const actionAuthLoginThunk = token => dispatch => dispatch(actionAuthLogin(token));
+export { authReducer, actionAuthLogin, actionAuthLogout, actionAuthLoginThunk };

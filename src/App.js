@@ -15,7 +15,14 @@ import './App.css';
 import { CCategory } from './Components/Category';
 
 export const history = createBrowserHistory();
-export const store = createStore(combineReducers({ promise: promiseReducer, auth: authReducer, frontend: frontEndReducer }), applyMiddleware(thunk));
+//export const store = createStore(combineReducers({ promise: promiseReducer, auth: authReducer, frontend: frontEndReducer }), applyMiddleware(thunk));
+export const store = configureStore({
+  reducer: {
+    auth: authReducer,
+    promise: promiseReducer,
+    frontend: frontEndReducer
+  }
+});
 store.subscribe(() => console.log(store.getState()))
 
 //console.log(useParams)

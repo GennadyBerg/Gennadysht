@@ -6,7 +6,7 @@ import { actionCategoryFindOne } from "../reducers";
 export const CatsList = ({ cats = [] }) => {
     return (
         <List>
-            {cats.map(cat => (
+            {cats?.map(cat => (
                 <CatItem cat={cat} key={cat._id} />
             ))}
         </List>
