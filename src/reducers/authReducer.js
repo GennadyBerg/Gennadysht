@@ -7,7 +7,8 @@ const authReducerSlice = createSlice({
     initialState: {},
     reducers: {
         login(state, action) {
-            state.payload = jwtDecode(action.token);
+            state.token = action.payload.token;
+            state.payload = jwtDecode(state.token);
             if (!state.payload) {
                 state.token = undefined;
             }
@@ -58,7 +59,7 @@ export const actionAuthLogout = () => ({ type: 'AUTH_LOGOUT' });
 export const actionAuthLoginThunk = token => dispatch => dispatch(actionAuthLogin(token));
 */
 let authReducer = authReducerSlice.reducer;
-let actionAuthLogin = authReducerSlice.actions.login;
-let actionAuthLogout = authReducerSlice.actions.logout;
+let actionAuthLogin = (token) => async dispatch => dispatch(authReducerSlice.actions.login({ token }));
+let actionAuthLogout = () => async dispatch => dispatch(authReducerSlice.actions.logout({}));
 const actionAuthLoginThunk = token => dispatch => dispatch(actionAuthLogin(token));
 export { authReducer, actionAuthLogin, actionAuthLogout, actionAuthLoginThunk };
