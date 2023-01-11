@@ -36,7 +36,7 @@ const Pagination = ({ allEntitiesCount, changePage, changePageFE, changeRowsPerP
 export const COrdersPagination = connect(
     state => (
         {
-            allEntitiesCount: state.promise.ordersCount?.payload,
+            allEntitiesCount: state.orders.ordersCount?.payload,
         }),
     {
         changePageFE: (fromPage, pageSize) => actionSetOrdersPaging({ fromPage, pageSize }),

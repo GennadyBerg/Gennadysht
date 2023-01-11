@@ -13,6 +13,8 @@ import { CRootCats } from './Components';
 
 import './App.css';
 import { CCategory } from './Components/Category';
+import { categoryReducer } from './reducers/categoryReducer';
+import { ordersReducer } from './reducers/ordersReducer';
 
 export const history = createBrowserHistory();
 //export const store = createStore(combineReducers({ promise: promiseReducer, auth: authReducer, frontend: frontEndReducer }), applyMiddleware(thunk));
@@ -20,7 +22,9 @@ export const store = configureStore({
   reducer: {
     auth: authReducer,
     promise: promiseReducer,
-    frontend: frontEndReducer
+    frontend: frontEndReducer,
+    category: categoryReducer,
+    orders: ordersReducer
   }
 });
 store.subscribe(() => console.log(store.getState()))

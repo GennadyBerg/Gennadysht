@@ -1,8 +1,15 @@
 import { gqlFindOrders, gqlOrdersCount } from "../jql/gqlOrders";
-import { actionPromise } from "./promiseReducer";
+import { actionPromiseGeneric, createPromiseReducerSlice } from "./promiseReducer";
 
-export const actionFindOrders = (fromPage = 0, pageSize = undefined, query = null) =>
-    actionPromise('orders', gqlFindOrders(fromPage, pageSize, query));
+const actionFindOrders = (fromPage = 0, pageSize = undefined, query = null) =>
+    actionPromiseOrders('orders', gqlFindOrders(fromPage, pageSize, query));
 
-export const actionOrdersCount = (query = null) =>
-    actionPromise('ordersCount', gqlOrdersCount(query));
+const actionOrdersCount = (query = null) =>
+    actionPromiseOrders('ordersCount', gqlOrdersCount(query));
+
+const ordersReducerSlice = createPromiseReducerSlice('orders');
+const actionPromiseOrders = (name, promise) =>
+    actionPromiseGeneric(ordersReducerSlice, name, promise);
+
+let ordersReducer = ordersReducerSlice.reducer;
+export { ordersReducer, actionOrdersCount, actionFindOrders }

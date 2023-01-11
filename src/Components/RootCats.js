@@ -1,7 +1,6 @@
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
 import { connect } from "react-redux";
 import { MyLink } from ".";
-import { actionCategoryFindOne } from "../reducers";
 
 export const CatsList = ({ cats = [] }) => {
     return (
@@ -12,7 +11,9 @@ export const CatsList = ({ cats = [] }) => {
         </List>
     )
 };
-const CRootCats = connect(state => ({ cats: state.promise.rootCats?.payload }))(CatsList)
+const CRootCats = connect(state => {
+    let a = '';
+    return { cats: state.category.rootCats?.payload }})(CatsList)
 
 const CatItem = ({ cat }) => {
     return (

@@ -193,7 +193,7 @@ const COrdersList = connect(
     state => {
         return (
             {
-                orders: state.promise.orders?.payload,
+                orders: state.orders?.orders?.payload,
                 searchStr: state.frontend.ordersSearchStr,
                 fromPage: state.frontend.ordersPaging.fromPage,
                 pageSize: state.frontend.ordersPaging.pageSize,

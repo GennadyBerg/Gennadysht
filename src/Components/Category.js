@@ -7,10 +7,9 @@ import { useParams } from "react-router-dom"
 import { MyLink } from "."
 import { actionCategoryFindOne } from "../reducers"
 import { GoodsList } from "./GoodsList"
-import { Pagination } from "./Pagination"
 import { CatsList } from "./RootCats"
 
-const CSubCategories = connect(state => ({ cats: state.promise.catFindOne?.payload?.subCategories }),
+const CSubCategories = connect(state => ({ cats: state.category.catFindOne?.payload?.subCategories }),
     { loadData: actionCategoryFindOne })(CatsList);
 
 const Category = (props) => {
@@ -18,7 +17,7 @@ const Category = (props) => {
     const { _id } = useParams();
     useEffect(() => {
         loadData(_id)
-    }, [_id]);
+    }, [_id, loadData]);
     let csubCats = false;
     return (
         <>
@@ -64,7 +63,7 @@ const Category = (props) => {
     )
 }
 
-const CCategory = connect(state => ({ cat: state.promise.catFindOne?.payload }),
+const CCategory = connect(state => ({ cat: state.category.catFindOne?.payload }),
     { loadData: actionCategoryFindOne })(Category);
 
 export { CCategory };

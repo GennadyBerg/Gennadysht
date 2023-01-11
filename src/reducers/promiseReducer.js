@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const promiseReducerSlice = createSlice({ //promiseReducer
-    name: 'promise', //префикс типа наподобие AUTH_
+const createPromiseReducerSlice = name => createSlice({ //promiseReducer
+    name: name, //префикс типа наподобие AUTH_
     initialState: {}, //state={} в параметрах
     reducers: {
         pending(state, { payload: { name } }) { //if (type === 'promise/pending')
@@ -14,9 +14,11 @@ const promiseReducerSlice = createSlice({ //promiseReducer
             state[name] = { status: 'REJECTED', error }
         },
     }
-})
+});
 
-const actionPromise = (name, promise) =>
+const promiseReducerSlice = createPromiseReducerSlice('promise');
+
+const actionPromiseGeneric = (promiseReducerSlice, name, promise) =>
     async dispatch => {
         try {
             dispatch(promiseReducerSlice.actions.pending({ name }))
@@ -31,12 +33,15 @@ const actionPromise = (name, promise) =>
         }
     }
 
+const actionPromise = (name, promise) => 
+    actionPromiseGeneric(promiseReducerSlice, name, promise);
+
 
 let promiseReducer = promiseReducerSlice.reducer;
 let actionPending = promiseReducerSlice.actions.pending;
 let actionFulfilled = promiseReducerSlice.actions.fulfilled;
 let actionRejected = promiseReducerSlice.actions.rejected;
-export { promiseReducer, actionPending, actionFulfilled, actionRejected, actionPromise };
+export { promiseReducer, actionPending, actionFulfilled, actionRejected, actionPromise, createPromiseReducerSlice, actionPromiseGeneric };
 
 /*export function promiseReducer(state = {}, action) {                   // диспетчер обработки
     if (action) {
