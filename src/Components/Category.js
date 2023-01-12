@@ -6,7 +6,7 @@ import { connect } from "react-redux"
 import { useParams } from "react-router-dom"
 import { MyLink } from "."
 import { actionCategoryFindOne } from "../reducers"
-import { GoodsList } from "./GoodsList"
+import { CGoodsList } from "./GoodsList"
 import { CatsList } from "./RootCats"
 
 const CSubCategories = connect(state => ({ cats: state.category.catFindOne?.payload?.subCategories }),
@@ -56,7 +56,7 @@ const Category = (props) => {
                         </List>
                     )
                     }
-                    <GoodsList goods={cat.goods} />
+                    <CGoodsList goods={cat.goods} />
                 </Box>
             </Container>
         </>

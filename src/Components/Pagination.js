@@ -1,8 +1,8 @@
 import { TablePagination } from '@mui/material';
 import { useState } from 'react';
 import { connect } from 'react-redux';
-import { actionFindOrders, actionOrdersCount } from '../reducers';
-import { actionSetOrdersPaging } from '../reducers/frontEndReducer';
+import { actionFindOrders, actionGoodFind, actionGoodsCount, actionOrdersCount } from '../reducers';
+import { actionSetGoodsPaging, actionSetOrdersPaging } from '../reducers/frontEndReducer';
 
 const Pagination = ({ allEntitiesCount, changePage, changePageFE, changeRowsPerPage, changeRowsPerPageFE }) => {
     allEntitiesCount = allEntitiesCount ?? 0;
@@ -43,6 +43,16 @@ export const COrdersPagination = connect(
         changePage: (fromPage, pageSize) => actionFindOrders(fromPage, pageSize),
         changeRowsPerPageFE: pageSize => actionSetOrdersPaging({ fromPage: 0, pageSize }),
         changeRowsPerPage: pageSize => actionFindOrders(0, pageSize),
-        retrieveOrdersCount: actionOrdersCount,
+    })(Pagination);
+export const CGoodsPagination = connect(
+    state => (
+        {
+            allEntitiesCount: state.goods.goodsCount?.payload ?? 0,
+        }),
+    {
+        changePageFE: (fromPage, pageSize) => actionSetGoodsPaging({ fromPage, pageSize }),
+        changePage: (fromPage, pageSize) => actionGoodFind(fromPage, pageSize),
+        changeRowsPerPageFE: pageSize => actionSetGoodsPaging({ fromPage: 0, pageSize }),
+        changeRowsPerPage: pageSize => actionGoodFind(0, pageSize),
     })(Pagination);
 

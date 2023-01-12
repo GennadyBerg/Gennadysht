@@ -4,8 +4,8 @@ import { Router, Route, Switch, useParams } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats } from './reducers';
-import { CLoginForm, CMainAppBar, COrdersList } from "./Components";
+import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer } from './reducers';
+import { CGoodsList, CLoginForm, CMainAppBar, COrdersList, goodsExample, GoodsList } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import thunk from 'redux-thunk';
@@ -24,7 +24,8 @@ export const store = configureStore({
     promise: promiseReducer,
     frontend: frontEndReducer,
     category: categoryReducer,
-    orders: ordersReducer
+    orders: ordersReducer,
+    goods: goodsReducer
   }
 });
 store.subscribe(() => console.log(store.getState()))
@@ -59,6 +60,7 @@ function App() {
             <Switch>
               <Route path="/" component={Main} exact />
               <Route path="/orders" component={COrdersList} />
+              <Route path="/goods" component={CGoodsList} />
               <Route path="/category/:_id" component={CCategory} />
               <Route path="/login" component={CLoginForm} />
               <Route path="/logout" component={CLogout} />

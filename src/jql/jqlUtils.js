@@ -1,11 +1,18 @@
 const createQuery = (searchStr, searchFieldNames) => {
-    let result = {};
+    let result = [];
     if (searchStr) {
         for (let searchFieldName of searchFieldNames) {
-            result[searchFieldName] = searchFieldName === '_id' ? searchStr : `/${searchStr}/`;
+            //result[searchFieldName] = searchFieldName === '_id' ? searchStr : `/${searchStr}/`;
+            result.push({ [searchFieldName]: searchFieldName === '_id' ? searchStr : `/${searchStr}/` });
         }
     }
-    return result;
+    return result.length == 0 ? {} :  { $or: result };
+}
+
+const createQueryExt = (searchQuery = {}, queryExt = {}) => {
+    if (!queryExt)
+        return searchQuery;
+    return { $and: [searchQuery, queryExt] };
 }
 
 const createQueryPaging = (fromPage, pageSize) => {
@@ -17,6 +24,6 @@ const createQueryPaging = (fromPage, pageSize) => {
     return result;
 }
 
-export const createFullQuery = ({ searchStr, searchFieldNames }, { fromPage, pageSize } = {}) => {
-    return { q: JSON.stringify([createQuery(searchStr, searchFieldNames), createQueryPaging(fromPage, pageSize)]) };
+export const createFullQuery = ({ searchStr, searchFieldNames, queryExt = {} }, { fromPage, pageSize } = {}) => {
+    return { q: JSON.stringify([createQueryExt(createQuery(searchStr, searchFieldNames), queryExt), createQueryPaging(fromPage, pageSize)]) };
 }

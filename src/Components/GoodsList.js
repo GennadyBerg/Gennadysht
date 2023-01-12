@@ -1,11 +1,11 @@
-import React, { Component, useState } from 'react';
-import Button from '@mui/material/Button';
-import { styled, alpha } from '@mui/material/styles';
-import { Container, Avatar, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper, List, ListItem, Box } from '@mui/material';
-//CssBaseline, TextField, FormControlLabel, Checkbox, Link, Divider
-import { getFullImageUrl } from "./../utills";
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import React, { useEffect } from 'react';
+import { Container, Box } from '@mui/material';
 import { Good } from './Good';
+import { connect } from 'react-redux';
+import { actionGoodFind, actionGoodsCount } from '../reducers';
+import { CGoodsSearchInput } from './SearchInput';
+import { CGoodsPagination } from './Pagination';
+
 
 let goodsExample = [
     {
@@ -403,18 +403,39 @@ let goodsExample = [
     }
 ];
 
-const GoodsList = ({ goods }) => {
+const GoodsList = ({ goods, searchStr, fromPage = 0, pageSize = 5, loadData, loadGoodsCount, currentCategory }) => {
+    useEffect(() => {
+        let categoryFilter = currentCategory ? { "categories._id": currentCategory._id } : {};
+        loadData(fromPage, pageSize, searchStr, categoryFilter);
+        loadGoodsCount(searchStr, categoryFilter);
+    }, [fromPage, pageSize, searchStr, currentCategory]);
+
     return (
         <Container maxWidth='lg'>
+            <CGoodsSearchInput />
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 {
-                    goods.map(good => {
+                    goods?.map(good => {
                         return (
                             <Good key={good._id} good={good} maxWidth='xs' />
                         )
                     })}
             </Box>
+            <CGoodsPagination />
         </Container>
     )
 }
-export { goodsExample, GoodsList };
+const CGoodsList = connect(
+    state => {
+        return (
+            {
+                currentCategory: state.category.catFindOne?.payload,
+                goods: state.goods?.goods?.payload,
+                searchStr: state.frontend.goodsSearchStr,
+                fromPage: state.frontend.goodsPaging.fromPage,
+                pageSize: state.frontend.goodsPaging.pageSize,
+            })
+    },
+    { loadData: actionGoodFind, loadGoodsCount: actionGoodsCount })(GoodsList);
+
+export { CGoodsList };
