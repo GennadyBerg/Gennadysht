@@ -6,10 +6,11 @@ import { connect } from "react-redux"
 import { useParams } from "react-router-dom"
 import { MyLink } from "."
 import { actionCategoryFindOne } from "../reducers"
+import { getCurrentCategory } from "../reducers/categoryReducer"
 import { CGoodsList } from "./GoodsList"
 import { CatsList } from "./RootCats"
 
-const CSubCategories = connect(state => ({ cats: state.category.catFindOne?.payload?.subCategories }),
+const CSubCategories = connect(state => ({ cats: getCurrentCategory(state)?.subCategories }),
     { loadData: actionCategoryFindOne })(CatsList);
 
 const Category = (props) => {
@@ -63,7 +64,7 @@ const Category = (props) => {
     )
 }
 
-const CCategory = connect(state => ({ cat: state.category.catFindOne?.payload }),
+const CCategory = connect(state => ({ cat: getCurrentCategory(state) }),
     { loadData: actionCategoryFindOne })(Category);
 
 export { CCategory };
