@@ -2,7 +2,7 @@ import { gqlGoodFind, gqlGoodFindOne, gqlGoodsCount } from '../jql/gqlGoods';
 import { createPromiseReducerSlice, actionPromiseGeneric } from './promiseReducer';
 
 const actionGoodFindOne = (id) =>
-    actionPromiseGoods('selectedGood', gqlGoodFindOne(id));
+    actionPromiseGoods('currentGood', gqlGoodFindOne(id));
 const actionGoodFind = (fromPage = 0, pageSize = undefined, searchStr = null, queryExt = {}) =>
     actionPromiseGoods('goods', gqlGoodFind(fromPage, pageSize, searchStr, queryExt));
 const actionGoodsCount = (searchStr = null, queryExt = {}) =>

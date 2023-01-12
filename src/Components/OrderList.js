@@ -6,6 +6,7 @@ import { COrdersPagination } from './Pagination';
 import { actionFindOrders, actionOrdersCount } from '../reducers';
 import { connect } from 'react-redux';
 import { COrdersSearchInput } from './SearchInput';
+import { MyLink } from '.';
 
 /*function stableSort(array, comparator) {
     const stabilizedThis = array.map((el, index) => [el, index]);
@@ -140,11 +141,11 @@ const OrderList = ({ orders, searchStr, fromPage = 0, pageSize = 5, loadData, lo
                                                     {new Date(+order.createdAt).toLocaleString()}
                                                 </StyledTableCell>
                                                 <StyledTableCell  >
-                                                    <Link href='#'>
+                                                    <MyLink to={`/order/${order._id}`}>
                                                         <Typography >
                                                             {order._id}
                                                         </Typography>
-                                                    </Link>
+                                                    </MyLink>
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >
                                                     <Typography >

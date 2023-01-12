@@ -1,6 +1,10 @@
+import React, { useEffect } from 'react';
 import { Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
+import { connect } from "react-redux"
+import { actionOrderFindOne, getCurrentOrder } from "../reducers/ordersReducer"
 import { OrderGoodsList } from "./OrderGoodsList"
+import { useParams } from 'react-router-dom/cjs/react-router-dom';
 
 let exampleOrder = {
     "_id": "62cdc9b3b74e1f5f2ec1a0e9",
@@ -56,7 +60,11 @@ let exampleOrder = {
         }
     ]
 }
-const Order = ({ order }) => {
+const Order = ({ order = {}, loadData }) => {
+    const { _id: currentOrderId } = useParams();
+    useEffect(() => {
+        loadData(currentOrderId);
+    }, [currentOrderId, loadData]);
     return (
         <>
             <Container>
@@ -67,10 +75,13 @@ const Order = ({ order }) => {
                     <Typography gutterBottom variant='body2' color='textSecondary' component='p'>
                         {`Created at: ${new Date(+order.createdAt).toLocaleString()}`}
                     </Typography>
-                    <OrderGoodsList orderGoods={order.orderGoods} />
+                    <OrderGoodsList orderGoods={order?.orderGoods} />
                 </Box>
             </Container>
         </>
     )
 }
-export { Order, exampleOrder }
+const COrder = connect(state => ({ order: getCurrentOrder(state) }),
+    { loadData: actionOrderFindOne })(Order);
+
+export { COrder };
