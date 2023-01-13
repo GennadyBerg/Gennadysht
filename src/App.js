@@ -1,14 +1,12 @@
 
 import { configureStore } from '@reduxjs/toolkit';
-import { Router, Route, Switch, useParams } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
-import { createStore, combineReducers, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
 import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer } from './reducers';
-import { CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, exampleOrder, goodsExample, GoodsList, Order } from "./Components";
+import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, exampleOrder, goodsExample, GoodsList, Order } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
-import thunk from 'redux-thunk';
 import { CRootCats } from './Components';
 
 import './App.css';
@@ -61,6 +59,7 @@ function App() {
               <Route path="/" component={Main} exact />
               <Route path="/orders" component={COrdersList} />
               <Route path="/goods" component={CGoodsList} />
+              <Route path="/good/:_id" component={CGood} />
               <Route path="/category/:_id" component={CCategory} />
               <Route path="/order/:_id" component={COrder} />
               <Route path="/login" component={CLoginForm} />

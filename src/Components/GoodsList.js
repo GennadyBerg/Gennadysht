@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Container, Box } from '@mui/material';
-import { Good } from './Good';
+import { CGoodItem } from './Good';
 import { connect } from 'react-redux';
 import { actionGoodFind, actionGoodsCount } from '../reducers';
 import { CGoodsSearchInput } from './SearchInput';
@@ -21,7 +21,7 @@ const GoodsList = ({ goods, searchStr, fromPage = 0, pageSize = 5, loadData, loa
                 {
                     goods?.map(good => {
                         return (
-                            <Good key={good._id} good={good} maxWidth='xs' />
+                            <CGoodItem key={good._id} good={good} maxWidth='xs' />
                         )
                     })}
             </Box>

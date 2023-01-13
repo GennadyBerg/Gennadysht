@@ -51,6 +51,7 @@ export const gqlOrderFindOne = (_id) => {
             orderGoods {
                 _id price count total createdAt
                 good {
+                    _id
                     name 
                     images { url }
                 }

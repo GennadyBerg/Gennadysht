@@ -1,6 +1,5 @@
 import { gql } from "../utills/gql";
 import { createFullQuery } from "./jqlUtils";
-
 export const gqlGoodFindOne = (id) => {
     let params = createFullQuery({ searchStr: id, searchFieldNames: ["_id"] });
     const gqlQuery = `

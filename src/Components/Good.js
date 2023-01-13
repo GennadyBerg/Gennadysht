@@ -1,31 +1,18 @@
-import React, { Component, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton, Paper } from '@mui/material';
-//CssBaseline, TextField, FormControlLabel, Checkbox, Link, Divider
+import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
-import { Box } from '@mui/system';
 import { AvatarAnimated } from './AvatarAnimated';
-const GoodExample = () => {
-    return <Good good={
-        {
-            "_id": "62c9472cb74e1f5f2ec1a0d1",
-            "name": "iPhone 4",
-            "price": 100,
-            "description": " сенсорный смартфон, разработанный корпорацией Apple. Это четвёртое поколение iPhone и преемник iPhone 3GS. Позиционируется для осуществления видеовызовов (под названием FaceTime), использования медиа, в том числе книг и периодических изданий, фильмов, музыки и игр, и для общего доступа к вебу и электронной почте. Был представлен 7 июня 2010 года на Worldwide Developers Conference в Сан-Франциско[1] и был выпущен 24 июня 2010 года в США, Великобритании, Франции, Германии и Японии.",
-            "images": [
-                {
-                    "url": "images/e48e7ee1bcc4ab5432d1e7a3a89b8466"
-                },
-                {
-                    "url": "images/58c6157d51d8c2430c4dd41b6d0132f4"
-                }
-            ]
-        }
-    } />
-}
-const ExpandMore = styled(props => {
+import { actionGoodFindOne } from '../reducers';
+import { connect } from 'react-redux';
+import { getCurrentGood } from '../reducers/goodsReducer';
+import { useParams } from 'react-router-dom';
+import { MyLink } from './MyLink';
+import { GoodItem } from './GoodItem';
+
+export const ExpandMore = styled(props => {
     const { expand, ...other } = props;
     return <IconButton {...other} />;
 })(({ theme, expand }) => ({
@@ -34,7 +21,7 @@ const ExpandMore = styled(props => {
     transition: theme.transitions.create('transform', { duration: theme.transitions.duration.shortest })
 }))
 
-const AvatarGroupOriented = styled((props) => {
+export const AvatarGroupOriented = styled((props) => {
     const { vertical, ...other } = props;
     return <AvatarGroup {...other} />;
 })(({ theme, vertical }) => (vertical && {
@@ -50,16 +37,20 @@ const AvatarGroupOriented = styled((props) => {
     },
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
-
-const Good = ({ good, maxWidth, showAddToCard = true }) => {
+const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = undefined }) => {
+    const params = useParams();
+    const currentGoodId = params._id;
+    useEffect(() => {
+        if (loadData && currentGoodId)
+            loadData(currentGoodId);
+    }, [currentGoodId, loadData]);
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
-    maxWidth = maxWidth ?? 'md';
-    return (
+    return good && (
         <Container maxWidth={maxWidth}>
             <Card variant='outlined'>
-                <Grid container spacing={maxWidth == 'xs' ? 7 : 5}>
+                <Grid container spacing={maxWidth === 'xs' ? 7 : 5}>
                     <Grid item xs={1}>
                         <AvatarGroupOriented variant='rounded' vertical>
                             {
@@ -127,5 +118,9 @@ const Good = ({ good, maxWidth, showAddToCard = true }) => {
     )
 }
 
+const CGoodItem = connect(state => ({ /*good: getCurrentGood(state)*/ }),
+    {})(GoodItem);
+const CGood = connect(state => ({ good: getCurrentGood(state) }),
+    { loadData: actionGoodFindOne })(Good);
 
-export { Good, GoodExample };
+export { CGoodItem, CGood };
