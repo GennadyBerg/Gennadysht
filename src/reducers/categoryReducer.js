@@ -1,4 +1,4 @@
-import { gqlCategoryFindOne, gqlRootCats } from '../jql/gqlCategories';
+import { gqlCategoryFindOne, gqlRootCats } from '../gql/gqlCategories';
 import { createPromiseReducerSlice, actionPromiseGeneric } from './promiseReducer';
 
 const currentCategory = 'currentCategory';

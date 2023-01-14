@@ -1,4 +1,4 @@
-import { gqlGoodFind, gqlGoodFindOne, gqlGoodsCount } from '../jql/gqlGoods';
+import { gqlGoodFind, gqlGoodFindOne, gqlGoodsCount } from '../gql/gqlGoods';
 import { createPromiseReducerSlice, actionPromiseGeneric } from './promiseReducer';
 
 const currentGood = 'currentGood';

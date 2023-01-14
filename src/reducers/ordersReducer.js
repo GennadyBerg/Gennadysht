@@ -1,4 +1,4 @@
-import { gqlFindOrders, gqlOrderFindOne, gqlOrdersCount } from "../jql/gqlOrders";
+import { gqlFindOrders, gqlOrderFindOne, gqlOrdersCount } from "../gql/gqlOrders";
 import { actionPromiseGeneric, createPromiseReducerSlice } from "./promiseReducer";
 
 const actionFindOrders = (fromPage = 0, pageSize = undefined, query = null) =>

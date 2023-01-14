@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
 import { Box } from '@mui/system';
 import { connect, useSelector } from 'react-redux';
-import { actionFullLogin } from '../jql';
+import { actionFullLogin } from '../gql';
 import { MyLink } from './MyLink';
 
 const LoginForm = ({ onLogin }) => {
