@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Container, Box } from '@mui/material';
-import { CGoodItem } from './Good';
+import { CGoodItem } from './GoodItem';
 import { connect } from 'react-redux';
 import { actionGoodFind, actionGoodsCount } from '../reducers';
 import { CGoodsSearchInput } from './SearchInput';

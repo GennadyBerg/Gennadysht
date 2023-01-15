@@ -1,7 +1,8 @@
 export { CLoginForm } from './LoginForm';
-export { CGood, CGoodItem } from './Good';
+export { CGoodItem } from './GoodItem';
+export { CGood } from './Good';
 export { CGoodsList } from './GoodsList';
-export { OrderGood} from './OrderGood';
+export { OrderGood } from './OrderGood';
 export { OrderGoodsList, exampleOrderGoodsList } from './OrderGoodsList'
 export { COrder } from './Order';
 export { COrdersList } from './OrderList';

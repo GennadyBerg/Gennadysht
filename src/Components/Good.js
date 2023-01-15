@@ -5,7 +5,7 @@ import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMed
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
-import { actionGoodFindOne } from '../reducers';
+import { actionAddGoodToCart, actionGoodFindOne } from '../reducers';
 import { connect } from 'react-redux';
 import { getCurrentGood } from '../reducers/goodsReducer';
 import { useParams } from 'react-router-dom';
@@ -37,7 +37,7 @@ export const AvatarGroupOriented = styled((props) => {
     },
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
-const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = undefined }) => {
+const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = undefined, addToCart = undefined }) => {
     const params = useParams();
     const currentGoodId = params._id;
     useEffect(() => {
@@ -99,7 +99,9 @@ const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = und
                     </ExpandMore>
                     {
                         showAddToCard && (
-                            <Button size='small' color='primary'>
+                            <Button size='small' color='primary'
+                                onClick={() => alert("Clicked")/*addToCart(good)*/}
+                            >
                                 Add to cart
                             </Button>
                         )
@@ -118,9 +120,7 @@ const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = und
     )
 }
 
-const CGoodItem = connect(state => ({ /*good: getCurrentGood(state)*/ }),
-    {})(GoodItem);
 const CGood = connect(state => ({ good: getCurrentGood(state) }),
-    { loadData: actionGoodFindOne })(Good);
+    { loadData: actionGoodFindOne, addToCart: actionAddGoodToCart })(Good);
 
-export { CGoodItem, CGood };
+export { CGood };

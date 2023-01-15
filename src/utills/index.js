@@ -1,2 +1,2 @@
-export {getFullImageUrl} from './utils';
+export {getFullImageUrl, findObjectIndexById} from './utils';
 export {gql, jwtDecode} from './gql';

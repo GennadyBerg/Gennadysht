@@ -44,11 +44,11 @@ const MainAppBar = ({ token, openSidebar }) => {
                             <MyLink to="/orders"><Button color="inherit">Orders</Button></MyLink>
                         </>
                     }
-                    <Button color="inherit">Cart</Button>
+                    <MyLink to="/cart"><Button color="inherit">Cart</Button></MyLink>
                 </Toolbar>
             </AppBar>
         </Box>
     );
 }
 
-export const CMainAppBar = connect(state => ({ token: state.auth?.token, sidebarOpened: state.frontend.sidebar.opened }), { openSidebar: actionSetSidebar }) (MainAppBar);
+export const CMainAppBar = connect(state => ({ token: state.auth?.token, sidebarOpened: state.frontend.sidebar.opened }), { openSidebar: actionSetSidebar })(MainAppBar);

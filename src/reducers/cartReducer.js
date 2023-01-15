@@ -1,52 +1,123 @@
-export function cartReducer(state = {}, action) {                   // диспетчер обработки
-    switch (action.type) {
+import { createSlice } from "@reduxjs/toolkit"
+import { actionGoodFind } from "./goodsReducer";
+import { v4 } from "uuid";
+import { findObjectIndexById } from "../utills";
 
-        case 'CART_ADD':
-            if (action.count >= 0) {
-                let newState = { ...state };
-                let { count } = state[action.good._id] ?? { count: 0 };
-                newState[action.good._id] = { count: action.count + count, good: { ...action.good } }
-                return newState;
+
+
+const cartReducerSlice = createSlice({ //promiseReducer
+    name: 'cart', //префикс типа наподобие AUTH_
+    initialState: {
+        goods: []
+    },
+    reducers: {
+        restoreCart(state, action) {
+            let goods = localStorage.cart.goods;
+            if (!goods) {
+                goods = [];
+                localStorage.cart = { goods: goods };
             }
-            break;
-        case 'CART_SUB':
-            if (action.count >= 0) {
-                let newState = { ...state };
-                let { count } = state[action.good._id] ?? { count: 0 };
-                if (count >= action.count) {
-                    newState[action.good._id] = { count: action.count - count, good: { ...action.good } }
-                    return newState;
-                }
+            state = { goods: goods, uniqueId: v4() };
+            return state;
+        },
+        cleanCart(state, action) {
+            localStorage.cart = { goods: [] };
+            state = { goods: [], uniqueId: v4() };
+            return state;
+        },
+        refreshCart(state, action) {
+            state.uniqueId = v4();
+            return state;
+        },
+        addGood(state, action) {
+            let { _id, count = 1 } = action.payload.good;
+            let goods = state.goods;
+            let goodIdx = findObjectIndexById(goods, _id);
+            let good;
+            if (goodIdx < 0) {
+                goodIdx = goods.length;
+                good = { _id: _id, count: 0 }
             }
-            break;
-        case 'CART_DEL':
-            {
-                let newState = { ...state };
-                delete newState[action.good._id];
-                return newState;
+            else {
+                good = goods[goodIdx];
             }
-        case 'CART_SET':
-            {
-                let newState = { ...state };
-                newState[action.good._id] = { count: action.count, good: { ...action.good } };
-                return newState;
+
+            count = good.count + count;
+            if (count > 0) {
+                good.count = count;
+                state.goods[goodIdx] = good;
+                state.uniqueId = v4()
             }
-        case 'CART_SHOW':
-            {
-                return { ...state };
+            return state;
+        },
+        deleteGood(state, action) {
+            let { _id } = action.payload.good;
+            let goods = state.goods;
+            let goodIdx = findObjectIndexById(goods, _id);
+            if (goodIdx >= 0) {
+                state.goods = goods.slice(goodIdx, 1);
+                state.uniqueId = v4()
             }
-        case 'CART_CLEAR':
-            return {};
-        default:
-            return {};
+            return state;
+        }
+    }
+})
+
+let cartReducer = cartReducerSlice.reducer;
+let actionAddGoodToCart = good => {
+    let a = '';
+    return async (dispatch, state) => {
+        dispatch(cartReducerSlice.actions.addGood({ good }))
+    }
+}
+
+let actionDeleteGoodFromCart = good =>
+    async dispatch => {
+        dispatch(cartReducerSlice.actions.deleteGood({ good }))
     }
 
-    return state;
-}
-export const actionCartAdd = (good, count = 1) => ({ type: 'CART_ADD', count: count, good: good });
-export const actionCartSub = (good, count = 1) => ({ type: 'CART_SUB', count, good }); //Уменьшение количества товара. Должен уменьшать количество товара в state, или удалять его если количество будет 0 или отрицательным
-export const actionCartDel = (good) => ({ type: 'CART_DEL', good }); //Удаление товара. Должен удалять ключ из state
-export const actionCartSet = (good, count = 1) => ({ type: 'CART_SET', count, good }); //Задание количества товара. В отличие от добавления и уменьшения, не учитывает того количества, которое уже было в корзине, а тупо назначает количество поверху (или создает новый ключ, если в корзине товара не было). Если count 0 или отрицательное число - удаляем ключ из корзины;
-export const actionCartShow = (good, count = 1) => ({ type: 'CART_SHOW', count, good }); //Задание количества товара. В отличие от добавления и уменьшения, не учитывает того количества, которое уже было в корзине, а тупо назначает количество поверху (или создает новый ключ, если в корзине товара не было). Если count 0 или отрицательное число - удаляем ключ из корзины;
-export const actionCartClear = () => ({ type: 'CART_CLEAR' }); //Очистка корзины. state должен стать пустым объектом {}
+let actionRestoreCart = () =>
+    async dispatch => {
+        dispatch(cartReducerSlice.actions.restoreCart({}))
+    }
+let actionClearCart = () =>
+    async dispatch => {
+        dispatch(cartReducerSlice.actions.cleanCart({}))
+    }
 
+let actionGoodFindInt = (dispatch, goods) => {
+    return dispatch(
+        actionGoodFind(undefined, undefined, null,
+        {_id: { "$in": goods.map(g => g._id) }}
+    ));
+    //return dispatch(cartReducerSlice.actions.refreshCart());
+}
+let actionLoadCart = () =>
+    async (dispatch, getState) => {
+        let state = getState();
+        let goods = state.cart.goods;
+        if (goods?.length > 0) {
+            actionGoodFindInt(dispatch, goods);
+            /*
+            dispatch(actionGoodFind(undefined, undefined, null,
+                { "$in": goods.map(g => g._id) }
+            ));
+            */
+        }
+    }
+
+let getCart = state => {
+    let res = {
+        goods: state.cart.goods,
+        goodsData: state.cart.goods?.goods,
+        uniqueId: state.cart.uniqueId,
+    };
+    return res;
+}
+
+
+export {
+    cartReducer,
+    actionLoadCart, getCart, 
+    actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart, actionClearCart
+};

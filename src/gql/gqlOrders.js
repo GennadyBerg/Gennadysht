@@ -1,6 +1,5 @@
 import { gql } from "../utills/gql";
-import { actionPromise } from "../reducers";
-import { actionCartClear } from '../reducers';
+import { actionClearCart, actionPromise } from "../reducers";
 import { createFullQuery } from "./gqlUtils";
 
 const orderUpsert = (order, id = null) => {
@@ -30,7 +29,7 @@ const orderFullUpsert = (then) => {
             if (res && res.errors && res.errors.length > 0) {
                 throw res.errors[0];
             }
-            dispatch(actionCartClear());
+            dispatch(actionClearCart());
         }
         if (then)
             then();

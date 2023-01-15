@@ -6,8 +6,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
 import { MyLink } from './MyLink';
 import { AvatarGroupOriented, ExpandMore } from './Good';
+import { connect } from 'react-redux';
+import { actionAddGoodToCart } from '../reducers';
 
-export const GoodItem = ({ good = {}, maxWidth = 'md', showAddToCard = true }) => {
+export const GoodItem = ({ good = {}, maxWidth = 'md', showAddToCard = true, addToCart = undefined }) => {
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
@@ -61,7 +63,9 @@ export const GoodItem = ({ good = {}, maxWidth = 'md', showAddToCard = true }) =
                         <ExpandMoreIcon />
                     </ExpandMore>
                     {showAddToCard && (
-                        <Button size='small' color='primary'>
+                        <Button size='small' color='primary'
+                            onClick={() => addToCart(good)}
+                        >
                             Add to cart
                         </Button>
                     )}
@@ -78,3 +82,7 @@ export const GoodItem = ({ good = {}, maxWidth = 'md', showAddToCard = true }) =
         </Container>
     );
 };
+
+const CGoodItem = connect(state => ({ /*good: getCurrentGood(state)*/ }),
+    { addToCart: actionAddGoodToCart })(GoodItem);
+export { CGoodItem };

@@ -3,8 +3,8 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
-import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer } from './reducers';
-import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, exampleOrder, goodsExample, GoodsList, Order } from "./Components";
+import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer, cartReducer, actionRestoreCart } from './reducers';
+import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, exampleOrder, goodsExample, GoodsList, MyLink, Order } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -13,6 +13,7 @@ import './App.css';
 import { CCategory } from './Components/Category';
 import { categoryReducer } from './reducers/categoryReducer';
 import { ordersReducer } from './reducers/ordersReducer';
+import { CCart } from './Components/Cart';
 
 export const history = createBrowserHistory();
 //export const store = createStore(combineReducers({ promise: promiseReducer, auth: authReducer, frontend: frontEndReducer }), applyMiddleware(thunk));
@@ -23,7 +24,8 @@ export const store = configureStore({
     frontend: frontEndReducer,
     category: categoryReducer,
     orders: ordersReducer,
-    goods: goodsReducer
+    goods: goodsReducer,
+    cart: cartReducer
   }
 });
 store.subscribe(() => console.log(store.getState()))
@@ -31,6 +33,7 @@ store.subscribe(() => console.log(store.getState()))
 //console.log(useParams)
 store.dispatch(actionAuthLogin(localStorage.authToken));
 store.dispatch(actionRootCats());
+store.dispatch(actionRestoreCart());
 console.log('TTTTT' + performance.now())
 
 
@@ -62,6 +65,7 @@ function App() {
               <Route path="/good/:_id" component={CGood} />
               <Route path="/category/:_id" component={CCategory} />
               <Route path="/order/:_id" component={COrder} />
+              <Route path="/cart" component={CCart} />
               <Route path="/login" component={CLoginForm} />
               <Route path="/logout" component={CLogout} />
               <Route path="*" component={NotFound} />
