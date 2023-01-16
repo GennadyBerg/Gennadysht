@@ -4,8 +4,11 @@ import { AvatarImage } from "./AvatarAnimated";
 import { StyledTableCell, StyledTableRow } from "./StyledTableElements";
 import "./cartGood.css"
 import { MyLink } from "./MyLink";
+import { connect } from "react-redux";
+import { actionAddGoodToCart } from "../reducers";
+import Button from '@mui/material/Button';
 
-const CartGood = ({ good, goodNum }) => {
+const CartGood = ({ good, goodNum, addToCart = undefined }) => {
     return (
         <>
             <StyledTableRow>
@@ -38,9 +41,19 @@ const CartGood = ({ good, goodNum }) => {
                     </Typography>
                 </StyledTableCell>
                 <StyledTableCell item align="right" xs={2}>
+                    <Button size='small' color='primary'
+                        onClick={() => addToCart(good, -1)}
+                    >
+                        -
+                    </Button>
                     <Typography>
                         {good.count}
                     </Typography>
+                    <Button size='small' color='primary'
+                        onClick={() => addToCart(good, +1)}
+                    >
+                        +
+                    </Button>
                 </StyledTableCell>
                 <StyledTableCell item align="right" xs={2}>
                     <Typography>
@@ -51,4 +64,6 @@ const CartGood = ({ good, goodNum }) => {
         </>
     )
 }
-export { CartGood };
+const CCartGood = connect(state => ({}),
+    { addToCart: actionAddGoodToCart })(CartGood);
+export { CCartGood };

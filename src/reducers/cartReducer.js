@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { v4 } from "uuid";
 import { findObjectIndexById } from "../utills";
-import { getCartData } from "./cartGoodsReducer";
+import { clearCartData, getCartData } from "./cartGoodsReducer";
 
 const cartReducerSlice = createSlice({ //promiseReducer
     name: 'cart', //префикс типа наподобие AUTH_
@@ -9,18 +9,23 @@ const cartReducerSlice = createSlice({ //promiseReducer
         goods: []
     },
     reducers: {
+        cleanCartData(state, { payload: { commonState } }) {
+            if (clearCartData(commonState))
+                state.uniqueId = v4();
+            return state;
+        },
         restoreCart(state, action) {
             let goods = localStorage.cart.goods;
             if (!goods) {
                 goods = [];
                 localStorage.cart = { goods: goods };
             }
-            state = { goods: goods, uniqueId: v4() };
+            setStateData(state, goods, v4());
             return state;
         },
         cleanCart(state, action) {
             localStorage.cart = { goods: [] };
-            state = { goods: [], uniqueId: v4() };
+            setStateData(state, [], v4());
             return state;
         },
         refreshCart(state, action) {
@@ -62,9 +67,9 @@ const cartReducerSlice = createSlice({ //promiseReducer
 })
 
 let cartReducer = cartReducerSlice.reducer;
-let actionAddGoodToCart = good =>
+let actionAddGoodToCart = (good, count = 1) =>
     async (dispatch, state) => {
-        dispatch(cartReducerSlice.actions.addGood({ good }))
+        dispatch(cartReducerSlice.actions.addGood({ good: { ...good, count } }))
     }
 
 let actionDeleteGoodFromCart = good =>
@@ -81,18 +86,32 @@ let actionClearCart = () =>
         dispatch(cartReducerSlice.actions.cleanCart({}))
     }
 
+let actionClearCartData = () =>
+    async (dispatch, useState) => {
+        let commonState = useState();
+        dispatch(cartReducerSlice.actions.cleanCartData({ commonState }))
+    }
+
 let getCart = state => {
     let res = {
         goods: state.cart.goods,
-        goodsData: (state.cartData?.goodsData?.payload ?? []),
+        goodsData: getCartData(state),
         uniqueId: state.cart.uniqueId,
     };
     return res;
 }
 
+const setStateData = (state, goods, uniqueId = undefined) => {
+    if (goods != undefined)
+        state.goods = goods;
+    if (uniqueId != undefined)
+        state.uniqueId = uniqueId;
+}
+
+
 
 export {
-    cartReducer,
-    getCart,
-    actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart, actionClearCart
+    cartReducer, getCart,
+    actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart,
+    actionClearCart, actionClearCartData
 };

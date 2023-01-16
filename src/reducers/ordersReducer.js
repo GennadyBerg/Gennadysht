@@ -1,4 +1,6 @@
-import { gqlFindOrders, gqlOrderFindOne, gqlOrdersCount } from "../gql/gqlOrders";
+import { gqlFindOrders, gqlOrderFindOne, gqlOrdersCount, gqlAddOrder } from "../gql/gqlOrders";
+import { actionClearCart } from "./cartReducer";
+
 import { actionPromiseGeneric, createPromiseReducerSlice } from "./promiseReducer";
 
 const actionFindOrders = (fromPage = 0, pageSize = undefined, query = null) =>
@@ -13,10 +15,24 @@ const actionOrderFindOne = (id) =>
 const getCurrentOrder = state => (
     state.orders[currentOrder]?.payload
 )
+const actionPlaceOrder = () => {
+    return async (dispatch, getState) => {
+        let state = getState();
+        if (state.cart.goods.length > 0) {
+            let order = [];
+            for (let good of Object.values(state.cart.goods)) {
+                order.push({ good: { _id: good._id }, count: good.count });
+            }
+            dispatch(actionPromiseOrders('placedOrderInfo', gqlAddOrder(order)));
+            dispatch(actionClearCart());
+        }
+    }
+}
+
 
 const ordersReducerSlice = createPromiseReducerSlice('orders');
 const actionPromiseOrders = (name, promise) =>
     actionPromiseGeneric(ordersReducerSlice, name, promise);
 
 let ordersReducer = ordersReducerSlice.reducer;
-export { ordersReducer, actionOrdersCount, actionFindOrders, actionOrderFindOne, getCurrentOrder }
+export { ordersReducer, actionOrdersCount, actionFindOrders, actionOrderFindOne, actionPlaceOrder, getCurrentOrder }

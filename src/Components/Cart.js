@@ -1,8 +1,8 @@
 import React, { useEffect } from 'react';
-import { Typography } from "@mui/material"
+import { Button, Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
 import { connect } from "react-redux"
-import { actionLoadCart, getCart } from "../reducers"
+import { actionLoadCart, getCart, actionPlaceOrder } from "../reducers"
 import { CartGoodsList } from "./CartGoodsList"
 import { findObjectIndexById } from '../utills';
 
@@ -14,7 +14,7 @@ const mapCountToGood = (goodData, goodsCounts) => {
     return count;
 }
 
-const Cart = ({ goods, goodsData, uniqueId, loadData }) => {
+const Cart = ({ goods, goodsData, uniqueId, loadData, placeOrder }) => {
     goodsData = goodsData?.map(gd => ({ ...gd, count: mapCountToGood(gd, goods) })) ?? [];
 
     useEffect(() => {
@@ -28,6 +28,11 @@ const Cart = ({ goods, goodsData, uniqueId, loadData }) => {
                         Cart
                     </Typography>
                     <CartGoodsList goods={goodsData ?? []} />
+                    <Button size='small' color='primary'
+                        onClick={() => placeOrder()}
+                    >
+                        Place Order
+                    </Button>
                 </Box>
             </Container>
         </>
@@ -40,6 +45,6 @@ const CCart = connect(state => ({
     ...getCart(state) 
     //cart: getCart(state) 
 }),
-    { loadData: actionLoadCart })(Cart);
+    { loadData: actionLoadCart, placeOrder: actionPlaceOrder })(Cart);
 
 export { CCart };

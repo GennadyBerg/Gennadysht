@@ -1,6 +1,6 @@
 import React from 'react';
 import { Paper } from '@mui/material';
-import { CartGood } from './CartGood';
+import { CCartGood } from './CartGood';
 import { Table, TableBody, TableContainer, TableHead, TableRow, TableCell } from "@mui/material";
 import { StyledTableCell } from './StyledTableElements';
 
@@ -33,7 +33,7 @@ const CartGoodsList = ({ goods = [], tax_rate = 0 }) => {
                         {
                             goods.map((good, index) => {
                                 return (
-                                    <CartGood key={good._id} good={good} goodNum={index} maxWidth='xs' />
+                                    <CCartGood key={good._id} good={good} goodNum={index} maxWidth='xs' />
                                 )
                             })
                         }
