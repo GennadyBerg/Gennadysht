@@ -34,9 +34,10 @@ const Cart = ({ goods, goodsData, uniqueId, loadData }) => {
     )
 }
 const CCart = connect(state => ({
-    goods: state.cart.goods,
+    /*goods: state.cart.goods,
     goodsData: state.goods?.goods?.payload,
-    uniqueId: state.cart.uniqueId,
+    uniqueId: state.cart.uniqueId,*/
+    ...getCart(state) 
     //cart: getCart(state) 
 }),
     { loadData: actionLoadCart })(Cart);

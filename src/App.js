@@ -3,7 +3,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
-import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer, cartReducer, actionRestoreCart } from './reducers';
+import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer, cartReducer, actionRestoreCart, cartGoodsReducer } from './reducers';
 import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, exampleOrder, goodsExample, GoodsList, MyLink, Order } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
@@ -25,7 +25,8 @@ export const store = configureStore({
     category: categoryReducer,
     orders: ordersReducer,
     goods: goodsReducer,
-    cart: cartReducer
+    cart: cartReducer,
+    cartData: cartGoodsReducer
   }
 });
 store.subscribe(() => console.log(store.getState()))

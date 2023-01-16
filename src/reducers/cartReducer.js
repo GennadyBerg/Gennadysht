@@ -1,9 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
-import { actionGoodFind } from "./goodsReducer";
 import { v4 } from "uuid";
 import { findObjectIndexById } from "../utills";
-
-
+import { getCartData } from "./cartGoodsReducer";
 
 const cartReducerSlice = createSlice({ //promiseReducer
     name: 'cart', //префикс типа наподобие AUTH_
@@ -64,12 +62,10 @@ const cartReducerSlice = createSlice({ //promiseReducer
 })
 
 let cartReducer = cartReducerSlice.reducer;
-let actionAddGoodToCart = good => {
-    let a = '';
-    return async (dispatch, state) => {
+let actionAddGoodToCart = good =>
+    async (dispatch, state) => {
         dispatch(cartReducerSlice.actions.addGood({ good }))
     }
-}
 
 let actionDeleteGoodFromCart = good =>
     async dispatch => {
@@ -85,31 +81,10 @@ let actionClearCart = () =>
         dispatch(cartReducerSlice.actions.cleanCart({}))
     }
 
-let actionGoodFindInt = (dispatch, goods) => {
-    return dispatch(
-        actionGoodFind(undefined, undefined, null,
-        {_id: { "$in": goods.map(g => g._id) }}
-    ));
-    //return dispatch(cartReducerSlice.actions.refreshCart());
-}
-let actionLoadCart = () =>
-    async (dispatch, getState) => {
-        let state = getState();
-        let goods = state.cart.goods;
-        if (goods?.length > 0) {
-            actionGoodFindInt(dispatch, goods);
-            /*
-            dispatch(actionGoodFind(undefined, undefined, null,
-                { "$in": goods.map(g => g._id) }
-            ));
-            */
-        }
-    }
-
 let getCart = state => {
     let res = {
         goods: state.cart.goods,
-        goodsData: state.cart.goods?.goods,
+        goodsData: (state.cartData?.goodsData?.payload ?? []),
         uniqueId: state.cart.uniqueId,
     };
     return res;
@@ -118,6 +93,6 @@ let getCart = state => {
 
 export {
     cartReducer,
-    actionLoadCart, getCart, 
+    getCart,
     actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart, actionClearCart
 };
