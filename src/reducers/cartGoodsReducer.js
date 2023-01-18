@@ -8,10 +8,8 @@ let actionCartGoodsFindInt = (dispatch, goods) => {
 }
 
 const goodsData = "goodsData";
-const actionGetCartGoods = (goodsQuery) => {
-    let a = '';
-    return actionPromiseCartGoods(goodsData, gqlGoodFind(undefined, undefined, null, goodsQuery));
-}
+const actionGetCartGoods = (goodsQuery) => 
+    actionPromiseCartGoods(goodsData, gqlGoodFind(undefined, undefined, null, goodsQuery));
 
 let actionLoadCart = () =>
     async (dispatch, getState) => {

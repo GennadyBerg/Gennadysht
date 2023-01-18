@@ -6,11 +6,15 @@ import { Box } from '@mui/system';
 import { connect, useSelector } from 'react-redux';
 import { actionFullLogin } from '../gql';
 import { MyLink } from './MyLink';
+import { useLoginMutation } from '../reducers/authReducer';
 
-const LoginForm = ({ onLogin }) => {
+const LoginForm = () => {
+    const [onLogin, { data, isLoading }] = useLoginMutation()
+    //const dispatch = useDispatch()
+
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
-    const isButtonActive = login?.length > 3 && password?.length > 3;
+    const isButtonActive = !isLoading && login?.length > 3 && password?.length > 3;
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -61,7 +65,7 @@ const LoginForm = ({ onLogin }) => {
                     fullWidth
                     type="submit"
                     disabled={!isButtonActive}
-                    onClick={() => onLogin( login, password )}>
+                    onClick={() => onLogin({ login, password })}>
                     Login...
                 </MyLink>
                 <Grid container>

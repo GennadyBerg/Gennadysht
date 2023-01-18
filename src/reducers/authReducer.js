@@ -1,65 +1,94 @@
-import { jwtDecode } from '../utills';
+import { gql } from "graphql-request";
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { graphqlRequestBaseQuery } from '@rtk-query/graphql-request-base-query' //npm install
+import { jwtDecode } from "../utills";
+import { createSlice } from "@reduxjs/toolkit";
 import { history } from "../App";
-import { createSlice } from '@reduxjs/toolkit';
 
-const authReducerSlice = createSlice({
-    name: "auth",
+
+const prepareHeaders = (headers, { getState }) => {
+    // By default, if we have a token in the store, let's use that for authenticated requests
+    const token = getState().auth.token;
+    if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+    }
+    return headers;
+}
+
+export const loginApi = createApi({
+    reducerPath: "authApi",
+    baseQuery: graphqlRequestBaseQuery({
+        url: '/graphql',
+        prepareHeaders
+    }),
+    endpoints: (builder) => ({
+        login: builder.mutation({
+            query: ({ login, password }) => ({
+                document: gql`
+                    query login($login: String, $password: String) {
+                        login(login: $login, password: $password) 
+                    }
+                    `,
+                variables: { login, password }
+            })
+        }),
+        userFind: builder.query({
+            query: (_id) => ({
+                document: gql`
+                    query UserFind($q: String) {
+                        UserFindOne(query: $q){
+                            _id login nick avatar {url} createdAt
+                        } 
+                    }
+                    `,
+                variables: { q: JSON.stringify([{ _id }]) }
+            }),
+            providesTags: (result, error, id) => ([{ type: 'User', id }])
+        }),
+        setNick: builder.mutation({
+            query: ({ _id, nick }) => ({
+                document: gql`
+                    mutation SetNick($_id:String, $nick: String){
+                        UserUpsert(user: {_id: $_id, nick: $nick}){
+                            _id, nick
+                        }
+                    }
+                `,
+                variables: { _id, nick }
+            }),
+            invalidatesTags: (result, error, arg) => ([{ type: 'User', id: arg._id }])
+        })
+    }),
+})
+
+export let authReducerPath = 'auth';
+const authSlice = createSlice({
+    name: authReducerPath,
     initialState: {},
     reducers: {
-        login(state, action) {
-            state.token = action.payload.token;
-            state.payload = jwtDecode(state.token);
-            if (!state.payload) {
-                state.token = undefined;
-            }
-            if (state.token)
-                localStorage.authToken = state.token;
-            else
-                delete localStorage.authToken;
+        logout(state) { //type - auth/logout
+            // state.token = undefined
             history.push('/');
-            return state;
-        },
-        logout(state, action) {
-            state.token = undefined;
-            state.payload = undefined;
-            delete localStorage.authToken;
-            return state;
+            return {}
         }
-    }
-});
-/*export function authReducer(state = {}, action) {                   // диспетчер обработки login
-    if (action) {
-        if (action.type === 'AUTH_LOGIN') {
-            let newState = { ...state };
-            newState.token = action.token;
-            newState.payload = jwtDecode(action.token);
-            if (!newState.payload) {
-                newState.token = undefined;
-            }
-            if (newState.token)
-                localStorage.authToken = newState.token;
-            else
-                delete localStorage.authToken;
-            history.push('/');
-            return newState;
-        }
-        else if (action.type === 'AUTH_LOGOUT') {
-            let newState = { ...state };
-            newState.token = undefined;
-            newState.payload = undefined;
-            delete localStorage.authToken;
-            return newState;
-        }
-    }
-    return state;
-}
-export const actionAuthLogin = token => ({ type: 'AUTH_LOGIN', token });
-export const actionAuthLogout = () => ({ type: 'AUTH_LOGOUT' });
+    },
+    extraReducers: builder =>
+        builder.addMatcher(loginApi.endpoints.login.matchFulfilled,
+            (state, { payload }) => {
+                const tokenPayload = jwtDecode(payload.login);
+                if (tokenPayload) {
+                    state.token = payload.login;
+                    state.payload = tokenPayload;
+                    history.push('/');
+                }
+            })
+})
 
-export const actionAuthLoginThunk = token => dispatch => dispatch(actionAuthLogin(token));
-*/
-let authReducer = authReducerSlice.reducer;
-let actionAuthLogin = (token) => async dispatch => dispatch(authReducerSlice.actions.login({ token }));
-let actionAuthLogout = () => async dispatch => dispatch(authReducerSlice.actions.logout({}));
-const actionAuthLoginThunk = token => dispatch => dispatch(actionAuthLogin(token));
-export { authReducer, actionAuthLogin, actionAuthLogout, actionAuthLoginThunk };
+const { logout: actionAuthLogout } = authSlice.actions;
+let authApiReducer = loginApi.reducer;
+let authReducer = authSlice.reducer;
+let authApiReducerPath = loginApi.reducerPath;
+
+export const { useLoginMutation } = loginApi;
+export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout }
+

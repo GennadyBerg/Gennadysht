@@ -1,9 +1,9 @@
 
-import { configureStore } from '@reduxjs/toolkit';
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
-import { authReducer, promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer, cartReducer, actionRestoreCart, cartGoodsReducer } from './reducers';
+import { promiseReducer, actionAuthLogin, frontEndReducer, actionRootCats, goodsReducer, cartReducer, actionRestoreCart, cartGoodsReducer } from './reducers';
 import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, exampleOrder, goodsExample, GoodsList, MyLink, Order } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
@@ -14,25 +14,46 @@ import { CCategory } from './Components/Category';
 import { categoryReducer } from './reducers/categoryReducer';
 import { ordersReducer } from './reducers/ordersReducer';
 import { CCart } from './Components/Cart';
+import { authApiReducer, authReducer, authApiReducerPath, loginApi, authReducerPath } from './reducers';
+import storage from "redux-persist/lib/storage";
+
+import {
+  persistReducer, persistStore, FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+} from 'redux-persist';
+
+
 
 export const history = createBrowserHistory();
-//export const store = createStore(combineReducers({ promise: promiseReducer, auth: authReducer, frontend: frontEndReducer }), applyMiddleware(thunk));
+
+
+const rootReducer = combineReducers({
+  [authReducerPath]: persistReducer({ key: authReducerPath, storage }, authReducer),
+  [authApiReducerPath]: authApiReducer,
+  promise: promiseReducer,
+  frontend: frontEndReducer,
+  category: categoryReducer,
+  orders: ordersReducer,
+  goods: goodsReducer,
+  cart: cartReducer,
+  cartData: cartGoodsReducer
+});
+
 export const store = configureStore({
-  reducer: {
-    auth: authReducer,
-    promise: promiseReducer,
-    frontend: frontEndReducer,
-    category: categoryReducer,
-    orders: ordersReducer,
-    goods: goodsReducer,
-    cart: cartReducer,
-    cartData: cartGoodsReducer
-  }
+  middleware: (getDefaultMiddleware) => [
+    ...getDefaultMiddleware({ serializableCheck: { ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] } }),
+    loginApi.middleware],
+  reducer: rootReducer
 });
 store.subscribe(() => console.log(store.getState()))
+const persistor = persistStore(store)
 
 //console.log(useParams)
-store.dispatch(actionAuthLogin(localStorage.authToken));
+//store.dispatch(actionAuthLogin(localStorage.authToken));
 store.dispatch(actionRootCats());
 store.dispatch(actionRestoreCart());
 console.log('TTTTT' + performance.now())

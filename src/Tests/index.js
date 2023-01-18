@@ -1,1 +1,0 @@
-export {ManualReact} from 'react'

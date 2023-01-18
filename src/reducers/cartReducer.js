@@ -102,9 +102,9 @@ let getCart = state => {
 }
 
 const setStateData = (state, goods, uniqueId = undefined) => {
-    if (goods != undefined)
+    if (goods !== undefined)
         state.goods = goods;
-    if (uniqueId != undefined)
+    if (uniqueId !== undefined)
         state.uniqueId = uniqueId;
 }
 

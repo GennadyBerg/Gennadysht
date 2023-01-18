@@ -1,12 +1,13 @@
 import { actionAuthLogout } from '../reducers';
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { history } from "../App";
 
 
-const Logout = ({onLogout}) => {
+const Logout = () => {
+    const dispatch = useDispatch()
     useEffect(() => {
-        onLogout();
+        dispatch(actionAuthLogout());
         history.push('/');
     }, []);
 

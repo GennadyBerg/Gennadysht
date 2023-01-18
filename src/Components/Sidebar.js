@@ -49,7 +49,7 @@ import { connect } from 'react-redux';
 function Sidebar(props) {
     let {drawerWidth, menuComponent, opened, openSidebar} = props;
     let MenuComponent = menuComponent;
-    drawerWidth = drawerWidth || 100;
+    drawerWidth = drawerWidth || 200;
     const theme = useTheme();
     const handleDrawerClose = () => {
         openSidebar(false);

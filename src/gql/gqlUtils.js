@@ -6,7 +6,7 @@ const createQuery = (searchStr, searchFieldNames) => {
             result.push({ [searchFieldName]: searchFieldName === '_id' ? searchStr : `/${searchStr}/` });
         }
     }
-    return result.length == 0 ? {} :  { $or: result };
+    return result.length === 0 ? {} :  { $or: result };
 }
 
 const createQueryExt = (searchQuery = {}, queryExt = {}) => {
