@@ -1,20 +1,52 @@
-import { gqlCategoryFindOne, gqlRootCats } from '../gql/gqlCategories';
-import { createPromiseReducerSlice, actionPromiseGeneric } from './promiseReducer';
+import { createApi } from '@reduxjs/toolkit/query/react'
+import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
+import { gql } from "graphql-request";
+//import { prepareHeaders } from "./index";
 
-const currentCategory = 'currentCategory';
+export const prepareHeaders = (headers, { getState }) => {
+    const token = getState().auth.token;
+    if (token) {
+        headers.set("Authorization", `Bearer ${token}`);
+    }
+    return headers;
+}
 
-const actionRootCats = () =>
-    actionPromiseCategory('rootCats', gqlRootCats());
-const actionCategoryFindOne = (id) =>
-    actionPromiseCategory(currentCategory, gqlCategoryFindOne(id));
+export const categoryApi = createApi({
+    reducerPath: 'category',
+    baseQuery: graphqlRequestBaseQuery({
+        url: '/graphql',
+        prepareHeaders
+    }),
+    endpoints: (builder) => ({
+        getRootCategories: builder.query({
+            query: () => ({
+                document: gql`
+                query GetCategories{
+                    CategoryFind(query: "[{\\"parent\\": null}]") {
+                        _id name
+                        }
+                    }
+                `}),
+        }),
+        getCategoryById: builder.query({
+            query: (_id) => ({
+                document: gql`
+                    query GetCategory($q: String) {
+                        CategoryFindOne(query: $q) {
+                            _id name
+                            parent { _id name }
+                            subCategories { _id name }
+                            goods { _id name price description 
+                                images { url }
+                            }
+                        }
+                    }
+                    `,
+                variables: { q: JSON.stringify([{ _id }]) }
+            }),
+        }),
+    }),
+})
 
-const getCurrentCategory = state => (
-    state.category[currentCategory]?.payload
-)
+export const { useGetRootCategoriesQuery, useGetCategoryByIdQuery } = categoryApi;
 
-const categoryReducerSlice = createPromiseReducerSlice('category');
-const actionPromiseCategory = (name, promise) =>
-    actionPromiseGeneric(categoryReducerSlice, name, promise);
-
-let categoryReducer = categoryReducerSlice.reducer;
-export { categoryReducer, actionRootCats, actionCategoryFindOne, getCurrentCategory }

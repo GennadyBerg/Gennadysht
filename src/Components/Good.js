@@ -100,7 +100,7 @@ const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = und
                     {
                         showAddToCard && (
                             <Button size='small' color='primary'
-                                onClick={() => alert("Clicked")/*addToCart(good)*/}
+                                onClick={() => addToCart(good)}
                             >
                                 Add to cart
                             </Button>

@@ -1,19 +1,16 @@
 import { List, ListItem, ListItemButton, ListItemText } from "@mui/material";
-import { connect } from "react-redux";
 import { MyLink } from ".";
+import { useGetRootCategoriesQuery } from "../reducers";
 
 export const CatsList = ({ cats = [] }) => {
     return (
         <List>
-            {cats?.map(cat => (
+            {cats && cats?.map(cat => (
                 <CatItem cat={cat} key={cat._id} />
             ))}
         </List>
     )
 };
-const CRootCats = connect(state => {
-    let a = '';
-    return { cats: state.category.rootCats?.payload }})(CatsList)
 
 const CatItem = ({ cat }) => {
     return (
@@ -26,4 +23,11 @@ const CatItem = ({ cat }) => {
         </ListItem>
     )
 };
+
+const CRootCats = () => {
+    const { isLoading, data } = useGetRootCategoriesQuery();
+    let cats = data?.CategoryFind;
+    return !isLoading && cats && <CatsList cats={cats} />
+}
+
 export { CRootCats };

@@ -4,6 +4,8 @@ export { cartReducer, actionAddGoodToCart, actionDeleteGoodFromCart, actionResto
 export { cartGoodsReducer, actionLoadCart } from "./cartGoodsReducer";
 export { localStoredReducer, } from "./localStoredReducer";
 export { frontEndReducer, } from "./frontEndReducer";
-export { actionRootCats, actionCategoryFindOne } from './categoryReducer';
+export { useGetRootCategoriesQuery, useGetCategoryByIdQuery  } from './categoryReducer';
 export { actionFindOrders, actionOrdersCount, actionPlaceOrder } from './ordersReducer';
 export { goodsReducer, actionGoodFind, actionGoodFindOne, actionGoodsCount } from './goodsReducer';
+
+

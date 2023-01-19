@@ -1,25 +1,27 @@
 import { List, ListItem, ListItemButton, ListItemText, Breadcrumbs } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
-import { useEffect } from "react"
-import { connect } from "react-redux"
+import { connect, useDispatch } from "react-redux"
 import { useParams } from "react-router-dom"
 import { MyLink } from "."
-import { actionCategoryFindOne } from "../reducers"
-import { getCurrentCategory } from "../reducers/categoryReducer"
+import { useGetCategoryByIdQuery } from "../reducers"
+import { getCurrentCategory, actionSetCurrentCategory } from "../reducers/frontEndReducer"
 import { CGoodsList } from "./GoodsList"
 import { CatsList } from "./RootCats"
 
 const CSubCategories = connect(state => ({ cats: getCurrentCategory(state)?.subCategories }),
-    { loadData: actionCategoryFindOne })(CatsList);
+    {})(CatsList);
 
-const Category = (props) => {
-    let { loadData, cat = { name: 'loading', goods: [] } } = props;
+const Category = () => {
     const { _id } = useParams();
-    useEffect(() => {
-        loadData(_id)
-    }, [_id, loadData]);
+    const { isLoading, data } = useGetCategoryByIdQuery(_id);
+    let cat = isLoading ? { name: 'loading', goods: [] } : data?.CategoryFindOne;
     let csubCats = false;
+    const dispatch = useDispatch();
+    dispatch(actionSetCurrentCategory(_id));
+    /*useEffect = () =>{
+        dispatch(actionSetCurrentCategory(_id));
+    }*/
     return (
         <>
             <Container>
@@ -64,7 +66,7 @@ const Category = (props) => {
     )
 }
 
-const CCategory = connect(state => ({ cat: getCurrentCategory(state) }),
-    { loadData: actionCategoryFindOne })(Category);
+const CCategory = connect(state => ({}),
+    {})(Category);
 
 export { CCategory };

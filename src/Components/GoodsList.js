@@ -1,19 +1,26 @@
 import React, { useEffect } from 'react';
 import { Container, Box } from '@mui/material';
 import { CGoodItem } from './GoodItem';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { actionGoodFind, actionGoodsCount } from '../reducers';
 import { CGoodsSearchInput } from './SearchInput';
 import { CGoodsPagination } from './Pagination';
-import { getCurrentCategory } from '../reducers/categoryReducer';
+import { getCurrentCategory } from '../reducers/frontEndReducer';
 
-const GoodsList = ({ goods, searchStr, fromPage = 0, pageSize = 5, loadData, loadGoodsCount, currentCategory }) => {
+const GoodsList = ({ loadData, loadGoodsCount}) => {
+    let state = useSelector(state => state);
+    const currentCategory = getCurrentCategory(state);
+    const goods = state.goods?.goods?.payload;
+    const searchStr = state.frontend.goodsSearchStr;
+    const fromPage = state.frontend.goodsPaging.fromPage;
+    const pageSize = state.frontend.goodsPaging.pageSize;
+
     useEffect(() => {
-        let categoryFilter = currentCategory ? { "categories._id": currentCategory._id } : {};
+        let categoryFilter = currentCategory ? { "categories._id": currentCategory } : {};
         loadData(fromPage, pageSize, searchStr, categoryFilter);
         loadGoodsCount(searchStr, categoryFilter);
     }, [fromPage, pageSize, searchStr, currentCategory]);
-
+    
     return (
         <Container maxWidth='lg'>
             <CGoodsSearchInput />
@@ -30,16 +37,7 @@ const GoodsList = ({ goods, searchStr, fromPage = 0, pageSize = 5, loadData, loa
     )
 }
 const CGoodsList = connect(
-    state => {
-        return (
-            {
-                currentCategory: getCurrentCategory(state),
-                goods: state.goods?.goods?.payload,
-                searchStr: state.frontend.goodsSearchStr,
-                fromPage: state.frontend.goodsPaging.fromPage,
-                pageSize: state.frontend.goodsPaging.pageSize,
-            })
-    },
+    state => { },
     { loadData: actionGoodFind, loadGoodsCount: actionGoodsCount })(GoodsList);
 
 export { CGoodsList };

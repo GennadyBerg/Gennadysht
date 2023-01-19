@@ -11,7 +11,7 @@ import { CRootCats } from './Components';
 
 import './App.css';
 import { CCategory } from './Components/Category';
-import { categoryReducer } from './reducers/categoryReducer';
+import { categoryApi, categoryReducer } from './reducers/categoryReducer';
 import { ordersReducer } from './reducers/ordersReducer';
 import { CCart } from './Components/Cart';
 import { authApiReducer, authReducer, authApiReducerPath, loginApi, authReducerPath } from './reducers';
@@ -36,7 +36,7 @@ const rootReducer = combineReducers({
   [authApiReducerPath]: authApiReducer,
   promise: promiseReducer,
   frontend: frontEndReducer,
-  category: categoryReducer,
+  [categoryApi.reducerPath]: categoryApi.reducer,
   orders: ordersReducer,
   goods: goodsReducer,
   cart: cartReducer,
@@ -46,6 +46,7 @@ const rootReducer = combineReducers({
 export const store = configureStore({
   middleware: (getDefaultMiddleware) => [
     ...getDefaultMiddleware({ serializableCheck: { ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] } }),
+    categoryApi.middleware,
     loginApi.middleware],
   reducer: rootReducer
 });
@@ -54,7 +55,7 @@ const persistor = persistStore(store)
 
 //console.log(useParams)
 //store.dispatch(actionAuthLogin(localStorage.authToken));
-store.dispatch(actionRootCats());
+//store.dispatch(actionRootCats());
 store.dispatch(actionRestoreCart());
 console.log('TTTTT' + performance.now())
 

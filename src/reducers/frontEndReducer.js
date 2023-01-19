@@ -2,11 +2,11 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const frontEndReducerSlice = createSlice({ //promiseReducer
     name: 'frontend', //префикс типа наподобие AUTH_
-    initialState: { 
-        sidebar: {}, 
+    initialState: {
+        sidebar: {},
         ordersPaging: { fromPage: 0, pageSize: 5 },
-        goodsPaging: { fromPage: 0, pageSize: 5 } 
-     }, //state={} в параметрах
+        goodsPaging: { fromPage: 0, pageSize: 5 }
+    }, //state={} в параметрах
     reducers: {
         setSidebar(state, action) {
             state.sidebar = { opened: action.payload.open };
@@ -28,6 +28,11 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             state.goodsSearchStr = action.payload.searchStr;
             return state;
         },
+        setCurrentCategory(state, action) {
+            setCurrentCategory(state, action.payload._id);
+            return state;
+        },
+
     }
 })
 
@@ -47,6 +52,11 @@ let actionSetOrderSearch = (searchStr) =>
         dispatch(frontEndReducerSlice.actions.setOrdersSearch({ searchStr }))
     }
 
+let actionSetCurrentCategory = (_id) =>
+    async dispatch => {
+        dispatch(frontEndReducerSlice.actions.setCurrentCategory({ _id }))
+    }
+
 let actionSetGoodsPaging = ({ fromPage, pageSize }) =>
     async dispatch => {
         dispatch(frontEndReducerSlice.actions.setGoodsPaging({ page: { fromPage, pageSize } }))
@@ -57,4 +67,17 @@ let actionSetGoodsSearch = (searchStr) =>
         dispatch(frontEndReducerSlice.actions.setGoodsSearch({ searchStr }))
     }
 
-export { frontEndReducer, actionSetSidebar, actionSetOrdersPaging, actionSetOrderSearch, actionSetGoodsPaging, actionSetGoodsSearch };
+const currentCategory = 'currentCategory';
+
+const getCurrentCategory = state => {
+    let result = state.frontend[currentCategory]?.payload
+    return result;
+}
+
+const setCurrentCategory = (state, id) => {
+    return state[currentCategory] = { payload: id } ;
+}
+
+
+export { frontEndReducer, actionSetSidebar, actionSetOrdersPaging, actionSetOrderSearch, actionSetGoodsPaging, actionSetGoodsSearch, actionSetCurrentCategory };
+export { getCurrentCategory }

@@ -4,10 +4,9 @@ import { graphqlRequestBaseQuery } from '@rtk-query/graphql-request-base-query' 
 import { jwtDecode } from "../utills";
 import { createSlice } from "@reduxjs/toolkit";
 import { history } from "../App";
+//import { prepareHeaders } from "./index";
 
-
-const prepareHeaders = (headers, { getState }) => {
-    // By default, if we have a token in the store, let's use that for authenticated requests
+export const prepareHeaders = (headers, { getState }) => {
     const token = getState().auth.token;
     if (token) {
         headers.set("Authorization", `Bearer ${token}`);
