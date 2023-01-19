@@ -34,11 +34,11 @@ export const history = createBrowserHistory();
 const rootReducer = combineReducers({
   [authReducerPath]: persistReducer({ key: authReducerPath, storage }, authReducer),
   [authApiReducerPath]: authApiReducer,
+  [categoryApi.reducerPath]: persistReducer({ key: categoryApi.reducerPath, storage }, categoryApi.reducer),
+  [goodsApi.reducerPath]: persistReducer({ key: goodsApi.reducerPath, storage }, goodsApi.reducer),
   promise: promiseReducer,
   frontend: frontEndReducer,
-  [categoryApi.reducerPath]: categoryApi.reducer,
   orders: ordersReducer,
-  [goodsApi.reducerPath]: goodsApi.reducer,
   cart: cartReducer,
   cartData: cartGoodsReducer
 });

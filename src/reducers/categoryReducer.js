@@ -44,6 +44,7 @@ export const categoryApi = createApi({
                     `,
                 variables: { q: JSON.stringify([{ _id }]) }
             }),
+            invalidatesTags: (result, error, arg) => ([{type: 'GoodsCount', id: arg._id}])
         }),
     }),
 })

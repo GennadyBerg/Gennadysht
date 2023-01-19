@@ -4,20 +4,17 @@ import { connect, useDispatch, useSelector } from 'react-redux';
 import { actionFindOrders } from '../reducers';
 import { actionSetGoodsPaging, actionSetOrdersPaging, getGoodsCount } from '../reducers';
 
-const Pagination = ({ allEntitiesCount, changePage, changePageFE, changeRowsPerPage, changeRowsPerPageFE }) => {
+const Pagination = ({ allEntitiesCount, fromPage, pageSize, changePage, changePageFE, changeRowsPerPage, changeRowsPerPageFE }) => {
     allEntitiesCount = allEntitiesCount ?? 0;
-    const [page, setPage] = useState(0);
-    const [rowsPerPage, setRowsPerPage] = useState(5);
+    //const [rowsPerPage, setRowsPerPage] = useState(5);
     const handleChangePage = (event, newPage) => {
-        setPage(newPage);
         if (changePage)
-            changePage(newPage, rowsPerPage);
-        changePageFE(newPage, rowsPerPage);
+            changePage(newPage);
+        changePageFE(newPage);
     };
     const handleChangeRowsPerPage = (event) => {
         let newPageSize = parseInt(event.target.value, 10);
-        setRowsPerPage(newPageSize);
-        setPage(0);
+        //setRowsPerPage(newPageSize);
         if (changeRowsPerPage)
             changeRowsPerPage(newPageSize);
         changeRowsPerPageFE(newPageSize);
@@ -27,8 +24,8 @@ const Pagination = ({ allEntitiesCount, changePage, changePageFE, changeRowsPerP
             rowsPerPageOptions={[5, 10, 25]}
             component="div"
             count={allEntitiesCount}
-            rowsPerPage={rowsPerPage}
-            page={page}
+            rowsPerPage={pageSize}
+            page={fromPage}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
         />
@@ -53,9 +50,11 @@ export const CGoodsPagination = () => {
     let state = useSelector(state => state);
     let allEntitiesCount = getGoodsCount(state);
     let dispatch = useDispatch();
-    let changePageFE = (fromPage, pageSize) => dispatch(actionSetGoodsPaging({ fromPage, pageSize }));
+    let changePageFE = (fromPage) => dispatch(actionSetGoodsPaging({ fromPage }));
     let changeRowsPerPageFE = pageSize => dispatch(actionSetGoodsPaging({ fromPage: 0, pageSize }));
-    return <Pagination allEntitiesCount={allEntitiesCount} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />
+    let fromPage = state.frontend.goodsPaging.fromPage;
+    const pageSize = state.frontend.goodsPaging.pageSize;
+    return <Pagination allEntitiesCount={allEntitiesCount} fromPage={fromPage} pageSize={pageSize} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />
 }
 
 /*export const CGoodsPagination = connect(

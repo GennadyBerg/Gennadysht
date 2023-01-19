@@ -13,7 +13,7 @@ export const prepareHeaders = (headers, { getState }) => {
 }
 const getGoodsSearchParams = (searchStr, queryExt) => (
     {
-        searchStr: searchStr, 
+        searchStr: searchStr,
         searchFieldNames: ["name", "description"],
         queryExt
     });
@@ -54,6 +54,7 @@ export const goodsApi = createApi({
                     variables: params
                 }
             },
+            providesTags: (result, error, id) => ([{ type: 'GoodsCount', id }]),
         }),
         getGoodById: builder.query({
             query: (_id) => {

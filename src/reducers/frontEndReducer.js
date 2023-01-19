@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { categoryApi } from "./categoryReducer";
 import { goodsApi } from "./goodsReducer";
 
 const frontEndReducerSlice = createSlice({ //promiseReducer
@@ -22,7 +23,10 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             return state;
         },
         setGoodsPaging(state, action) {
-            state.goodsPaging = { fromPage: action.payload.page.fromPage, pageSize: action.payload.page.pageSize };
+            let {fromPage, pageSize} = action.payload.page;
+            fromPage = fromPage ?? state.goodsPaging?.fromPage;
+            pageSize = pageSize ?? state.goodsPaging?.pageSize;
+            state.goodsPaging = { fromPage, pageSize };
             return state;
         },
         setGoodsSearch(state, action) {
@@ -38,11 +42,16 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             return state;
         },
     },
-    extraReducers: builder =>
+    extraReducers: builder => {
         builder.addMatcher(goodsApi.endpoints.getGoodsCount.matchFulfilled,
             (state, { payload }) => {
                 state.goods = { goodsCount: { payload: payload.GoodCount } }
-            })
+            });
+        builder.addMatcher(categoryApi.endpoints.getCategoryById.matchFulfilled,
+            (state, { payload }) => {
+                state.goodsPaging.fromPage = 0;
+            });
+    }
 
 })
 
@@ -61,7 +70,6 @@ let actionSetOrderSearch = (searchStr) =>
     async dispatch => {
         dispatch(frontEndReducerSlice.actions.setOrdersSearch({ searchStr }))
     }
-
 
 let actionSetCurrentCategory = (_id) =>
     async dispatch => {
