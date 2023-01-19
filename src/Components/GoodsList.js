@@ -1,26 +1,13 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Container, Box } from '@mui/material';
 import { CGoodItem } from './GoodItem';
-import { connect, useSelector } from 'react-redux';
-import { actionGoodFind, actionGoodsCount } from '../reducers';
+import { useSelector } from 'react-redux';
+import { useGetGoodsCountQuery, useGetGoodsQuery } from '../reducers';
 import { CGoodsSearchInput } from './SearchInput';
 import { CGoodsPagination } from './Pagination';
 import { getCurrentCategory } from '../reducers/frontEndReducer';
 
-const GoodsList = ({ loadData, loadGoodsCount}) => {
-    let state = useSelector(state => state);
-    const currentCategory = getCurrentCategory(state);
-    const goods = state.goods?.goods?.payload;
-    const searchStr = state.frontend.goodsSearchStr;
-    const fromPage = state.frontend.goodsPaging.fromPage;
-    const pageSize = state.frontend.goodsPaging.pageSize;
-
-    useEffect(() => {
-        let categoryFilter = currentCategory ? { "categories._id": currentCategory } : {};
-        loadData(fromPage, pageSize, searchStr, categoryFilter);
-        loadGoodsCount(searchStr, categoryFilter);
-    }, [fromPage, pageSize, searchStr, currentCategory]);
-    
+const GoodsList = ({ goods }) => {
     return (
         <Container maxWidth='lg'>
             <CGoodsSearchInput />
@@ -36,8 +23,22 @@ const GoodsList = ({ loadData, loadGoodsCount}) => {
         </Container>
     )
 }
-const CGoodsList = connect(
-    state => { },
-    { loadData: actionGoodFind, loadGoodsCount: actionGoodsCount })(GoodsList);
+
+const CGoodsList = () => {
+    let state = useSelector(state => state);
+    const currentCategory = getCurrentCategory(state);
+    const searchStr = state.frontend.goodsSearchStr;
+    const fromPage = state.frontend.goodsPaging.fromPage;
+    const pageSize = state.frontend.goodsPaging.pageSize;
+
+    let categoryFilter = currentCategory ? { "categories._id": currentCategory } : {};
+    const goodsResult = useGetGoodsQuery({ fromPage, pageSize, searchStr, queryExt: categoryFilter });
+    const goodsCountResult = useGetGoodsCountQuery({ searchStr, queryExt: categoryFilter });
+    let isLoading = goodsResult.isLoading || goodsCountResult.isLoading;
+
+    let goods = goodsResult.data?.GoodFind;
+    return !isLoading && goods && <GoodsList goods={goods} />
+}
+
 
 export { CGoodsList };

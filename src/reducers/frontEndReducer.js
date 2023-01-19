@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { goodsApi } from "./goodsReducer";
 
 const frontEndReducerSlice = createSlice({ //promiseReducer
     name: 'frontend', //префикс типа наподобие AUTH_
@@ -32,8 +33,17 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             setCurrentCategory(state, action.payload._id);
             return state;
         },
+        setCurrentGood(state, action) {
+            setCurrentGood(state, action.payload._id);
+            return state;
+        },
+    },
+    extraReducers: builder =>
+        builder.addMatcher(goodsApi.endpoints.getGoodsCount.matchFulfilled,
+            (state, { payload }) => {
+                state.goods = { goodsCount: { payload: payload.GoodCount } }
+            })
 
-    }
 })
 
 let frontEndReducer = frontEndReducerSlice.reducer;
@@ -52,9 +62,15 @@ let actionSetOrderSearch = (searchStr) =>
         dispatch(frontEndReducerSlice.actions.setOrdersSearch({ searchStr }))
     }
 
+
 let actionSetCurrentCategory = (_id) =>
     async dispatch => {
         dispatch(frontEndReducerSlice.actions.setCurrentCategory({ _id }))
+    }
+
+let actionSetCurrentGood = (_id) =>
+    async dispatch => {
+        dispatch(frontEndReducerSlice.actions.setCurrentGood({ _id }))
     }
 
 let actionSetGoodsPaging = ({ fromPage, pageSize }) =>
@@ -75,9 +91,19 @@ const getCurrentCategory = state => {
 }
 
 const setCurrentCategory = (state, id) => {
-    return state[currentCategory] = { payload: id } ;
+    return state[currentCategory] = { payload: id };
+}
+const currentGood = 'currentGood';
+
+const getCurrentGood = state => {
+    let result = state.frontend[currentGood]?.payload
+    return result;
+}
+
+const setCurrentGood = (state, id) => {
+    return state[currentGood] = { payload: id };
 }
 
 
-export { frontEndReducer, actionSetSidebar, actionSetOrdersPaging, actionSetOrderSearch, actionSetGoodsPaging, actionSetGoodsSearch, actionSetCurrentCategory };
-export { getCurrentCategory }
+export { frontEndReducer, actionSetSidebar, actionSetOrdersPaging, actionSetOrderSearch, actionSetGoodsPaging, actionSetGoodsSearch };
+export { getCurrentCategory, getCurrentGood, actionSetCurrentCategory, actionSetCurrentGood }

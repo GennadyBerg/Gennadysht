@@ -1,16 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMedia, AvatarGroup, CardActions, Collapse, IconButton } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
-import { actionAddGoodToCart, actionGoodFindOne } from '../reducers';
-import { connect } from 'react-redux';
-import { getCurrentGood } from '../reducers/goodsReducer';
+import { actionAddGoodToCart } from '../reducers';
+import { connect, useDispatch } from 'react-redux';
+import { useGetGoodByIdQuery } from '../reducers';
 import { useParams } from 'react-router-dom';
-import { MyLink } from './MyLink';
-import { GoodItem } from './GoodItem';
+import { actionSetCurrentGood } from '../reducers/frontEndReducer';
+
 
 export const ExpandMore = styled(props => {
     const { expand, ...other } = props;
@@ -37,13 +37,12 @@ export const AvatarGroupOriented = styled((props) => {
     },
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
-const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = undefined, addToCart = undefined }) => {
-    const params = useParams();
-    const currentGoodId = params._id;
-    useEffect(() => {
-        if (loadData && currentGoodId)
-            loadData(currentGoodId);
-    }, [currentGoodId, loadData]);
+const Good = ({ /*good = {},*/ maxWidth = 'md', showAddToCard = true, addToCart = undefined }) => {
+    const { _id } = useParams();
+    const { isLoading, data } = useGetGoodByIdQuery(_id);
+    let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
+    const dispatch = useDispatch();
+    dispatch(actionSetCurrentGood(_id));
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
@@ -120,7 +119,7 @@ const Good = ({ good = {}, maxWidth = 'md', showAddToCard = true, loadData = und
     )
 }
 
-const CGood = connect(state => ({ good: getCurrentGood(state) }),
-    { loadData: actionGoodFindOne, addToCart: actionAddGoodToCart })(Good);
+const CGood = connect(state => ({}),
+    { addToCart: actionAddGoodToCart })(Good);
 
 export { CGood };
