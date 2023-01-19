@@ -104,6 +104,11 @@ const setCurrentGood = (state, id) => {
     return state[currentGood] = { payload: id };
 }
 
+const getGoodsCount = state => {
+    let result = state.frontend.goods.goodsCount?.payload ?? 0;
+    return result;
+}
+
 
 export { frontEndReducer, actionSetSidebar, actionSetOrdersPaging, actionSetOrderSearch, actionSetGoodsPaging, actionSetGoodsSearch };
-export { getCurrentCategory, getCurrentGood, actionSetCurrentCategory, actionSetCurrentGood }
+export { getCurrentCategory, getCurrentGood, actionSetCurrentCategory, actionSetCurrentGood, getGoodsCount }
