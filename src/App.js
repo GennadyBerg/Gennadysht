@@ -8,11 +8,10 @@ import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList } from 
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
-
 import './App.css';
 import { CCategory } from './Components/Category';
 import { categoryApi } from './reducers/categoryReducer';
-import { ordersReducer } from './reducers/ordersReducer';
+import { ordersApi, ordersReducer } from './reducers/ordersReducer';
 import { CCart } from './Components/Cart';
 import { authApiReducer, authReducer, authApiReducerPath, loginApi, authReducerPath } from './reducers';
 import storage from "redux-persist/lib/storage";
@@ -34,11 +33,14 @@ export const history = createBrowserHistory();
 const rootReducer = combineReducers({
   [authReducerPath]: persistReducer({ key: authReducerPath, storage }, authReducer),
   [authApiReducerPath]: authApiReducer,
-  [categoryApi.reducerPath]: persistReducer({ key: categoryApi.reducerPath, storage }, categoryApi.reducer),
-  [goodsApi.reducerPath]: persistReducer({ key: goodsApi.reducerPath, storage }, goodsApi.reducer),
+  //[categoryApi.reducerPath]: persistReducer({ key: categoryApi.reducerPath, storage }, categoryApi.reducer),
+  //[goodsApi.reducerPath]: persistReducer({ key: goodsApi.reducerPath, storage }, goodsApi.reducer),
+  //[ordersApi.reducerPath]: persistReducer({ key: ordersApi.reducerPath, storage }, ordersApi.reducer),
+  [categoryApi.reducerPath]: categoryApi.reducer,
+  [goodsApi.reducerPath]: goodsApi.reducer,
+  [ordersApi.reducerPath]: ordersApi.reducer,
   promise: promiseReducer,
   frontend: frontEndReducer,
-  orders: ordersReducer,
   cart: cartReducer,
   cartData: cartGoodsReducer
 });
@@ -48,6 +50,7 @@ export const store = configureStore({
     ...getDefaultMiddleware({ serializableCheck: { ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] } }),
     categoryApi.middleware,
     goodsApi.middleware,
+    ordersApi.middleware,
     loginApi.middleware],
   reducer: rootReducer
 });

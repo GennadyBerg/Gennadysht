@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 import { Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
-import { connect } from "react-redux"
-import { actionOrderFindOne, getCurrentOrder } from "../reducers/ordersReducer"
+import { connect, useDispatch } from "react-redux"
+import { actionOrderFindOne, getCurrentOrder, useGetOrderByIdQuery } from "../reducers/ordersReducer"
 import { OrderGoodsList } from "./OrderGoodsList"
 import { useParams } from 'react-router-dom/cjs/react-router-dom';
+import { actionSetCurrentOrder } from '../reducers/frontEndReducer';
 
 let exampleOrder = {
     "_id": "62cdc9b3b74e1f5f2ec1a0e9",
@@ -60,11 +61,7 @@ let exampleOrder = {
         }
     ]
 }
-const Order = ({ order = {}, loadData }) => {
-    const { _id: currentOrderId } = useParams();
-    useEffect(() => {
-        loadData(currentOrderId);
-    }, [currentOrderId, loadData]);
+const Order = ({ order = {} }) => {
     return (
         <>
             <Container>
@@ -81,7 +78,13 @@ const Order = ({ order = {}, loadData }) => {
         </>
     )
 }
-const COrder = connect(state => ({ order: getCurrentOrder(state) }),
-    { loadData: actionOrderFindOne })(Order);
+const COrder = () => {
+    const { _id } = useParams();
+    const { isLoading, data } = useGetOrderByIdQuery(_id);
+    let order = isLoading ? { name: 'loading', order: {} } : data?.OrderFindOne;
+    const dispatch = useDispatch();
+    dispatch(actionSetCurrentOrder(_id));
+    return !isLoading && <Order order={order} />;
+}
 
 export { COrder };

@@ -3,9 +3,9 @@ export { authApiReducer, authReducer, authApiReducerPath, loginApi, authReducerP
 export { cartReducer, actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart, actionClearCart, getCart, } from "./cartReducer";
 export { cartGoodsReducer, actionLoadCart } from "./cartGoodsReducer";
 export { localStoredReducer, } from "./localStoredReducer";
-export { frontEndReducer, getCurrentCategory, actionSetGoodsPaging, actionSetOrdersPaging, getCurrentGood, getGoodsCount } from "./frontEndReducer";
+export { frontEndReducer, getCurrentCategory, actionSetGoodsPaging, actionSetOrdersPaging, getCurrentGood, getGoodsCount, getOrdersCount } from "./frontEndReducer";
 export { useGetRootCategoriesQuery, useGetCategoryByIdQuery } from './categoryReducer';
-export { actionFindOrders, actionOrdersCount, actionPlaceOrder } from './ordersReducer';
+export { ordersApi, useGetOrderByIdQuery, useGetOrdersCountQuery, useGetOrdersQuery, actionAddOrder } from './ordersReducer';
 export { goodsApi, useGetGoodByIdQuery, useGetGoodsCountQuery, useGetGoodsQuery } from './goodsReducer';
 
 

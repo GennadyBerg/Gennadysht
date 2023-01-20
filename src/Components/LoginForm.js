@@ -3,8 +3,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Button from '@mui/material/Button';
 import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
 import { Box } from '@mui/system';
-import { connect, useSelector } from 'react-redux';
-import { actionFullLogin } from '../gql';
+import { connect } from 'react-redux';
 import { MyLink } from './MyLink';
 import { useLoginMutation } from '../reducers/authReducer';
 
@@ -84,6 +83,6 @@ const LoginForm = () => {
         </Container>
     )
 }
-const CLoginForm = connect(null, { onLogin: actionFullLogin })(LoginForm)
+const CLoginForm = connect(null, { })(LoginForm)
 
 export { CLoginForm };

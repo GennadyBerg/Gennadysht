@@ -1,53 +1,14 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Container, Typography, Paper, Link } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
 import { COrdersPagination } from './Pagination';
-import { actionFindOrders, actionOrdersCount } from '../reducers';
-import { connect } from 'react-redux';
 import { COrdersSearchInput } from './SearchInput';
 import { MyLink } from '.';
+import { useSelector } from 'react-redux';
+import { useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
 
-/*function stableSort(array, comparator) {
-    const stabilizedThis = array.map((el, index) => [el, index]);
-    stabilizedThis.sort((a, b) => {
-        const order = comparator(a[0], b[0]);
-        if (order !== 0) {
-            return order;
-        }
-        return a[1] - b[1];
-    });
-    return stabilizedThis.map((el) => el[0]);
-}
-function getComparator(order, orderBy) {
-    return order === 'desc'
-        ? (a, b) => descendingComparator(a, b, orderBy)
-        : (a, b) => -descendingComparator(a, b, orderBy);
-}
-function descendingComparator(a, b, orderBy) {
-    if (b[orderBy] < a[orderBy]) {
-        return -1;
-    }
-    if (b[orderBy] > a[orderBy]) {
-        return 1;
-    }
-    return 0;
-}*/
-const OrderList = ({ orders, searchStr, fromPage = 0, pageSize = 5, loadData, loadOrdersCount }) => {
-    /*const [order, setOrder] = React.useState('asc');
-    const [orderBy, setOrderBy] = React.useState('calories');
-    const [page, setPage] = React.useState(0);
-    const [rowsPerPage, setRowsPerPage] = React.useState(5);*/
-
-    useEffect(() => {
-        loadData(fromPage, pageSize, searchStr);
-        loadOrdersCount(searchStr);
-    }, [fromPage, pageSize, searchStr]);
-
-    /*<StyledTableCell align={headCell.align}>{headCell.label}</StyledTableCell>*/
-    /*    const createSortHandler = (property) => (event) => {
-            onRequestSort(event, property);
-          };*/
+const OrderList = ({ orders, fromPage, pageSize }) => {
 
     let headCells = [
         {
@@ -101,7 +62,7 @@ const OrderList = ({ orders, searchStr, fromPage = 0, pageSize = 5, loadData, lo
                             <TableRow>
                                 {
                                     headCells.map(headCell => {
-                                        return <StyledTableCell align={headCell.align}>{headCell.label}</StyledTableCell>
+                                        return <StyledTableCell key={headCell.id} align={headCell.align}>{headCell.label}</StyledTableCell>
                                         /*return (
                                             <StyledTableCell
                                                 key={headCell.id}
@@ -177,29 +138,19 @@ const OrderList = ({ orders, searchStr, fromPage = 0, pageSize = 5, loadData, lo
         </>
     )
 
-    /*
-                    <TablePagination
-                        rowsPerPageOptions={[5, 10, 25]}
-                        component="div"
-                        count={exampleOrderList.length}
-                        rowsPerPage={rowsPerPage}
-                        page={page}
-                        onPageChange={handleChangePage}
-                        onRowsPerPageChange={handleChangeRowsPerPage}
-                    />
-    */
 }
+const COrdersList = () => {
+    let state = useSelector(state => state);
+    const searchStr = state.frontend.ordersSearchStr;
+    const fromPage = state.frontend.ordersPaging.fromPage;
+    const pageSize = state.frontend.ordersPaging.pageSize;
 
-const COrdersList = connect(
-    state => {
-        return (
-            {
-                orders: state.orders?.orders?.payload,
-                searchStr: state.frontend.ordersSearchStr,
-                fromPage: state.frontend.ordersPaging.fromPage,
-                pageSize: state.frontend.ordersPaging.pageSize,
-            })
-    },
-    { loadData: actionFindOrders, loadOrdersCount: actionOrdersCount })(OrderList);
+    const ordersResult = useGetOrdersQuery({ fromPage, pageSize, searchStr });
+    const ordersCountResult = useGetOrdersCountQuery({ searchStr });
+    let isLoading = ordersResult.isLoading || ordersCountResult.isLoading;
+
+    let orders = ordersResult.data?.OrderFind;
+    return !isLoading && orders && <OrderList orders={orders} fromPage={fromPage} pageSize={pageSize} />
+}
 
 export { COrdersList };

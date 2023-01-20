@@ -3,7 +3,7 @@ export { CGoodItem } from './GoodItem';
 export { CGood } from './Good';
 export { CGoodsList } from './GoodsList';
 export { OrderGood } from './OrderGood';
-export { OrderGoodsList, exampleOrderGoodsList } from './OrderGoodsList'
+export { OrderGoodsList} from './OrderGoodsList'
 export { COrder } from './Order';
 export { COrdersList } from './OrderList';
 export { MyLink } from './MyLink';
