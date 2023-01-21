@@ -85,7 +85,7 @@ const ordersApi = createApi({
                             } 
                         }
                         `,
-                variables: JSON.stringify({ order: { "_id": id, "orderGoods": order } })
+                variables: { order: { "_id": id, "orderGoods": order } }
             })
         }),
     }),

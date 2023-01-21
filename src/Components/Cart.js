@@ -14,7 +14,7 @@ const mapCountToGood = (goodData, goodsCounts) => {
     return count;
 }
 
-const Cart = ({ uniqueId }) => {
+const Cart = () => {
     let goods = useSelector(state => state.cart.goods) ?? [];
     let { isLoading, data } = useGetCartGoodsQuery({ goods });
     let goodsData = data?.GoodFind?.map(gd => ({ ...gd, count: mapCountToGood(gd, goods) })) ?? [];
@@ -24,7 +24,6 @@ const Cart = ({ uniqueId }) => {
         order.push({ good: { _id: good._id }, count: good.count });
     }
     const [addOrderMutation, { isLoading: isOrderAdding, data: orderAddingData }] = useAddOrderMutation();
-    const dispatch = useDispatch();
     return !isLoading && (
         <>
             <Container>

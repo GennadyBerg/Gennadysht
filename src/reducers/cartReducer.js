@@ -1,6 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { v4 } from "uuid";
+import { history } from "../App";
 import { findObjectIndexById } from "../utills";
+import { ordersApi } from "./ordersReducer";
 //import { clearCartData, getCartData } from "./cartGoodsReducer";
 
 const cartReducerSlice = createSlice({ //promiseReducer
@@ -9,11 +11,6 @@ const cartReducerSlice = createSlice({ //promiseReducer
         goods: []
     },
     reducers: {
-        /*cleanCartData(state, { payload: { commonState } }) {
-            if (clearCartData(commonState))
-                state.uniqueId = v4();
-            return state;
-        },*/
         restoreCart(state, action) {
             let goods = localStorage.cart.goods;
             if (!goods) {
@@ -24,9 +21,7 @@ const cartReducerSlice = createSlice({ //promiseReducer
             return state;
         },
         cleanCart(state, action) {
-            localStorage.cart = { goods: [] };
-            setStateData(state, [], v4());
-            return state;
+            return cleanCartInt(state);
         },
         refreshCart(state, action) {
             state.uniqueId = v4();
@@ -63,8 +58,21 @@ const cartReducerSlice = createSlice({ //promiseReducer
             }
             return state;
         }
+    },
+    extraReducers: builder => {
+        builder.addMatcher(ordersApi.endpoints.addOrder.matchFulfilled,
+            (state, { payload }) => {
+                cleanCartInt(state);
+                let orderId = payload.OrderUpsert._id;
+                history.push(`/order/${orderId}`);
+            });
     }
 })
+function cleanCartInt(state) {
+    localStorage.cart = { goods: [] };
+    setStateData(state, [], v4());
+    return state;
+}
 
 let cartReducer = cartReducerSlice.reducer;
 let actionAddGoodToCart = (good, count = 1) =>
@@ -81,6 +89,7 @@ let actionRestoreCart = () =>
     async dispatch => {
         dispatch(cartReducerSlice.actions.restoreCart({}))
     }
+
 let actionClearCart = () =>
     async dispatch => {
         dispatch(cartReducerSlice.actions.cleanCart({}))

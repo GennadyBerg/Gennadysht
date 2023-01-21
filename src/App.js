@@ -4,7 +4,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
 import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi } from './reducers';
-import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList } from "./Components";
+import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CSortedFileDropZone } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -24,6 +24,8 @@ import {
   PURGE,
   REGISTER,
 } from 'redux-persist';
+import { EditPost } from './Test/drop';
+import { FileDropZone } from './Components/FileDropZone';
 
 
 
@@ -73,11 +75,15 @@ const Main = () =>
     <h1>Main page</h1>
   </div>
 
-
+//<EditPost onSave={post => console.log(post)}/>
+//<SortedDropZone />
 function App() {
 
   return (
     <>
+      <CSortedFileDropZone />
+      
+      
       <Router history={history}>
         <Provider store={store}>
           <div className="App">

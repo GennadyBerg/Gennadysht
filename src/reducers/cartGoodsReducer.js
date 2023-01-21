@@ -21,8 +21,9 @@ const cartGoodsApi = createApi({
     endpoints: (builder) => ({
         getCartGoods: builder.query({
             query: ({ goods }) => {
-                let params = createFullQuery({ queryExt: { _id: { "$in": goods.map(g => g._id) } } });
-                //JSON.stringify({ q: [{ _id: { "$in": goods.map(g => g._id) } }] });
+                let params = createFullQuery({queryExt: { _id: { "$in": goods.map(g => g._id) } } })
+                //{ q: { _id: { "$in": goods.map(g => g._id) } } };
+                //let params = JSON.stringify({ q: [{ _id: { "$in": goods.map(g => g._id) } }] });
                 return {
                     document: gql`
                         query GoodFind($q: String) {

@@ -1,5 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit"
-import { useDispatch } from "react-redux";
+import { createSlice, current } from "@reduxjs/toolkit"
+import { v4 } from "uuid";
 import { actionClearCart } from "./cartReducer";
 import { categoryApi } from "./categoryReducer";
 import { goodsApi } from "./goodsReducer";
@@ -65,13 +65,7 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             (state, { payload }) => {
                 state.orders = { ordersCount: { payload: payload.OrderCount } }
             });
-        builder.addMatcher(ordersApi.endpoints.addOrder.matchFulfilled,
-            (state, { payload }) => {
-                const dispatch = useDispatch();
-                dispatch(actionClearCart());
-            });
     }
-
 })
 
 let frontEndReducer = frontEndReducerSlice.reducer;
