@@ -6,10 +6,10 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
 import { MyLink } from './MyLink';
 import { AvatarGroupOriented, ExpandMore } from './Good';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { actionAddGoodToCart } from '../reducers';
 
-export const GoodItem = ({ good = {}, maxWidth = 'md', showAddToCard = true, addToCart = undefined }) => {
+export const GoodItem = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart }) => {
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
@@ -64,7 +64,7 @@ export const GoodItem = ({ good = {}, maxWidth = 'md', showAddToCard = true, add
                     </ExpandMore>
                     {showAddToCard && (
                         <Button size='small' color='primary'
-                            onClick={() => addToCart(good)}
+                            onClick={actionAddGoodToCart}
                         >
                             Add to cart
                         </Button>
@@ -83,6 +83,8 @@ export const GoodItem = ({ good = {}, maxWidth = 'md', showAddToCard = true, add
     );
 };
 
-const CGoodItem = connect(state => ({ /*good: getCurrentGood(state)*/ }),
-    { addToCart: actionAddGoodToCart })(GoodItem);
+const CGoodItem = ({ good, maxWidth = 'md', showAddToCard = true }) => {
+    const dispatch = useDispatch();
+    return <GoodItem good={good} maxWidth={maxWidth} showAddToCard={showAddToCard} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
+}
 export { CGoodItem };
