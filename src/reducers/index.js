@@ -5,7 +5,7 @@ export { cartGoodsApi, useGetCartGoodsQuery } from "./cartGoodsReducer";
 export { localStoredReducer, } from "./localStoredReducer";
 export { frontEndReducer, getCurrentCategory, actionSetGoodsPaging, actionSetOrdersPaging, getCurrentGood, getGoodsCount, getOrdersCount } from "./frontEndReducer";
 export { useGetRootCategoriesQuery, useGetCategoryByIdQuery } from './categoryReducer';
-export { ordersApi, useGetOrderByIdQuery, useGetOrdersCountQuery, useGetOrdersQuery, actionAddOrder, useAddOrderMutation } from './ordersReducer';
-export { goodsApi, useGetGoodByIdQuery, useGetGoodsCountQuery, useGetGoodsQuery } from './goodsReducer';
+export { ordersApi, useGetOrderByIdQuery, useGetOrdersCountQuery, useGetOrdersQuery, useAddOrderMutation } from './ordersReducer';
+export { goodsApi, useGetGoodByIdQuery, useGetGoodsCountQuery, useGetGoodsQuery, useSaveGoodMutation } from './goodsReducer';
 
 

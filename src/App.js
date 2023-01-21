@@ -4,7 +4,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
 import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi } from './reducers';
-import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CSortedFileDropZone } from "./Components";
+import { CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CSortedFileDropZone } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -94,11 +94,13 @@ function App() {
               <Route path="/orders" component={COrdersList} />
               <Route path="/goods" component={CGoodsList} />
               <Route path="/good/:_id" component={CGood} />
+              <Route path="/editgood/:_id" component={CEditableGood} />
               <Route path="/category/:_id" component={CCategory} />
               <Route path="/order/:_id" component={COrder} />
               <Route path="/cart" component={CCart} />
               <Route path="/login" component={CLoginForm} />
               <Route path="/logout" component={CLogout} />
+
               <Route path="*" component={NotFound} />
             </Switch>
           </div>

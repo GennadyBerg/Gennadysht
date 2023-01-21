@@ -6,10 +6,11 @@ import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
 import { actionAddGoodToCart } from '../reducers';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { useGetGoodByIdQuery } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { actionSetCurrentGood } from '../reducers/frontEndReducer';
+import { MyLink } from './MyLink';
 
 
 export const ExpandMore = styled(props => {
@@ -100,6 +101,12 @@ const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart
                             </Button>
                         )
                     }
+                    <MyLink to={`/editgood/${good._id}`}>
+
+                        <Button size='small' color='primary'>
+                            Edit
+                        </Button>
+                    </MyLink>
                 </CardActions>
                 <Collapse in={expanded} timeout='auto' unmountOnExit>
                     <Typography paragraph sx={{ marginLeft: 1 }}>

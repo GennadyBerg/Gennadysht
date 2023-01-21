@@ -91,22 +91,7 @@ const ordersApi = createApi({
     }),
 });
 
-const actionAddOrder = () => {
-    return async (dispatch, getState) => {
-        let state = getState();
-        if (state.cart.goods.length > 0) {
-            let order = [];
-            for (let good of Object.values(state.cart.goods)) {
-                order.push({ good: { _id: good._id }, count: good.count });
-            }
-            const addOrderMutation = ordersApi.useAddOrderMutation();
-            dispatch(addOrderMutation({ order }));
-            //dispatch(actionClearCart());
-        }
-    }
-}
-
 
 export const { useGetOrdersQuery, useGetOrdersCountQuery, useGetOrderByIdQuery, useAddOrderMutation } = ordersApi;
-export { ordersApi, actionAddOrder };
+export { ordersApi };
 

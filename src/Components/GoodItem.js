@@ -6,7 +6,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
 import { MyLink } from './MyLink';
 import { AvatarGroupOriented, ExpandMore } from './Good';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { actionAddGoodToCart } from '../reducers';
 
 export const GoodItem = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart }) => {

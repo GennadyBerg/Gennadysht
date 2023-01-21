@@ -35,7 +35,7 @@ export const goodsApi = createApi({
                         query GoodFind($q: String) {
                             GoodFind(query: $q) {
                                 _id name  price description
-                                images { url }
+                                images { _id url }
                             }
                         }
                 `,
@@ -64,7 +64,7 @@ export const goodsApi = createApi({
                         query GoodFindOne($q: String) {
                             GoodFindOne(query: $q) {
                                 _id name  price description
-                                images { url }
+                                images { _id url }
                             }
                         }
                     `,
@@ -72,8 +72,21 @@ export const goodsApi = createApi({
                 }
             },
         }),
+
+        saveGood: builder.mutation({
+            query: ({ good }) => ({
+                document: gql`
+                            mutation GoodUpsert($good: GoodInput) {
+                                GoodUpsert(good: $good) {
+                                    _id
+                                }
+                            }
+                        `,
+                variables: { good: { ...good, images: good?.images.map(img => ({ _id: img._id })) ?? [] } }
+            })
+        }),
     }),
 })
 
-export const { useGetGoodsQuery, useGetGoodsCountQuery, useGetGoodByIdQuery } = goodsApi;
+export const { useGetGoodsQuery, useGetGoodsCountQuery, useGetGoodByIdQuery, useSaveGoodMutation } = goodsApi;
 

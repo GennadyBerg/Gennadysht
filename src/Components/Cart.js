@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
 import { connect, useDispatch, useSelector } from "react-redux"
-import { actionAddOrder, useAddOrderMutation, useGetCartGoodsQuery } from "../reducers"
+import { useAddOrderMutation, useGetCartGoodsQuery } from "../reducers"
 import { CartGoodsList } from "./CartGoodsList"
 import { findObjectIndexById } from '../utills';
 
@@ -33,10 +33,7 @@ const Cart = () => {
                     </Typography>
                     <CartGoodsList goods={goodsData ?? []} />
                     <Button size='small' color='primary' disabled={isOrderAdding}
-                        onClick={() => {
-                            let a = '';
-                            addOrderMutation({ order });
-                        }}
+                        onClick={() => addOrderMutation({ order })}
                     >
                         Place Order
                     </Button>
