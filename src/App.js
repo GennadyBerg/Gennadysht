@@ -3,7 +3,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
-import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, cartGoodsReducer, goodsApi } from './reducers';
+import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi } from './reducers';
 import { CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
@@ -11,7 +11,7 @@ import { CRootCats } from './Components';
 import './App.css';
 import { CCategory } from './Components/Category';
 import { categoryApi } from './reducers/categoryReducer';
-import { ordersApi, ordersReducer } from './reducers/ordersReducer';
+import { ordersApi } from './reducers/ordersReducer';
 import { CCart } from './Components/Cart';
 import { authApiReducer, authReducer, authApiReducerPath, loginApi, authReducerPath } from './reducers';
 import storage from "redux-persist/lib/storage";
@@ -39,10 +39,10 @@ const rootReducer = combineReducers({
   [categoryApi.reducerPath]: categoryApi.reducer,
   [goodsApi.reducerPath]: goodsApi.reducer,
   [ordersApi.reducerPath]: ordersApi.reducer,
+  [cartGoodsApi.reducerPath]: cartGoodsApi.reducer,
   promise: promiseReducer,
   frontend: frontEndReducer,
   cart: cartReducer,
-  cartData: cartGoodsReducer
 });
 
 export const store = configureStore({
@@ -51,11 +51,12 @@ export const store = configureStore({
     categoryApi.middleware,
     goodsApi.middleware,
     ordersApi.middleware,
-    loginApi.middleware],
+    loginApi.middleware,
+    cartGoodsApi.middleware],
   reducer: rootReducer
 });
 store.subscribe(() => console.log(store.getState()))
-const persistor = persistStore(store)
+/*const persistor = */persistStore(store)
 
 //store.dispatch(actionAuthLogin(localStorage.authToken));
 //store.dispatch(actionRootCats());

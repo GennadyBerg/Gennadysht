@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 import { v4 } from "uuid";
 import { findObjectIndexById } from "../utills";
-import { clearCartData, getCartData } from "./cartGoodsReducer";
+//import { clearCartData, getCartData } from "./cartGoodsReducer";
 
 const cartReducerSlice = createSlice({ //promiseReducer
     name: 'cart', //префикс типа наподобие AUTH_
@@ -9,11 +9,11 @@ const cartReducerSlice = createSlice({ //promiseReducer
         goods: []
     },
     reducers: {
-        cleanCartData(state, { payload: { commonState } }) {
+        /*cleanCartData(state, { payload: { commonState } }) {
             if (clearCartData(commonState))
                 state.uniqueId = v4();
             return state;
-        },
+        },*/
         restoreCart(state, action) {
             let goods = localStorage.cart.goods;
             if (!goods) {
@@ -86,20 +86,20 @@ let actionClearCart = () =>
         dispatch(cartReducerSlice.actions.cleanCart({}))
     }
 
-let actionClearCartData = () =>
+/*let actionClearCartData = () =>
     async (dispatch, useState) => {
         let commonState = useState();
         dispatch(cartReducerSlice.actions.cleanCartData({ commonState }))
-    }
+    }*/
 
-let getCart = state => {
+/*let getCart = state => {
     let res = {
         goods: state.cart.goods,
         goodsData: getCartData(state),
         uniqueId: state.cart.uniqueId,
     };
     return res;
-}
+}*/
 
 const setStateData = (state, goods, uniqueId = undefined) => {
     if (goods !== undefined)
@@ -111,7 +111,7 @@ const setStateData = (state, goods, uniqueId = undefined) => {
 
 
 export {
-    cartReducer, getCart,
+    cartReducer, /*getCart,*/
     actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart,
-    actionClearCart, actionClearCartData
+    actionClearCart/*, actionClearCartData*/
 };

@@ -1,8 +1,9 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
 import { gql } from "graphql-request";
+import { useSelector } from 'react-redux';
 import { createFullQuery } from '../gql';
- 
+
 const getOrderSearchParams = query => ({ searchStr: query, searchFieldNames: ["_id"] });
 const prepareHeaders = (headers, { getState }) => {
     const token = getState().auth.token;
@@ -105,6 +106,7 @@ const actionAddOrder = () => {
     }
 }
 
-export const { useGetOrdersQuery, useGetOrdersCountQuery, useGetOrderByIdQuery } = ordersApi;
+
+export const { useGetOrdersQuery, useGetOrdersCountQuery, useGetOrderByIdQuery, useAddOrderMutation } = ordersApi;
 export { ordersApi, actionAddOrder };
 

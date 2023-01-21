@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button, Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
-import { connect } from "react-redux"
-import { actionLoadCart, getCart, actionPlaceOrder, actionAddOrder } from "../reducers"
+import { connect, useDispatch, useSelector } from "react-redux"
+import { actionAddOrder, useAddOrderMutation, useGetCartGoodsQuery } from "../reducers"
 import { CartGoodsList } from "./CartGoodsList"
 import { findObjectIndexById } from '../utills';
 
@@ -14,13 +14,18 @@ const mapCountToGood = (goodData, goodsCounts) => {
     return count;
 }
 
-const Cart = ({ goods, goodsData, uniqueId, loadData }) => {
-    goodsData = goodsData?.map(gd => ({ ...gd, count: mapCountToGood(gd, goods) })) ?? [];
-
-    useEffect(() => {
-        loadData();
-    }, [uniqueId, loadData]);
-    return (
+const Cart = ({ uniqueId }) => {
+    let goods = useSelector(state => state.cart.goods) ?? [];
+    let { isLoading, data } = useGetCartGoodsQuery({ goods });
+    let goodsData = data?.GoodFind?.map(gd => ({ ...gd, count: mapCountToGood(gd, goods) })) ?? [];
+    let state = useSelector(state => state);
+    let order = [];
+    for (let good of Object.values(state.cart.goods)) {
+        order.push({ good: { _id: good._id }, count: good.count });
+    }
+    const [addOrderMutation, { isLoading: isOrderAdding, data: orderAddingData }] = useAddOrderMutation();
+    const dispatch = useDispatch();
+    return !isLoading && (
         <>
             <Container>
                 <Box>
@@ -28,8 +33,11 @@ const Cart = ({ goods, goodsData, uniqueId, loadData }) => {
                         Cart
                     </Typography>
                     <CartGoodsList goods={goodsData ?? []} />
-                    <Button size='small' color='primary'
-                        onClick={() => actionAddOrder()}
+                    <Button size='small' color='primary' disabled={isOrderAdding}
+                        onClick={() => {
+                            let a = '';
+                            addOrderMutation({ order });
+                        }}
                     >
                         Place Order
                     </Button>
@@ -42,9 +50,9 @@ const CCart = connect(state => ({
     /*goods: state.cart.goods,
     goodsData: state.goods?.goods?.payload,
     uniqueId: state.cart.uniqueId,*/
-    ...getCart(state) 
+    //...getCart(state)
     //cart: getCart(state) 
 }),
-    { loadData: actionLoadCart })(Cart);
+    {})(Cart);
 
 export { CCart };

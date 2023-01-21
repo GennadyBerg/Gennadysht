@@ -23,8 +23,8 @@ const CartGood = ({ good, goodNum, addToCart = undefined }) => {
                         null}
                 </StyledTableCell>
                 <StyledTableCell item xs={3}>
-                    {good?.good?._id ?
-                        <MyLink to={`/good/${good?.good._id}`}>
+                    {good?._id ?
+                        <MyLink to={`/good/${good?._id}`}>
                             <Typography >
                                 {good.name}
                             </Typography>
