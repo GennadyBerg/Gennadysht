@@ -34,7 +34,7 @@ const SortableItem = (props) => {
 
     return (
         <div style={itemStyle} ref={setNodeRef} {...attributes} {...listeners}>
-            <Render {...{ [props.itemProp]: props.item }} />
+            <Render {...{ item: props.item, ...(props.itemProp ?? {}) }} />
         </div>
     );
 };
@@ -60,14 +60,27 @@ const Droppable = ({ id, items = [], itemProp, keyField, render }) => {
     );
 };
 
-function CSortedFileDropZone({ items: startItems, render, itemProp, keyField, onChange, horizontal }) {
+function CSortedFileDropZone(props) {
+    let render = file => {
+        file = file.item;
+        return (
+            <div>
+                <img key={file.name} src={file.url} {...props.itemProp}/>
+            </div>
+        );
+    }
+    props = { ...props, render: render, keyField: "name", itemProp: {width: "100px"} }
+    return <SortedFileDropZone {...props} />
 }
 
 function SortedFileDropZone({ items: startItems, render, itemProp, keyField, onChange, horizontal }) {
     const [items, setItems] = useState(
-        startItems
+        startItems ?? []
     );
-    useEffect(() => setItems(startItems), [startItems])
+    useEffect(() => {
+        return setItems(startItems ?? []);
+    }
+        , [startItems])
 
     useEffect(() => {
         if (typeof onChange === 'function') {
@@ -83,33 +96,47 @@ function SortedFileDropZone({ items: startItems, render, itemProp, keyField, onC
     );
 
     const handleDragEnd = ({ active, over }) => {
-        const activeIndex = active.data.current.sortable.index;
-        const overIndex = over.data.current?.sortable.index || 0;
+        let activeIndex = active.data.current.sortable.index;
+        let overIndex = over?.data.current?.sortable.index;
 
         setItems((items) => {
-            return arrayMoveImmutable(items, activeIndex, overIndex)
+            if (overIndex === undefined) {
+                if (items.length === 1)
+                    activeIndex = 0;
+                items.splice(activeIndex, 1);
+                return items;
+            }
+            else
+                return arrayMoveImmutable(items, activeIndex, overIndex)
         });
+    }
+
+    const onDropFiles = droppedFiles => {
+        return setItems(items => {
+            return [...items, ...droppedFiles]
+        }
+        );
     }
 
     const containerStyle = { display: horizontal ? "flex" : '' };
 
     return (
         <>
-            <FileDropZone>
-                <DndContext
-                    sensors={sensors}
-                    onDragEnd={handleDragEnd}
-                >
-                    <div style={containerStyle}>
-                        <Droppable id="aaa"
-                            items={items}
-                            itemProp={itemProp}
-                            keyField={keyField}
-                            render={render} >
-                        </Droppable>
-                    </div>
-                </DndContext>
+            <FileDropZone onDropFiles={onDropFiles}>
             </FileDropZone>
+            <DndContext
+                sensors={sensors}
+                onDragEnd={handleDragEnd}
+            >
+                <div style={containerStyle}>
+                    <Droppable id="aaa"
+                        items={items}
+                        itemProp={itemProp}
+                        keyField={keyField}
+                        render={render} >
+                    </Droppable>
+                </div>
+            </DndContext>
         </>
     );
 }

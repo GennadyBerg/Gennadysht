@@ -121,7 +121,7 @@ const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart
     )
 }
 
-const CGood = (maxWidth = 'md', showAddToCard = true) => {
+const CGood = ({maxWidth = 'md', showAddToCard = true}) => {
     const { _id } = useParams();
     const { isLoading, data } = useGetGoodByIdQuery(_id);
     let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;

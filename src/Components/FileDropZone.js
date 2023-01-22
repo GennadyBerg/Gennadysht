@@ -1,23 +1,61 @@
-import React, { useCallback } from 'react'
+import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
-function FileDropZone() {
+function FileDropZone({ onDropFiles }) {
+    const [paths, setPaths] = useState([]);
     const onDrop = useCallback(acceptedFiles => {
         // Do something with the files
-        let a = '';
-    }, [])
+        acceptedFiles = acceptedFiles.map(f => {
+            let url = URL.createObjectURL(f)
+            return { _id: null, name: f.path, url }
+        }
+        );
+        setPaths(acceptedFiles);
+        onDropFiles(acceptedFiles);
+    }, [setPaths])
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-
+    console.log(paths);
     return (
-        <div {...getRootProps()}>
-            <input {...getInputProps()} />
-            {
-                isDragActive ?
-                    <p>Drop the files here ...</p> :
-                    <p>Drag 'n' drop some files here, or click to select files</p>
-            }
-        </div>
+        <>
+            <div {...getRootProps()}>
+                <input {...getInputProps()} />
+                {
+                    isDragActive ?
+                        <p>Drop the files here ...</p> :
+                        <p>Drag 'n' drop some files here, or click to select files</p>
+                }
+            </div>
+        </>
     )
 }
+/*
+              {
+                paths.map(
+                    f => 
+                    <img key={f.name} src={f.url} />
+               )
+            }
+*/
+
+/*export function MyDropzone() {
+  const [paths, setPaths] = useState([]);
+
+  const onDrop = useCallback(acceptedFiles => {
+    setPaths(acceptedFiles.map(file => URL.createObjectURL(file)));
+  }, [setPaths]);
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  return (
+    <div>
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        <p>Drop the files here ...</p>
+      </div>
+      {paths.map(path => 
+        <img key={path} src={path} />
+       )}
+    </div>
+  );
+}*/
 
 export { FileDropZone }

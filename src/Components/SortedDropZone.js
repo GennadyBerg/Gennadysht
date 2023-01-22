@@ -100,8 +100,8 @@ function SortedDropZone({ items: startItems, render, itemProp, keyField, onChang
                     items={items}
                     itemProp={itemProp}
                     keyField={keyField}
-                    render={render} >
-                </Droppable>
+                    render={render}
+                />
             </div>
         </DndContext>
     );

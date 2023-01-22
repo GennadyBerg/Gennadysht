@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment } from '@mui/material';
+import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
 import { useDispatch } from 'react-redux';
 import { useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { actionSetCurrentGood } from '../reducers/frontEndReducer';
+import { CSortedFileDropZone } from './SortedFileDropZone';
+import { MyDropzone } from './FileDropZone';
 
 
 export const ExpandMore = styled(props => {
@@ -35,7 +37,7 @@ export const AvatarGroupOriented = styled((props) => {
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
 
-const EditableGood = ({ goodExt, maxWidth = 'md', saveGood }) => {
+const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
     let [good, setGood] = useState(goodExt);
     const setGoodData = (data) => {
         let goodData = { ...good, ...data };
@@ -47,8 +49,8 @@ const EditableGood = ({ goodExt, maxWidth = 'md', saveGood }) => {
     return good && (
         <Container maxWidth={maxWidth}>
             <Card variant='outlined'>
-                <Grid container spacing={maxWidth === 'xs' ? 7 : 5}>
-                    <Grid item xs>
+                <Grid container spacing={maxWidth === 'xs' ? 7 : 5} rowSpacing={2}>
+                    <Grid item xs={12}>
                         <Grid container spacing={2}>
                             <Grid item xs={4}>
                                 <CardMedia
@@ -60,32 +62,48 @@ const EditableGood = ({ goodExt, maxWidth = 'md', saveGood }) => {
                             </Grid>
                             <Grid item xs={8}>
                                 <CardContent>
-                                    <TextField
-                                        required
-                                        id="outlined-required"
-                                        label="Name"
-                                        value={good.name}
-                                        onChange={event => setGoodData({ name: event.target.value })}
-                                    />
-                                    <TextField
-                                        required
-                                        id="outlined-required"
-                                        label="Price"
-                                        type="number"
-                                        startAdornment={<InputAdornment position="start">$</InputAdornment>}
-                                        value={good.price}
-                                        onChange={event => setGoodData({ price: +event.target.value })}
-                                    />
-                                    <TextField
-                                        required
-                                        id="outlined-required"
-                                        label="Description"
-                                        value={good.description}
-                                        onChange={event => setGoodData({ description: event.target.value })}
-                                    />
+                                    <Grid container rowSpacing={2}>
+                                        <Grid item width="100%">
+                                            <TextField
+                                                required
+                                                id="outlined-required"
+                                                label="Name"
+                                                value={good.name}
+                                                onChange={event => setGoodData({ name: event.target.value })}
+                                                fullWidth 
+                                            />
+                                        </Grid>
+                                        <Grid item width="100%">
+                                            <TextField
+                                                required
+                                                id="outlined-required"
+                                                label="Price"
+                                                type="number"
+                                                startAdornment={<InputAdornment position="start">$</InputAdornment>}
+                                                value={good.price}
+                                                onChange={event => setGoodData({ price: +event.target.value })}
+                                                fullWidth 
+                                            />
+                                        </Grid>
+                                        <Grid item width="100%">
+                                            <TextField
+                                                required
+                                                id="outlined-required"
+                                                label="Description"
+                                                value={good.description}
+                                                onChange={event => setGoodData({ description: event.target.value })}
+                                                multiline={true}
+                                                rows={15}
+                                                fullWidth 
+                                            />
+                                        </Grid>
+                                    </Grid>
                                 </CardContent>
                             </Grid>
                         </Grid>
+                    </Grid>
+                    <Grid>
+                        <CSortedFileDropZone/>
                     </Grid>
                 </Grid>
                 <CardActions>
@@ -105,7 +123,7 @@ const EditableGood = ({ goodExt, maxWidth = 'md', saveGood }) => {
     )
 }
 
-const CEditableGood = (maxWidth = 'md') => {
+const CEditableGood = ({ maxWidth = 'md' }) => {
     const { _id } = useParams();
     const { isLoading, data } = useGetGoodByIdQuery(_id);
     let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
@@ -113,7 +131,7 @@ const CEditableGood = (maxWidth = 'md') => {
     dispatch(actionSetCurrentGood(_id));
     const [saveGoodMutation, { }] = useSaveGoodMutation();
 
-    return <EditableGood saveGood={saveGoodMutation} goodExt={good} maxWidth={maxWidth} />
+    return <EditableGood saveGood={saveGoodMutation} good={good} maxWidth={maxWidth} />
 }
 
 export { CEditableGood }

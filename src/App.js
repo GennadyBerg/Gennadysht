@@ -81,9 +81,6 @@ function App() {
 
   return (
     <>
-      <CSortedFileDropZone />
-      
-      
       <Router history={history}>
         <Provider store={store}>
           <div className="App">
