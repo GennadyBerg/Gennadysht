@@ -10,6 +10,5 @@ export { MyLink } from './MyLink';
 export { CLogout } from './Logout';
 export { CMainAppBar } from './MainAppBar';
 export { CRootCats } from './RootCats';
-export { SortedDropZone } from './SortedDropZone';
 export { CSortedFileDropZone } from './SortedFileDropZone';
 export { CEditableGood } from './EditableGood'

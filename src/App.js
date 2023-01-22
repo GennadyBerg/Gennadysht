@@ -76,7 +76,6 @@ const Main = () =>
   </div>
 
 //<EditPost onSave={post => console.log(post)}/>
-//<SortedDropZone />
 function App() {
 
   return (

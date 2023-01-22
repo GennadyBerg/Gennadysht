@@ -4,6 +4,7 @@ import { arrayMoveImmutable } from "array-move";
 import { useEffect, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { FileDropZone } from "./FileDropZone";
+import { getFullImageUrl } from "../utills";
 
 const SortableItem = (props) => {
     const {
@@ -62,14 +63,14 @@ const Droppable = ({ id, items = [], itemProp, keyField, render }) => {
 
 function CSortedFileDropZone(props) {
     let render = file => {
-        file = file.item;
+        file = file.item ?? file;
         return (
             <div>
-                <img key={file.name} src={file.url} {...props.itemProp}/>
+                <img key={file.name} src={file._id ? getFullImageUrl(file) : file.url} {...props.itemProp} />
             </div>
         );
     }
-    props = { ...props, render: render, keyField: "name", itemProp: {width: "100px"} }
+    props = { ...props, render: render, keyField: "name", itemProp: { width: "100px" } }
     return <SortedFileDropZone {...props} />
 }
 

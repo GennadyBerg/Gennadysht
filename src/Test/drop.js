@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { SortedDropZone } from "../Components"
+import { SortedDropZone } from "./SortedDropZone"
 
 const imgSet = ['https://mir-s3-cdn-cf.behance.net/project_modules/disp/8a1f1813765711.56277edb36b94.gif',
     'http://shop.asmer.fe.a-level.com.ua/loading.gif',

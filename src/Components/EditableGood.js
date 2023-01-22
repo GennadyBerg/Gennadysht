@@ -103,7 +103,7 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
                         </Grid>
                     </Grid>
                     <Grid>
-                        <CSortedFileDropZone/>
+                        <CSortedFileDropZone items={good.images}/>
                     </Grid>
                 </Grid>
                 <CardActions>
