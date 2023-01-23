@@ -2,7 +2,7 @@ import { gql } from "graphql-request";
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from '@rtk-query/graphql-request-base-query' //npm install
 import { jwtDecode } from "../utills";
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, current } from "@reduxjs/toolkit";
 import { history } from "../App";
 //import { prepareHeaders } from "./index";
 
@@ -71,23 +71,39 @@ const authSlice = createSlice({
             return {}
         }
     },
-    extraReducers: builder =>
+    extraReducers: builder => {
         builder.addMatcher(loginApi.endpoints.login.matchFulfilled,
             (state, { payload }) => {
                 const tokenPayload = jwtDecode(payload.login);
                 if (tokenPayload) {
                     state.token = payload.login;
                     state.payload = tokenPayload;
+                    state.currentUser = { _id: tokenPayload.sub.id };
                     history.push('/');
                 }
-            })
+            });
+        builder.addMatcher(loginApi.endpoints.userFind.matchFulfilled,
+            (state, { payload }) => {
+                let retrievedUser = payload?.UserFindOne;
+                if (retrievedUser?._id === state.currentUser?._id)
+                    state.currentUser = retrievedUser;
+                })
+    }
 })
+
+const actionAboutMe = () =>
+    async (dispatch, getState) => {
+        const auth = getState().auth
+        if (auth.token) {
+            dispatch(loginApi.endpoints.userFind.initiate(auth.currentUser._id))
+        }
+    }
 
 const { logout: actionAuthLogout } = authSlice.actions;
 let authApiReducer = loginApi.reducer;
 let authReducer = authSlice.reducer;
 let authApiReducerPath = loginApi.reducerPath;
 
-export const { useLoginMutation } = loginApi;
-export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout }
+export const { useLoginMutation, useUserFindQuery } = loginApi;
+export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe }
 

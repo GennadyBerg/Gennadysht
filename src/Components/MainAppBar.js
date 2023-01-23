@@ -42,6 +42,7 @@ const MainAppBar = ({ token, openSidebar }) => {
                         <>
                             <MyLink to="/logout"><Button color="inherit">Logout</Button></MyLink>
                             <MyLink to="/orders"><Button color="inherit">Orders</Button></MyLink>
+                            <MyLink to="/user"><Button color="inherit">About Me</Button></MyLink>
                         </>
                     }
                     <MyLink to="/cart"><Button color="inherit">Cart</Button></MyLink>

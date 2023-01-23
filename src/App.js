@@ -3,8 +3,8 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
-import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi, uploadAPI } from './reducers';
-import { CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CSortedFileDropZone } from "./Components";
+import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi } from './reducers';
+import { CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CUser } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -42,7 +42,6 @@ const rootReducer = combineReducers({
   [goodsApi.reducerPath]: goodsApi.reducer,
   [ordersApi.reducerPath]: ordersApi.reducer,
   [cartGoodsApi.reducerPath]: cartGoodsApi.reducer,
-  [uploadAPI.reducerPath]: uploadAPI.reducer,
   promise: promiseReducer,
   frontend: frontEndReducer,
   cart: cartReducer,
@@ -55,7 +54,6 @@ export const store = configureStore({
     goodsApi.middleware,
     ordersApi.middleware,
     loginApi.middleware,
-    uploadAPI.middleware,
     cartGoodsApi.middleware],
   reducer: rootReducer
 });
@@ -97,6 +95,8 @@ function App() {
               <Route path="/order/:_id" component={COrder} />
               <Route path="/cart" component={CCart} />
               <Route path="/login" component={CLoginForm} />
+              <Route path="/user" component={CUser} />
+              <Route path="/user/:_id" component={CUser} />
               <Route path="/logout" component={CLogout} />
 
               <Route path="*" component={NotFound} />

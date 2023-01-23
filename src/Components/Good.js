@@ -131,4 +131,5 @@ const CGood = ({ maxWidth = 'md', showAddToCard = true, editable = true }) => {
 
     return <Good good={good} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
 }
+let a = '';
 export { CGood };

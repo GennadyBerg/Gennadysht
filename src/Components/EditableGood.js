@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box, Modal } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
 import { useDispatch } from 'react-redux';
-import { useGetGoodByIdQuery, useSaveGoodMutation, useUploadSingleFileMutation } from '../reducers';
+import { useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { actionSetCurrentGood } from '../reducers/frontEndReducer';
 import { CSortedFileDropZone } from './SortedFileDropZone';
@@ -161,10 +161,9 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
     const dispatch = useDispatch();
     dispatch(actionSetCurrentGood(_id));
     const [saveGoodMutation, { }] = useSaveGoodMutation();
-    const [uploadSingleFileMutation, { }] = useUploadSingleFileMutation();
 
 
-    return !isLoading && <EditableGood good={good} saveGood={saveGoodMutation} uploadFile={uploadSingleFileMutation} maxWidth={maxWidth} />
+    return !isLoading && <EditableGood good={good} saveGood={saveGoodMutation} maxWidth={maxWidth} />
 }
 
 export { CEditableGood }

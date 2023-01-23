@@ -3,13 +3,13 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Button from '@mui/material/Button';
 import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
 import { Box } from '@mui/system';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { MyLink } from './MyLink';
-import { useLoginMutation } from '../reducers/authReducer';
+import { actionAboutMe, useLoginMutation } from '../reducers/authReducer';
 
 const LoginForm = () => {
     const [onLogin, { data, isLoading }] = useLoginMutation()
-    //const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
@@ -64,7 +64,7 @@ const LoginForm = () => {
                     fullWidth
                     type="submit"
                     disabled={!isButtonActive}
-                    onClick={() => onLogin({ login, password })}>
+                    onClick={() => onLogin({ login, password }).then(() => dispatch(actionAboutMe()))}>
                     Login...
                 </MyLink>
                 <Grid container>
