@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
-import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box } from '@mui/material';
+import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box, Modal } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
 import { useDispatch } from 'react-redux';
 import { useGetGoodByIdQuery, useSaveGoodMutation, useUploadSingleFileMutation } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { actionSetCurrentGood } from '../reducers/frontEndReducer';
 import { CSortedFileDropZone } from './SortedFileDropZone';
-import { MyDropzone } from './FileDropZone';
+import { saveImage } from '../utills/utils';
+import { CGood } from './Good';
+import { ModalContainer } from './ModalContainer';
 
 
 export const ExpandMore = styled(props => {
@@ -39,6 +41,7 @@ export const AvatarGroupOriented = styled((props) => {
 
 const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) => {
     let [good, setGood] = useState(goodExt);
+    let [showPreview, setShowPreview] = useState(false);
     let [imagesContainer, setImagesContainer] = useState({ images: goodExt.images });
     const setGoodData = (data) => {
         let goodData = { ...good, ...data };
@@ -48,13 +51,20 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
     const onChangeImages = images => {
         setImagesContainer({ images });
     }
+    const preview = show => {
+        let a = '';
+        setShowPreview(show);
+    }
 
-    const saveFullGood = () => {
-        for (let image of imagesContainer.images){
-            uploadFile(image);
+    const saveFullGood = async () => {
+        let addedImages = imagesContainer.images.filter(img => !img._id);
+        let results = await Promise.all(addedImages.map(img => saveImage(img)));
+        for (let i = 0; i < results.length; i++) {
+            addedImages[i]._id = results[i]._id;
+            addedImages[i].url = results[i].url;
         }
-        //saveGood({ good });
-
+        good = { ...good, images: imagesContainer.images };
+        saveGood({ good });
     }
 
     return good && (
@@ -117,6 +127,11 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
                         <CSortedFileDropZone items={good.images} onChange={items => onChangeImages(items)} />
                     </Grid>
                 </Grid>
+                {showPreview &&
+                    <ModalContainer onCloseClick={() => preview(false)}>
+                        <CGood good={good} editable={false} />
+                    </ModalContainer>
+                }
                 <CardActions>
                     <Button size='small' color='primary'
                         onClick={() => saveFullGood(good)}
@@ -127,6 +142,11 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
                         onClick={() => setGood(goodExt)}
                     >
                         Cancel
+                    </Button>
+                    <Button size='small' color='primary'
+                        onClick={() => preview(true)}
+                    >
+                        Preview
                     </Button>
                 </CardActions>
             </Card>
@@ -144,7 +164,7 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
     const [uploadSingleFileMutation, { }] = useUploadSingleFileMutation();
 
 
-    return <EditableGood good={good} saveGood={saveGoodMutation} uploadFile={uploadSingleFileMutation} maxWidth={maxWidth} />
+    return !isLoading && <EditableGood good={good} saveGood={saveGoodMutation} uploadFile={uploadSingleFileMutation} maxWidth={maxWidth} />
 }
 
 export { CEditableGood }

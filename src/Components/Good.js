@@ -38,7 +38,7 @@ export const AvatarGroupOriented = styled((props) => {
     },
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
-const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart }) => {
+const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart, editable }) => {
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
@@ -102,10 +102,11 @@ const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart
                         )
                     }
                     <MyLink to={`/editgood/${good._id}`}>
-
-                        <Button size='small' color='primary'>
-                            Edit
-                        </Button>
+                        {
+                            editable && <Button size='small' color='primary'>
+                                Edit
+                            </Button>
+                        }
                     </MyLink>
                 </CardActions>
                 <Collapse in={expanded} timeout='auto' unmountOnExit>
@@ -121,13 +122,13 @@ const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart
     )
 }
 
-const CGood = ({maxWidth = 'md', showAddToCard = true}) => {
+const CGood = ({ maxWidth = 'md', showAddToCard = true, editable = true }) => {
     const { _id } = useParams();
     const { isLoading, data } = useGetGoodByIdQuery(_id);
     let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
     const dispatch = useDispatch();
     dispatch(actionSetCurrentGood(_id));
 
-    return <Good good={good} maxWidth={maxWidth} showAddToCard={showAddToCard} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
+    return <Good good={good} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
 }
 export { CGood };

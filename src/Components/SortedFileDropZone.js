@@ -104,6 +104,7 @@ function SortedFileDropZone({ items: startItems, render, itemProp, keyField, onC
             if (overIndex === undefined) {
                 if (items.length === 1)
                     activeIndex = 0;
+                items = [...items]
                 items.splice(activeIndex, 1);
                 return items;
             }

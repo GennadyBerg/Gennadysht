@@ -12,7 +12,7 @@ const cartReducerSlice = createSlice({ //promiseReducer
     },
     reducers: {
         restoreCart(state, action) {
-            let goods = localStorage.cart.goods;
+            let goods = localStorage.cart?.goods ?? [];
             if (!goods) {
                 goods = [];
                 localStorage.cart = { goods: goods };
