@@ -3,7 +3,7 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
-import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi } from './reducers';
+import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi, uploadAPI } from './reducers';
 import { CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CSortedFileDropZone } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
@@ -42,6 +42,7 @@ const rootReducer = combineReducers({
   [goodsApi.reducerPath]: goodsApi.reducer,
   [ordersApi.reducerPath]: ordersApi.reducer,
   [cartGoodsApi.reducerPath]: cartGoodsApi.reducer,
+  [uploadAPI.reducerPath]: uploadAPI.reducer,
   promise: promiseReducer,
   frontend: frontEndReducer,
   cart: cartReducer,
@@ -54,6 +55,7 @@ export const store = configureStore({
     goodsApi.middleware,
     ordersApi.middleware,
     loginApi.middleware,
+    uploadAPI.middleware,
     cartGoodsApi.middleware],
   reducer: rootReducer
 });

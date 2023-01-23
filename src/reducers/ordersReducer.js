@@ -1,7 +1,6 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
 import { gql } from "graphql-request";
-import { useSelector } from 'react-redux';
 import { createFullQuery } from '../gql';
 
 const getOrderSearchParams = query => ({ searchStr: query, searchFieldNames: ["_id"] });
@@ -12,7 +11,6 @@ const prepareHeaders = (headers, { getState }) => {
     }
     return headers;
 }
-const getOrdersSearchParams = query => ({ searchStr: query, searchFieldNames: ["_id"] });
 const ordersApi = createApi({
     reducerPath: 'orders',
     baseQuery: graphqlRequestBaseQuery({

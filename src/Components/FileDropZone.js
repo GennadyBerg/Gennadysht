@@ -7,7 +7,7 @@ function FileDropZone({ onDropFiles }) {
         // Do something with the files
         acceptedFiles = acceptedFiles.map(f => {
             let url = URL.createObjectURL(f)
-            return { _id: null, name: f.path, url }
+            return { _id: null, name: f.path, url, data: f }
         }
         );
         setPaths(acceptedFiles);

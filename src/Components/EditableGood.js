@@ -4,7 +4,7 @@ import { styled } from '@mui/material/styles';
 import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
 import { useDispatch } from 'react-redux';
-import { useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
+import { useGetGoodByIdQuery, useSaveGoodMutation, useUploadSingleFileMutation } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { actionSetCurrentGood } from '../reducers/frontEndReducer';
 import { CSortedFileDropZone } from './SortedFileDropZone';
@@ -37,14 +37,25 @@ export const AvatarGroupOriented = styled((props) => {
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
 
-const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
+const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) => {
     let [good, setGood] = useState(goodExt);
+    let [imagesContainer, setImagesContainer] = useState({ images: goodExt.images });
     const setGoodData = (data) => {
         let goodData = { ...good, ...data };
         setGood(goodData);
         return goodData;
     }
+    const onChangeImages = images => {
+        setImagesContainer({ images });
+    }
 
+    const saveFullGood = () => {
+        for (let image of imagesContainer.images){
+            uploadFile(image);
+        }
+        //saveGood({ good });
+
+    }
 
     return good && (
         <Container maxWidth={maxWidth}>
@@ -70,7 +81,7 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
                                                 label="Name"
                                                 value={good.name}
                                                 onChange={event => setGoodData({ name: event.target.value })}
-                                                fullWidth 
+                                                fullWidth
                                             />
                                         </Grid>
                                         <Grid item width="100%">
@@ -82,7 +93,7 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
                                                 startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                                 value={good.price}
                                                 onChange={event => setGoodData({ price: +event.target.value })}
-                                                fullWidth 
+                                                fullWidth
                                             />
                                         </Grid>
                                         <Grid item width="100%">
@@ -94,7 +105,7 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
                                                 onChange={event => setGoodData({ description: event.target.value })}
                                                 multiline={true}
                                                 rows={15}
-                                                fullWidth 
+                                                fullWidth
                                             />
                                         </Grid>
                                     </Grid>
@@ -103,12 +114,12 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
                         </Grid>
                     </Grid>
                     <Grid>
-                        <CSortedFileDropZone items={good.images}/>
+                        <CSortedFileDropZone items={good.images} onChange={items => onChangeImages(items)} />
                     </Grid>
                 </Grid>
                 <CardActions>
                     <Button size='small' color='primary'
-                        onClick={() => saveGood({ good })}
+                        onClick={() => saveFullGood(good)}
                     >
                         Save
                     </Button>
@@ -130,8 +141,10 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
     const dispatch = useDispatch();
     dispatch(actionSetCurrentGood(_id));
     const [saveGoodMutation, { }] = useSaveGoodMutation();
+    const [uploadSingleFileMutation, { }] = useUploadSingleFileMutation();
 
-    return <EditableGood saveGood={saveGoodMutation} good={good} maxWidth={maxWidth} />
+
+    return <EditableGood good={good} saveGood={saveGoodMutation} uploadFile={uploadSingleFileMutation} maxWidth={maxWidth} />
 }
 
 export { CEditableGood }
