@@ -1,5 +1,5 @@
 export { promiseReducer, actionPromise, actionFulfilled, actionPending, actionRejected } from "./promiseReducer";
-export { authApiReducer, authReducer, authApiReducerPath, loginApi, authReducerPath, useUserFindQuery, actionAuthLogout } from './authReducer';
+export { authApiReducer, authReducer, authApiReducerPath, loginApi, authReducerPath, useUserFindQuery, actionAuthLogout, useSaveUserMutation } from './authReducer';
 export { cartReducer, actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart, actionClearCart, /*getCart,*/ } from "./cartReducer";
 export { cartGoodsApi, useGetCartGoodsQuery } from "./cartGoodsReducer";
 export { localStoredReducer, } from "./localStoredReducer";

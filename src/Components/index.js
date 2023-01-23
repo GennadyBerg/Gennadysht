@@ -12,4 +12,4 @@ export { CMainAppBar } from './MainAppBar';
 export { CRootCats } from './RootCats';
 export { CSortedFileDropZone } from './SortedFileDropZone';
 export { CEditableGood } from './EditableGood'
-export {CUser} from './AboutMe';
+export { CEditableUser as CUser } from './EditableUser';

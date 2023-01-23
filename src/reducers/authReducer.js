@@ -56,7 +56,19 @@ export const loginApi = createApi({
                 variables: { _id, nick }
             }),
             invalidatesTags: (result, error, arg) => ([{ type: 'User', id: arg._id }])
-        })
+        }),
+        saveUser: builder.mutation({
+            query: ({ user }) => ({
+                document: gql`
+                            mutation UserUpsert($user: UserInput) {
+                                UserUpsert(user: $user) {
+                                    _id
+                                }
+                            }
+                        `,
+                variables: { user: { ...user, avatar: user?.avatar?._id } }
+            })
+        }),
     }),
 })
 
@@ -87,7 +99,7 @@ const authSlice = createSlice({
                 let retrievedUser = payload?.UserFindOne;
                 if (retrievedUser?._id === state.currentUser?._id)
                     state.currentUser = retrievedUser;
-                })
+            })
     }
 })
 
@@ -104,6 +116,6 @@ let authApiReducer = loginApi.reducer;
 let authReducer = authSlice.reducer;
 let authApiReducerPath = loginApi.reducerPath;
 
-export const { useLoginMutation, useUserFindQuery } = loginApi;
+export const { useLoginMutation, useUserFindQuery, useSaveUserMutation } = loginApi;
 export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe }
 
