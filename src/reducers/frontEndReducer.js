@@ -19,8 +19,8 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
         },
         setOrdersPaging(state, action) {
             let { fromPage, pageSize } = action.payload.page;
-            fromPage = fromPage ?? state.goodsPaging?.fromPage;
-            pageSize = pageSize ?? state.goodsPaging?.pageSize;
+            fromPage = fromPage ?? state.ordersPaging?.fromPage;
+            pageSize = pageSize ?? state.ordersPaging?.pageSize;
             state.ordersPaging = { fromPage, pageSize };
             return state;
         },
