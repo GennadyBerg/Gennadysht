@@ -122,12 +122,14 @@ const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart
     )
 }
 
-const CGood = ({ maxWidth = 'md', showAddToCard = true, editable = true }) => {
+const CGood = ({ good, maxWidth = 'md', showAddToCard = true, editable = true }) => {
     const { _id } = useParams();
     const { isLoading, data } = useGetGoodByIdQuery(_id);
-    let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
     const dispatch = useDispatch();
-    dispatch(actionSetCurrentGood(_id));
+    if (!good) {
+        good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
+        dispatch(actionSetCurrentGood(_id));
+    }
 
     return <Good good={good} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
 }

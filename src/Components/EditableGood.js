@@ -40,7 +40,7 @@ export const AvatarGroupOriented = styled((props) => {
 }));
 
 const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) => {
-    let [good, setGood] = useState(goodExt);
+    let [good, setGood] = useState({ ...goodExt, images: goodExt.images });
     let [showPreview, setShowPreview] = useState(false);
     let [imagesContainer, setImagesContainer] = useState({ images: goodExt.images });
     const setGoodData = (data) => {
@@ -50,6 +50,8 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
     }
     const onChangeImages = images => {
         setImagesContainer({ images });
+        good.images = images;
+        setGood(good);
     }
     const preview = show => {
         let a = '';
