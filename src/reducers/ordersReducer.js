@@ -20,12 +20,12 @@ const ordersApi = createApi({
     endpoints: (builder) => ({
         getOrders: builder.query({
             query: ({ fromPage, pageSize, searchStr = '' }) => {
-                let params = createFullQuery(getOrderSearchParams(searchStr), { fromPage, pageSize });
+                let params = createFullQuery(getOrderSearchParams(searchStr), { fromPage, pageSize, sort: { _id: -1 } });
                 return {
                     document: gql`
                             query OrderFind($q: String) {
                                 OrderFind(query: $q) {
-                                    _id total
+                                    _id total createdAt
                                     orderGoods {
                                         _id price count total createdAt
                                         good {

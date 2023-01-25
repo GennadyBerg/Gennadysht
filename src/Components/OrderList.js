@@ -63,26 +63,6 @@ const OrderList = ({ orders, fromPage, pageSize }) => {
                                 {
                                     headCells.map(headCell => {
                                         return <StyledTableCell key={headCell.id} align={headCell.align}>{headCell.label}</StyledTableCell>
-                                        /*return (
-                                            <StyledTableCell
-                                                key={headCell.id}
-                                                align={headCell.align}
-                                                padding={headCell.disablePadding ? 'none' : 'normal'}
-                                                sortDirection={orderBy === headCell.id ? order : false}
-                                            >
-                                                <TableSortLabel
-                                                    active={orderBy === headCell.id}
-                                                    direction={orderBy === headCell.id ? order : 'asc'}
-                                                >
-                                                    {headCell.label}
-                                                    {orderBy === headCell.id ? (
-                                                        <Box component="span" sx={visuallyHidden}>
-                                                            {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                                                        </Box>
-                                                    ) : null}
-                                                </TableSortLabel>
-                                            </StyledTableCell>
-                                        )*/
                                     })
                                 }
                             </TableRow>
@@ -149,8 +129,8 @@ const COrdersList = () => {
     const ordersCountResult = useGetOrdersCountQuery({ searchStr });
     let isLoading = ordersResult.isLoading || ordersCountResult.isLoading;
 
-    let orders = ordersResult.data?.OrderFind;
-    return !isLoading && orders && <OrderList orders={orders} fromPage={fromPage} pageSize={pageSize} />
+    let orders = !isLoading && ordersResult.data?.OrderFind;
+    return !isLoading  && orders && <OrderList orders={orders} fromPage={fromPage} pageSize={pageSize} />
 }
 
 export { COrdersList };

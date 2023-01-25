@@ -4,26 +4,30 @@ import { useParams } from "react-router-dom";
 import { Button, Card, CardActions, CardContent, CardMedia, Container, Grid, InputAdornment, TextField } from "@mui/material";
 import { CSortedFileDropZone } from "./SortedFileDropZone";
 import { ModalContainer } from "./ModalContainer";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { getFullImageUrl, saveImage } from "../utills/utils";
+import { Input } from "@mui/icons-material";
 
 const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
     let [user, setUser] = useState(userExt);
-    let [imagesContainer, setImagesContainer] = useState({ images: userExt.images });
+
+    useEffect(() => {
+        setUser(userExt);
+    }, [userExt]);
+
     const setUserData = (data) => {
         let userData = { ...user, ...data };
         setUser(userData);
         return userData;
     }
     const saveFullUser = async () => {
-        let addedImages = imagesContainer.images.filter(img => !img._id);
-        let results = await Promise.all(addedImages.map(img => saveImage(img)));
-        for (let i = 0; i < results.length; i++) {
-            addedImages[i]._id = results[i]._id;
-            addedImages[i].url = results[i].url;
-        }
-        user = { ...user, images: imagesContainer.images };
-        saveUser({ user });
+        saveUser({ user: { _id: user._id, nick: user.nick } });
+    }
+
+    const uploadAvatar = async param => {
+        let image = await saveImage({ data: param.target.files[0] }, false);
+        let userToSave = { _id: user._id, avatar: { _id: image._id } };
+        saveUser({ user: userToSave });
     }
 
     return user && (
@@ -40,6 +44,17 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
                                         image={getFullImageUrl(user.avatar)}
                                         title={user.name}
                                     />
+                                    <Button
+                                        variant="contained"
+                                        component="label"
+                                    >
+                                        Upload File
+                                        <input
+                                            type="file"
+                                            hidden
+                                            onChange={param => uploadAvatar(param)}
+                                        />
+                                    </Button>
                                 </Grid>
                                 <Grid item xs={8}>
                                     <CardContent>
@@ -48,7 +63,7 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
                                                 <TextField
                                                     required
                                                     id="outlined-required"
-                                                    label="Name"
+                                                    label="Nick"
                                                     value={user.nick}
                                                     onChange={event => setUserData({ nick: event.target.value })}
                                                     fullWidth
@@ -58,7 +73,7 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
                                                 <TextField
                                                     required
                                                     id="outlined-required"
-                                                    label="Price"
+                                                    label="Login"
                                                     startAdornment={<InputAdornment position="start">$</InputAdornment>}
                                                     value={user.login}
                                                     onChange={event => setUserData({ login: event.target.value })}
@@ -92,9 +107,9 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
 
 const CEditableUser = ({ maxWidth = 'md' }) => {
     const { _id } = useParams();
-    const { isLoading, data } = useUserFindQuery(_id);
-    let user = isLoading ? undefined : data?.UserFindOne;
     let currentUser = useSelector(state => state.auth.currentUser);
+    const { isLoading, data } = useUserFindQuery(_id ?? currentUser?._id ?? 'jfbvwkbvjeb');
+    let user = isLoading ? undefined : data?.UserFindOne;
     user = _id ? user : currentUser;
     const [saveUserMutation, { }] = useSaveUserMutation();
 

@@ -31,10 +31,8 @@ export const COrdersPagination = () => {
     let allEntitiesCount = getOrdersCount(state);
     let dispatch = useDispatch();
     let changePageFE = (fromPage) => dispatch(actionSetOrdersPaging({ fromPage }));
-    let changeRowsPerPageFE = pageSize => {
-        let a = '';
+    let changeRowsPerPageFE = pageSize => 
         dispatch(actionSetOrdersPaging({ fromPage: 0, pageSize }));
-    }
     let fromPage = state.frontend.ordersPaging.fromPage;
     const pageSize = state.frontend.ordersPaging.pageSize;
     return <Pagination allEntitiesCount={allEntitiesCount} fromPage={fromPage} pageSize={pageSize} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />

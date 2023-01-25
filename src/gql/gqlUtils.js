@@ -15,15 +15,17 @@ const createQueryExt = (searchQuery = {}, queryExt = {}) => {
     return { $and: [searchQuery, queryExt] };
 }
 
-const createQueryPaging = (fromPage, pageSize) => {
+const createQueryPaging = (fromPage, pageSize, sort) => {
     let result = {};
     if (fromPage !== undefined && pageSize !== undefined) {
         result["skip"] = [fromPage * pageSize];
         result["limit"] = [pageSize];
     }
+    if (sort)
+        result["sort"] = [sort];
     return result;
 }
 
-export const createFullQuery = ({ searchStr, searchFieldNames, queryExt = {} }, { fromPage, pageSize } = {}) => {
-    return { q: JSON.stringify([createQueryExt(createQuery(searchStr, searchFieldNames), queryExt), createQueryPaging(fromPage, pageSize)]) };
+export const createFullQuery = ({ searchStr, searchFieldNames, queryExt = {} }, { fromPage, pageSize, sort } = {}) => {
+    return { q: JSON.stringify([createQueryExt(createQuery(searchStr, searchFieldNames), queryExt), createQueryPaging(fromPage, pageSize, sort)]) };
 }

@@ -9,7 +9,7 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
     name: 'frontend', //префикс типа наподобие AUTH_
     initialState: {
         sidebar: {},
-        ordersPaging: { fromPage: 0, pageSize: 5 },
+        ordersPaging: { fromPage: 0, pageSize: 10 },
         goodsPaging: { fromPage: 0, pageSize: 5 }
     }, //state={} в параметрах
     reducers: {
@@ -21,7 +21,8 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             let { fromPage, pageSize } = action.payload.page;
             fromPage = fromPage ?? state.ordersPaging?.fromPage;
             pageSize = pageSize ?? state.ordersPaging?.pageSize;
-            state.ordersPaging = { fromPage, pageSize };
+            state.ordersPaging.fromPage = fromPage;
+            state.ordersPaging.pageSize = pageSize;
             return state;
         },
         setOrdersSearch(state, action) {
@@ -64,6 +65,16 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
         builder.addMatcher(ordersApi.endpoints.getOrdersCount.matchFulfilled,
             (state, { payload }) => {
                 state.orders = { ordersCount: { payload: payload.OrderCount } }
+            });
+        builder.addMatcher(ordersApi.endpoints.getOrders.matchFulfilled,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(ordersApi.endpoints.getOrders.matchRejected,
+            (state, data) => {
+                let a = '';
+                let b = '';
             });
     }
 })

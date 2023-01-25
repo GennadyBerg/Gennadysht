@@ -36,7 +36,7 @@ export const loginApi = createApi({
                 document: gql`
                     query UserFind($q: String) {
                         UserFindOne(query: $q){
-                            _id login nick avatar {url} createdAt
+                            _id login nick avatar {_id url} createdAt
                         } 
                     }
                     `,
@@ -66,8 +66,9 @@ export const loginApi = createApi({
                                 }
                             }
                         `,
-                variables: { user: { ...user, avatar: user?.avatar?._id } }
-            })
+                variables: { user }
+            }),
+            invalidatesTags: (result, error, arg) => ([{ type: 'User', id: arg._id }])
         }),
     }),
 })
@@ -99,7 +100,17 @@ const authSlice = createSlice({
                 let retrievedUser = payload?.UserFindOne;
                 if (retrievedUser?._id === state.currentUser?._id)
                     state.currentUser = retrievedUser;
-            })
+            });
+        builder.addMatcher(loginApi.endpoints.saveUser.matchFulfilled,
+            (state, { payload }) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(loginApi.endpoints.saveUser.matchRejected,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
     }
 })
 
