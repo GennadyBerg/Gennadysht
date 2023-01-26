@@ -7,21 +7,14 @@ import { ModalContainer } from "./ModalContainer";
 import { useEffect, useState } from "react";
 import { getFullImageUrl, saveImage } from "../utills/utils";
 import { Input } from "@mui/icons-material";
+import { UserEntity } from "../Entities";
 
 const getRoleIdx = (user, role) => {
     let res = user?.acl?.indexOf(role);
     return res ?? -1;
 }
-const isRole = (user, role) => getRoleIdx(user, role) >= 0;
-const isAdminRole = user => isRole(user, "admin");
-const isUserRole = user => isRole(user, "user");
-
 const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermissions }) => {
-    const copyUser = user => ({
-        ...user,
-        acl: user.acl ? [...user.acl] : [],
-        avatar: user.avatar ? { _id: user.avatar._id, url: user.avatar.url } : undefined
-    });
+    const copyUser = user => new UserEntity(user);
 
     let [user, setUser] = useState(copyUser(userExt));
 
@@ -30,7 +23,7 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermiss
     }, [userExt]);
 
     const setUserData = (data) => {
-        let userData = { ...user, ...data };
+        let userData = copyUser({ ...user, ...data });
         setUser(userData);
         return userData;
     }
@@ -44,24 +37,6 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermiss
         saveUser({ user: userToSave });
     }
 
-    const setRole = (user, role, isSet) => {
-        user.acl ??= [];
-        let roleIdx = getRoleIdx(user, role);
-        if (isSet) {
-            if (roleIdx < 0) {
-                user.acl.push(role);
-            }
-        }
-        else {
-            if (roleIdx >= 0) {
-                user.acl.splice(roleIdx, 1);
-            }
-        }
-        setUser({ ...user });
-    }
-    const setAdminRole = (user, isSet) => setRole(user, "admin", isSet);
-    const setUserRole = (user, isSet) => setRole(user, "user", isSet);
-    
     return user && (
         <>
             <Container maxWidth={maxWidth}>
@@ -116,15 +91,15 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermiss
                                                 <FormGroup>
                                                     <FormControlLabel control={(
                                                         <Checkbox
-                                                            checked={isUserRole(user)}
+                                                            checked={user.isUserRole}
                                                             disabled={!isAdminPermissions}
-                                                            onChange={e => setUserRole(user, e.target.checked)}
+                                                            onChange={e => { user.setUserRole(e.target.checked); setUser(copyUser(user)); }}
                                                         />)} label="User" />
                                                     <FormControlLabel control={(
                                                         <Checkbox
-                                                            checked={isAdminRole(user)}
+                                                            checked={user.isAdminRole}
                                                             disabled={!isAdminPermissions}
-                                                            onChange={e => setAdminRole(user, e.target.checked)}
+                                                            onChange={e => { user.setAdminRole(e.target.checked); setUser(copyUser(user)); }}
                                                         />)} label="Admin" />
                                                 </FormGroup>
                                             </Grid>
@@ -155,14 +130,14 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermiss
 
 const CEditableUser = ({ maxWidth = 'md' }) => {
     const { _id } = useParams();
-    let currentUser = useSelector(state => state.auth.currentUser);
+    let currentUser = useSelector(state => new UserEntity(state.auth.currentUser));
     const { isLoading, data } = useUserFindQuery(_id ?? currentUser?._id ?? 'jfbvwkbvjeb');
     let user = isLoading ? undefined : data?.UserFindOne;
     user = _id ? user : currentUser;
     const [saveUserMutation, { }] = useSaveUserMutation();
 
     let isCurrentUser = currentUser?._id === _id || !_id;
-    let isAdminPermissions = isAdminRole(currentUser);
+    let isAdminPermissions = currentUser.isAdminRole;
 
 
     return user && (isAdminPermissions || isCurrentUser) ? (

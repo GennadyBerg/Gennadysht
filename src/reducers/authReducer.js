@@ -4,6 +4,7 @@ import { graphqlRequestBaseQuery } from '@rtk-query/graphql-request-base-query' 
 import { jwtDecode } from "../utills";
 import { createSlice, current } from "@reduxjs/toolkit";
 import { history } from "../App";
+import { UserEntity } from "../Entities";
 //import { prepareHeaders } from "./index";
 
 export const prepareHeaders = (headers, { getState }) => {
