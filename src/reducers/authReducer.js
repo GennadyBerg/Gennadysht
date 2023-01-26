@@ -36,7 +36,7 @@ export const loginApi = createApi({
                 document: gql`
                     query UserFind($q: String) {
                         UserFindOne(query: $q){
-                            _id login nick avatar {_id url} createdAt
+                            _id login nick acl avatar {_id url} createdAt
                         } 
                     }
                     `,

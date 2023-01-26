@@ -95,8 +95,8 @@ function App() {
               <Route path="/order/:_id" component={COrder} />
               <Route path="/cart" component={CCart} />
               <Route path="/login" component={CLoginForm} />
-              <Route path="/user" component={CUser} />
               <Route path="/user/:_id" component={CUser} />
+              <Route path="/user" component={CUser} />
               <Route path="/logout" component={CLogout} />
 
               <Route path="*" component={NotFound} />

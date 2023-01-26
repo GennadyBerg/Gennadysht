@@ -1,18 +1,32 @@
 import { useSelector } from "react-redux"
 import { useSaveUserMutation, useUserFindQuery } from "../reducers";
 import { useParams } from "react-router-dom";
-import { Button, Card, CardActions, CardContent, CardMedia, Container, Grid, InputAdornment, TextField } from "@mui/material";
+import { Button, Card, CardActions, CardContent, CardMedia, Checkbox, Container, FormControlLabel, FormGroup, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import { CSortedFileDropZone } from "./SortedFileDropZone";
 import { ModalContainer } from "./ModalContainer";
 import { useEffect, useState } from "react";
 import { getFullImageUrl, saveImage } from "../utills/utils";
 import { Input } from "@mui/icons-material";
 
-const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
-    let [user, setUser] = useState(userExt);
+const getRoleIdx = (user, role) => {
+    let res = user?.acl?.indexOf(role);
+    return res ?? -1;
+}
+const isRole = (user, role) => getRoleIdx(user, role) >= 0;
+const isAdminRole = user => isRole(user, "admin");
+const isUserRole = user => isRole(user, "user");
+
+const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermissions }) => {
+    const copyUser = user => ({
+        ...user,
+        acl: user.acl ? [...user.acl] : [],
+        avatar: user.avatar ? { _id: user.avatar._id, url: user.avatar.url } : undefined
+    });
+
+    let [user, setUser] = useState(copyUser(userExt));
 
     useEffect(() => {
-        setUser(userExt);
+        setUser(copyUser(userExt));
     }, [userExt]);
 
     const setUserData = (data) => {
@@ -21,7 +35,7 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
         return userData;
     }
     const saveFullUser = async () => {
-        saveUser({ user: { _id: user._id, nick: user.nick } });
+        saveUser({ user: { _id: user._id, nick: user.nick, acl: user.acl ?? [] } });
     }
 
     const uploadAvatar = async param => {
@@ -30,6 +44,24 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
         saveUser({ user: userToSave });
     }
 
+    const setRole = (user, role, isSet) => {
+        user.acl ??= [];
+        let roleIdx = getRoleIdx(user, role);
+        if (isSet) {
+            if (roleIdx < 0) {
+                user.acl.push(role);
+            }
+        }
+        else {
+            if (roleIdx >= 0) {
+                user.acl.splice(roleIdx, 1);
+            }
+        }
+        setUser({ ...user });
+    }
+    const setAdminRole = (user, isSet) => setRole(user, "admin", isSet);
+    const setUserRole = (user, isSet) => setRole(user, "user", isSet);
+    
     return user && (
         <>
             <Container maxWidth={maxWidth}>
@@ -80,6 +112,22 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser }) => {
                                                     fullWidth
                                                 />
                                             </Grid>
+                                            <Grid item width="100%">
+                                                <FormGroup>
+                                                    <FormControlLabel control={(
+                                                        <Checkbox
+                                                            checked={isUserRole(user)}
+                                                            disabled={!isAdminPermissions}
+                                                            onChange={e => setUserRole(user, e.target.checked)}
+                                                        />)} label="User" />
+                                                    <FormControlLabel control={(
+                                                        <Checkbox
+                                                            checked={isAdminRole(user)}
+                                                            disabled={!isAdminPermissions}
+                                                            onChange={e => setAdminRole(user, e.target.checked)}
+                                                        />)} label="Admin" />
+                                                </FormGroup>
+                                            </Grid>
                                         </Grid>
                                     </CardContent>
                                 </Grid>
@@ -113,7 +161,13 @@ const CEditableUser = ({ maxWidth = 'md' }) => {
     user = _id ? user : currentUser;
     const [saveUserMutation, { }] = useSaveUserMutation();
 
-    return <EditableUser user={user} maxWidth={maxWidth} saveUser={saveUserMutation} />
+    let isCurrentUser = currentUser?._id === _id || !_id;
+    let isAdminPermissions = isAdminRole(currentUser);
+
+
+    return user && (isAdminPermissions || isCurrentUser) ? (
+        <EditableUser user={user} maxWidth={maxWidth} isAdminPermissions={isAdminPermissions} saveUser={saveUserMutation} />) :
+        <Typography>Permission denied</Typography>;
 }
 
 
