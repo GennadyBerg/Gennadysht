@@ -5,7 +5,15 @@ import { jwtDecode } from "../utills";
 import { createSlice, current } from "@reduxjs/toolkit";
 import { history } from "../App";
 import { UserEntity } from "../Entities";
+import { createFullQuery } from "../gql";
 //import { prepareHeaders } from "./index";
+
+const getUsersSearchParams = (searchStr, queryExt) => (
+    {
+        searchStr: searchStr,
+        searchFieldNames: ["nick", "login"],
+        queryExt
+    });
 
 export const prepareHeaders = (headers, { getState }) => {
     const token = getState().auth.token;
@@ -45,19 +53,6 @@ export const loginApi = createApi({
             }),
             providesTags: (result, error, id) => ([{ type: 'User', id }])
         }),
-        setNick: builder.mutation({
-            query: ({ _id, nick }) => ({
-                document: gql`
-                    mutation SetNick($_id:String, $nick: String){
-                        UserUpsert(user: {_id: $_id, nick: $nick}){
-                            _id, nick
-                        }
-                    }
-                `,
-                variables: { _id, nick }
-            }),
-            invalidatesTags: (result, error, arg) => ([{ type: 'User', id: arg._id }])
-        }),
         saveUser: builder.mutation({
             query: ({ user }) => ({
                 document: gql`
@@ -71,6 +66,33 @@ export const loginApi = createApi({
             }),
             invalidatesTags: (result, error, arg) => ([{ type: 'User', id: arg._id }])
         }),
+        getUsers: builder.query({
+            query: ({ fromPage, pageSize, searchStr = '' }) => {
+                let params = createFullQuery(getUsersSearchParams(searchStr), { fromPage, pageSize, sort: { _id: -1 } });
+                return {
+                    document: gql`
+                        query UserFind($q: String) {
+                            UserFind(query: $q){
+                                _id login nick acl avatar {_id url} createdAt
+                            } 
+                        }                
+                    `,
+                    variables: params
+                }
+            },
+        }),
+        getUsersCount: builder.query({
+            query: ({ searchStr = '' }) => {
+                let params = createFullQuery(getUsersSearchParams(searchStr));
+                return {
+                    document: gql`
+                            query UsersCount($q: String) { UserCount(query: $q) }
+                    `,
+                    variables: params
+                }
+            },
+        }),
+
     }),
 })
 
@@ -128,6 +150,6 @@ let authApiReducer = loginApi.reducer;
 let authReducer = authSlice.reducer;
 let authApiReducerPath = loginApi.reducerPath;
 
-export const { useLoginMutation, useUserFindQuery, useSaveUserMutation } = loginApi;
+export const { useLoginMutation, useUserFindQuery, useSaveUserMutation, useGetUsersQuery, useGetUsersCountQuery } = loginApi;
 export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe }
 

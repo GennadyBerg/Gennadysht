@@ -13,3 +13,4 @@ export { CRootCats } from './RootCats';
 export { CSortedFileDropZone } from './SortedFileDropZone';
 export { CEditableGood } from './EditableGood'
 export { CEditableUser as CUser } from './EditableUser';
+export { CUsersList } from './UsersList';

@@ -6,7 +6,7 @@ import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import { connect } from 'react-redux';
-import { actionSetGoodsSearch, actionSetOrderSearch } from '../reducers/frontEndReducer';
+import { actionSetGoodsSearch, actionSetOrderSearch, actionSetUsersSearch } from '../reducers/frontEndReducer';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -77,17 +77,21 @@ function SearchInput({ onChange }) {
 }
 
 export const COrdersSearchInput = connect(
-  state => {
-
-  },
+  state => { },
   {
     onChange: seacrhStr => actionSetOrderSearch(seacrhStr)
   }
 )(SearchInput);
-export const CGoodsSearchInput = connect(
-  state => {
 
-  },
+export const CUsersSearchInput = connect(
+  state => { },
+  {
+    onChange: seacrhStr => actionSetUsersSearch(seacrhStr)
+  }
+)(SearchInput);
+
+export const CGoodsSearchInput = connect(
+  state => { },
   {
     onChange: seacrhStr => actionSetGoodsSearch(seacrhStr)
   }

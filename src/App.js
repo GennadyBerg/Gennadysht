@@ -4,7 +4,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
 import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi } from './reducers';
-import { CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CUser } from "./Components";
+import { CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CUser, CUsersList } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -26,6 +26,7 @@ import {
 } from 'redux-persist';
 import { EditPost } from './Test/drop';
 import { FileDropZone } from './Components/FileDropZone';
+import { useEffect } from 'react';
 
 
 
@@ -77,17 +78,17 @@ const Main = () =>
 
 //<EditPost onSave={post => console.log(post)}/>
 function App() {
-
   return (
     <>
       <Router history={history}>
         <Provider store={store}>
           <div className="App">
             <CMainAppBar />
-            <CSidebar menuComponent={() => <CRootCats />} />
+            <CSidebar id="sidBar" menuComponent={() => <CRootCats />} />
             <Switch>
               <Route path="/" component={Main} exact />
               <Route path="/orders" component={COrdersList} />
+              <Route path="/users" component={CUsersList} />
               <Route path="/goods" component={CGoodsList} />
               <Route path="/good/:_id" component={CGood} />
               <Route path="/editgood/:_id" component={CEditableGood} />

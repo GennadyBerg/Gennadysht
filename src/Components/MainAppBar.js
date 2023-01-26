@@ -6,13 +6,15 @@ import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import { MyLink } from './MyLink';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
 import { actionSetSidebar } from '../reducers/frontEndReducer';
+import { UserEntity } from '../Entities';
 
 const MainAppBar = ({ token, openSidebar }) => {
     const theme = useTheme();
-
+    let currentUser = useSelector(state => new UserEntity(state.auth.currentUser ?? { _id: null }));
+    let isAdmin = currentUser.isAdminRole;
     let isLoggedIn = token && true;
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -33,19 +35,20 @@ const MainAppBar = ({ token, openSidebar }) => {
                     {
                         !isLoggedIn &&
                         <>
-                            <MyLink to="/login"><Button color="inherit">Login</Button></MyLink>
-                            <MyLink to="/register"><Button color="inherit">Register</Button></MyLink>
+                            <MyLink to="/login"><Button sx={{ color: "white" }}>Login</Button></MyLink>
+                            <MyLink to="/register"><Button sx={{ color: "white" }}>Register</Button></MyLink>
                         </>
                     }
                     {
                         isLoggedIn &&
                         <>
-                            <MyLink to="/logout"><Button color="inherit">Logout</Button></MyLink>
-                            <MyLink to="/orders"><Button color="inherit">Orders</Button></MyLink>
-                            <MyLink to="/user"><Button color="inherit">About Me</Button></MyLink>
+                            <MyLink to="/logout"><Button sx={{ color: "white" }}>Logout</Button></MyLink>
+                            <MyLink to="/orders"><Button sx={{ color: "white" }}>Orders</Button></MyLink>
+                            {isAdmin && <MyLink to="/users"><Button sx={{ color: "white" }}>Users</Button></MyLink>}
+                            <MyLink to="/user"><Button sx={{ color: "white" }}>About Me</Button></MyLink>
                         </>
                     }
-                    <MyLink to="/cart"><Button color="inherit">Cart</Button></MyLink>
+                    <MyLink to="/cart"><Button sx={{ color: "white" }}>Cart</Button></MyLink>
                 </Toolbar>
             </AppBar>
         </Box>

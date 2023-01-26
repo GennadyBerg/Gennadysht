@@ -116,7 +116,7 @@ const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermiss
                             Save
                         </Button>
                         <Button size='small' color='primary'
-                            onClick={() => setUser(userExt)}
+                            onClick={() => setUser(copyUser(userExt))}
                         >
                             Cancel
                         </Button>

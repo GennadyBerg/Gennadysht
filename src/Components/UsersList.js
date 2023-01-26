@@ -2,13 +2,13 @@ import React from 'react';
 import { Container, Typography, Paper, Link } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
-import { COrdersPagination } from './Pagination';
-import { COrdersSearchInput } from './SearchInput';
+import { CUsersPagination } from './Pagination';
+import { CUsersSearchInput } from './SearchInput';
 import { MyLink } from '.';
 import { useSelector } from 'react-redux';
-import { useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
+import { useGetUsersCountQuery, useGetUsersQuery } from '../reducers';
 
-const UsersList = ({ orders, fromPage, pageSize }) => {
+const UsersList = ({ users, fromPage, pageSize }) => {
 
     let headCells = [
         {
@@ -16,94 +16,87 @@ const UsersList = ({ orders, fromPage, pageSize }) => {
             numeric: true,
             disablePadding: true,
             label: '#',
-            align: "center"
+            align: "center",
+            xs: 1,
         },
         {
             id: 'Date',
             numeric: true,
             disablePadding: true,
             label: 'Date',
+            xs: 2,
         },
         {
-            id: 'Order ID',
+            id: 'User ID',
             numeric: true,
             disablePadding: true,
-            label: 'Order ID',
+            label: 'User ID',
+            xs: 3,
         },
         {
-            id: 'Total ($)',
+            id: 'login',
             numeric: true,
             disablePadding: true,
-            label: 'Total ($)',
-            align: "right"
+            label: 'login',
+            align: "right",
+            xs: 3,
         },
         {
-            id: 'Owner',
+            id: 'Nick',
             numeric: true,
             disablePadding: true,
-            label: 'Owner',
-            align: "right"
-        },
-        {
-            id: 'Note',
-            numeric: true,
-            disablePadding: true,
-            label: 'Note',
-            align: "right"
+            label: 'Nick',
+            align: "right",
+            xs: 3,
         },
     ]
     return (
         <>
             <Container maxWidth="lg">
-                <COrdersSearchInput />
+                <CUsersSearchInput />
                 <TableContainer component={Paper} >
                     <Table sx={{ overflow: 'scroll' }} >
                         <TableHead>
                             <TableRow>
                                 {
                                     headCells.map(headCell => {
-                                        return <StyledTableCell key={headCell.id} align={headCell.align}>{headCell.label}</StyledTableCell>
+                                        return <StyledTableCell key={headCell.id} align={headCell.align} xs={headCell.xs}>{headCell.label}</StyledTableCell>
                                     })
                                 }
                             </TableRow>
                         </TableHead>
-                        {orders?.length > 0 && (
+                        {users?.length > 0 && (
                             <TableBody>
                                 {
-                                    orders.map((order, index) => {
+                                    users.map((user, index) => {
                                         return (
-                                            <StyledTableRow key={order._id}>
-                                                <StyledTableCell align="right" >
+                                            <StyledTableRow key={user._id}>
+                                                <StyledTableCell align="right" width="10%">
                                                     <Typography>
                                                         {(fromPage * pageSize) + index + 1}.
                                                     </Typography>
                                                 </StyledTableCell>
-                                                <StyledTableCell  >
-                                                    {new Date(+order.createdAt).toLocaleString()}
+                                                <StyledTableCell width="15%">
+                                                    {new Date(+user.createdAt).toLocaleString()}
                                                 </StyledTableCell>
-                                                <StyledTableCell  >
-                                                    <MyLink to={`/order/${order._id}`}>
+                                                <StyledTableCell width="25%">
+                                                    <MyLink to={`/user/${user._id}`}>
                                                         <Typography >
-                                                            {order._id}
+                                                            {user._id}
                                                         </Typography>
                                                     </MyLink>
                                                 </StyledTableCell>
-                                                <StyledTableCell align="right" >
+                                                <StyledTableCell align="right" width="25%">
                                                     <Typography >
-                                                        {order.total}
+                                                        {user.login}
                                                     </Typography>
                                                 </StyledTableCell>
-                                                <StyledTableCell align="right" >
+                                                <StyledTableCell align="right" width="25%">
                                                     <Link href='#'>
                                                         <Typography>
-                                                            {order.owner?.nick}
+                                                            {user.nick}
                                                         </Typography>
                                                     </Link>
-                                                </StyledTableCell>
-                                                <StyledTableCell align="right" >
-                                                    <Typography>
-                                                        {order.notes}
-                                                    </Typography>
                                                 </StyledTableCell>
                                             </StyledTableRow>
                                         )
@@ -111,26 +104,26 @@ const UsersList = ({ orders, fromPage, pageSize }) => {
                                 }
                             </TableBody>
                         )}
-                        <COrdersPagination />
                     </Table>
+                    <CUsersPagination />
                 </TableContainer>
             </Container>
         </>
     )
 
 }
-const COrdersList = () => {
+const CUsersList = () => {
     let state = useSelector(state => state);
-    const searchStr = state.frontend.ordersSearchStr;
-    const fromPage = state.frontend.ordersPaging.fromPage;
-    const pageSize = state.frontend.ordersPaging.pageSize;
+    const searchStr = state.frontend.usersSearchStr;
+    const fromPage = state.frontend.usersPaging.fromPage;
+    const pageSize = state.frontend.usersPaging.pageSize;
 
-    const ordersResult = useGetOrdersQuery({ fromPage, pageSize, searchStr });
-    const ordersCountResult = useGetOrdersCountQuery({ searchStr });
-    let isLoading = ordersResult.isLoading || ordersCountResult.isLoading;
+    const usersResult = useGetUsersQuery({ fromPage, pageSize, searchStr });
+    const usersCountResult = useGetUsersCountQuery({ searchStr });
+    let isLoading = usersResult.isLoading || usersCountResult.isLoading;
 
-    let orders = !isLoading && ordersResult.data?.OrderFind;
-    return !isLoading  && orders && <OrderList orders={orders} fromPage={fromPage} pageSize={pageSize} />
+    let users = !isLoading && usersResult.data?.UserFind;
+    return !isLoading && users && <UsersList users={users} fromPage={fromPage} pageSize={pageSize} />
 }
 
-////export { COrdersList };
+export { CUsersList };

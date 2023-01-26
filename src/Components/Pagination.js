@@ -1,6 +1,6 @@
 import { TablePagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { getOrdersCount } from '../reducers';
+import { actionSetUsersPaging, getOrdersCount, getUsersCount } from '../reducers';
 import { actionSetGoodsPaging, actionSetOrdersPaging, getGoodsCount } from '../reducers';
 
 const Pagination = ({ allEntitiesCount, fromPage, pageSize, changePageFE, changeRowsPerPageFE }) => {
@@ -48,3 +48,14 @@ export const CGoodsPagination = () => {
     return <Pagination allEntitiesCount={allEntitiesCount} fromPage={fromPage} pageSize={pageSize} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />
 }
 
+export const CUsersPagination = () => {
+    let state = useSelector(state => state);
+    let allEntitiesCount = getUsersCount(state);
+    let dispatch = useDispatch();
+    let changePageFE = (fromPage) => dispatch(actionSetUsersPaging({ fromPage }));
+    let changeRowsPerPageFE = pageSize => 
+        dispatch(actionSetUsersPaging({ fromPage: 0, pageSize }));
+    let fromPage = state.frontend.usersPaging.fromPage;
+    const pageSize = state.frontend.usersPaging.pageSize;
+    return <Pagination allEntitiesCount={allEntitiesCount} fromPage={fromPage} pageSize={pageSize} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />
+}
