@@ -6,7 +6,8 @@ import { COrdersPagination, CPagination } from './Pagination';
 import { CSearchInput } from './SearchInput';
 import { MyLink } from '.';
 import { useSelector } from 'react-redux';
-import { frontEndNames, getEntitiesListShowParams, useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
+import { frontEndNames, getCurrentUser, getEntitiesListShowParams, useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
+import { UserEntity } from '../Entities';
 
 const OrderList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
 
@@ -55,7 +56,7 @@ const OrderList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
     return (
         <>
             <Container maxWidth="lg">
-            <CSearchInput entitiesTypeName={entitiesTypeName} />
+                <CSearchInput entitiesTypeName={entitiesTypeName} />
                 <TableContainer component={Paper} >
                     <Table sx={{ overflow: 'scroll' }} >
                         <TableHead>
@@ -94,11 +95,16 @@ const OrderList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
                                                     </Typography>
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >
-                                                    <Link href='#'>
-                                                        <Typography>
-                                                            {order.owner?.nick}
-                                                        </Typography>
-                                                    </Link>
+                                                    {
+                                                        order.owner ?
+                                                        <MyLink to={`/user/${order.owner._id}`}>
+                                                            <Typography>
+                                                                {order.owner?.nick || order.owner.login}
+                                                            </Typography>
+                                                        </MyLink>
+                                                        :
+                                                        <Typography>No owner</Typography>
+                                                    }
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >
                                                     <Typography>
@@ -111,8 +117,8 @@ const OrderList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
                                 }
                             </TableBody>
                         )}
-                        <CPagination entitiesTypeName={entitiesTypeName} />
                     </Table>
+                    <CPagination entitiesTypeName={entitiesTypeName} />
                 </TableContainer>
             </Container>
         </>
@@ -123,13 +129,14 @@ const COrdersList = () => {
     let entitiesTypeName = frontEndNames.orders;
     let state = useSelector(state => state);
     const { fromPage, pageSize, searchStr } = getEntitiesListShowParams(entitiesTypeName, state);
-
-    const ordersResult = useGetOrdersQuery({ fromPage, pageSize, searchStr });
-    const ordersCountResult = useGetOrdersCountQuery({ searchStr });
+    let currentUser = useSelector(state => new UserEntity(getCurrentUser(state)));
+    
+    const ordersResult = useGetOrdersQuery({ fromPage, pageSize, searchStr, owner: currentUser });
+    const ordersCountResult = useGetOrdersCountQuery({ searchStr, owner: currentUser });
     let isLoading = ordersResult.isLoading || ordersCountResult.isLoading;
 
     let entities = !isLoading && ordersResult.data?.OrderFind;
-    return !isLoading  && entities && <OrderList entities={entities} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />
+    return !isLoading && <OrderList entities={entities} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />
 }
 
 export { COrdersList };

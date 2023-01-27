@@ -38,7 +38,7 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
         setOrdersSearch(state, action) {
             return setEntitiesSearchStr(frontEndNames.orders, state, action);
         },
-        setCurrentOrder(state, action) {
+        setCurrentOrders(state, action) {
             return setCurrentEntity(frontEndNames.orders, state, action.payload._id);
         },
         setUsersPaging(state, action) {
@@ -53,7 +53,7 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
         setGoodsSearch(state, action) {
             return setEntitiesSearchStr(frontEndNames.goods, state, action);
         },
-        setCurrentGood(state, action) {
+        setCurrentGoods(state, action) {
             return setCurrentEntity(frontEndNames.goods, state, action.payload._id);
         },
         setCurrentCategory(state, action) {
@@ -84,6 +84,16 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
                 let b = '';
             });
         builder.addMatcher(ordersApi.endpoints.getOrders.matchRejected,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(ordersApi.endpoints.getOrderById.matchFulfilled,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(ordersApi.endpoints.getOrderById.matchRejected,
             (state, data) => {
                 let a = '';
                 let b = '';

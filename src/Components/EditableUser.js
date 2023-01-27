@@ -1,15 +1,11 @@
 import { useSelector } from "react-redux"
-import { useSaveUserMutation, useUserFindQuery } from "../reducers";
+import { frontEndNames, getCurrentEntity, getCurrentUser, useSaveUserMutation, useUserFindQuery } from "../reducers";
 import { useParams } from "react-router-dom";
 import { Button, Card, CardActions, CardContent, CardMedia, Checkbox, Container, FormControlLabel, FormGroup, Grid, InputAdornment, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { getFullImageUrl, saveImage } from "../utills/utils";
 import { UserEntity } from "../Entities";
 
-const getRoleIdx = (user, role) => {
-    let res = user?.acl?.indexOf(role);
-    return res ?? -1;
-}
 const EditableUser = ({ user: userExt = {_id: null, login: '', nick: ''}, maxWidth = 'md', saveUser, isAdminPermissions }) => {
     const copyUser = user => new UserEntity(user);
 
@@ -127,14 +123,14 @@ const EditableUser = ({ user: userExt = {_id: null, login: '', nick: ''}, maxWid
 
 const CEditableUser = ({ maxWidth = 'md' }) => {
     const { _id } = useParams();
-    let currentUser = useSelector(state => new UserEntity(state.auth.currentUser));
+    let currentUser = useSelector(state => new UserEntity(getCurrentUser(state)));
     const { isLoading, data } = useUserFindQuery(_id ?? currentUser?._id ?? 'jfbvwkbvjeb');
     let user = isLoading ? undefined : data?.UserFindOne;
     user = _id ? user : currentUser;
     const [saveUserMutation, { }] = useSaveUserMutation();
 
     let isCurrentUser = currentUser?._id === _id || !_id;
-    let isAdminPermissions = currentUser.isAdminRole;
+    let isAdminPermissions = currentUser?.isAdminRole ?? false;
 
 
     return user && (isAdminPermissions || isCurrentUser) ? (

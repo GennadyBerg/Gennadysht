@@ -1,10 +1,11 @@
 import React from 'react';
 import { Button, Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
-import { connect, useDispatch, useSelector } from "react-redux"
-import { useAddOrderMutation, useGetCartGoodsQuery } from "../reducers"
+import { connect, useSelector } from "react-redux"
+import { frontEndNames, getCurrentEntity, getCurrentUser, useAddOrderMutation, useGetCartGoodsQuery } from "../reducers"
 import { CartGoodsList } from "./CartGoodsList"
 import { findObjectIndexById } from '../utills';
+import { MyLink } from './MyLink';
 
 const mapCountToGood = (goodData, goodsCounts) => {
     let count = 0;
@@ -23,6 +24,7 @@ const Cart = () => {
     for (let good of Object.values(state.cart.goods)) {
         order.push({ good: { _id: good._id }, count: good.count });
     }
+    let currentUser = useSelector(state => getCurrentUser(state));
     const [addOrderMutation, { isLoading: isOrderAdding, data: orderAddingData }] = useAddOrderMutation();
     return !isLoading && (
         <>
@@ -32,11 +34,19 @@ const Cart = () => {
                         Cart
                     </Typography>
                     <CartGoodsList goods={goodsData ?? []} />
-                    <Button size='small' color='primary' disabled={isOrderAdding}
-                        onClick={() => addOrderMutation({ order })}
-                    >
-                        Place Order
-                    </Button>
+                    {
+                        !currentUser ?
+                            <>
+                                <Typography>User not logged in. </Typography>
+                                <MyLink to='/login'>Please login</MyLink>
+
+                            </> :
+                            <Button size='small' color='primary' disabled={isOrderAdding}
+                                onClick={() => addOrderMutation({ order })}
+                            >
+                                Place Order
+                            </Button>
+                    }
                 </Box>
             </Container>
         </>

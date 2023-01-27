@@ -1,9 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
 import { gql } from "graphql-request";
+import { useSelector } from 'react-redux';
+import { frontEndNames, getCurrentEntity } from '.';
 import { createFullQuery } from '../gql';
 
-const getOrderSearchParams = query => ({ searchStr: query, searchFieldNames: ["_id"] });
+const getOrderSearchParams = (query, queryExt) => ({ searchStr: query, searchFieldNames: ["_id"], queryExt });
 const prepareHeaders = (headers, { getState }) => {
     const token = getState().auth.token;
     if (token) {
@@ -19,13 +21,17 @@ const ordersApi = createApi({
     }),
     endpoints: (builder) => ({
         getOrders: builder.query({
-            query: ({ fromPage, pageSize, searchStr = '' }) => {
-                let params = createFullQuery(getOrderSearchParams(searchStr), { fromPage, pageSize, sort: { _id: -1 } });
+            query: ({ owner, fromPage, pageSize, searchStr = '' }) => {
+                let queryOrders = GetOwnerQuery(owner);
+                let params = createFullQuery(getOrderSearchParams(searchStr, queryOrders), { fromPage, pageSize, sort: { _id: -1 } });
                 return {
                     document: gql`
                             query OrderFind($q: String) {
                                 OrderFind(query: $q) {
-                                    _id total createdAt
+                                    _id total createdAt 
+                                    owner {
+                                        _id nick login
+                                    }
                                     orderGoods {
                                         _id price count total createdAt
                                         good {
@@ -41,8 +47,9 @@ const ordersApi = createApi({
             },
         }),
         getOrdersCount: builder.query({
-            query: ({ searchStr = '' }) => {
-                let params = createFullQuery(getOrderSearchParams(searchStr));
+            query: ({ owner, searchStr = '' }) => {
+                let queryOrders = GetOwnerQuery(owner);
+                let params = createFullQuery(getOrderSearchParams(searchStr, queryOrders));
                 return {
                     document: gql`
                             query OrdersCount($q: String) { OrderCount(query: $q) }
@@ -52,13 +59,14 @@ const ordersApi = createApi({
             },
         }),
         getOrderById: builder.query({
-            query: (_id) => {
-                let params = createFullQuery({ queryExt: { _id } });
+            query: ({ owner, _id }) => {
+                let queryOrders = GetOwnerQuery(owner);
+                let params = createFullQuery({ queryExt: { ...queryOrders, _id } });
                 return {
                     document: gql`
                             query OrderFindOne($q: String) {
                                 OrderFindOne(query: $q) {
-                                    _id total createdAt
+                                    _id total createdAt #owner
                                     orderGoods {
                                         _id price count total createdAt
                                         good {
@@ -75,16 +83,18 @@ const ordersApi = createApi({
             },
         }),
         addOrder: builder.mutation({
-            query: ({ order, id = null }) => ({
-                document: gql`
+            query: ({ order, id = null }) => (
+                {
+                    document: gql`
                         mutation OrderUpsert($order: OrderInput) {
                             OrderUpsert(order: $order) {
                                 _id
                             } 
                         }
                         `,
-                variables: { order: { "_id": id, "orderGoods": order } }
-            })
+                    variables: { order: { "_id": id, "orderGoods": order } }
+                }
+            )
         }),
     }),
 });
@@ -92,4 +102,8 @@ const ordersApi = createApi({
 
 export const { useGetOrdersQuery, useGetOrdersCountQuery, useGetOrderByIdQuery, useAddOrderMutation } = ordersApi;
 export { ordersApi };
+
+function GetOwnerQuery(owner) {
+    return owner?._id && !owner.isAdminRole ? { ___owner: { $in: [owner._id] } } : {};
+}
 

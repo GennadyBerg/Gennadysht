@@ -1,11 +1,14 @@
 import React, { useEffect } from 'react';
 import { Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
-import { connect, useDispatch } from "react-redux"
+import { connect, useDispatch, useSelector } from "react-redux"
 import { actionOrderFindOne, getCurrentOrder, useGetOrderByIdQuery } from "../reducers/ordersReducer"
 import { OrderGoodsList } from "./OrderGoodsList"
 import { useParams } from 'react-router-dom/cjs/react-router-dom';
 import { actionSetCurrentEntity, frontEndNames } from '../reducers/frontEndReducer';
+import { MyLink } from './MyLink';
+import { getCurrentUser } from '../reducers';
+import { UserEntity } from '../Entities';
 
 let exampleOrder = {
     "_id": "62cdc9b3b74e1f5f2ec1a0e9",
@@ -72,6 +75,16 @@ const Order = ({ order = {} }) => {
                     <Typography gutterBottom variant='body2' color='textSecondary' component='p'>
                         {`Created at: ${new Date(+order.createdAt).toLocaleString()}`}
                     </Typography>
+                    <Typography paragraph gutterBottom component={'h4'} variant={'h4'}>
+                        {
+                            order.owner ?
+                                <MyLink to={`/user/${order.owner._id}`}>
+                                    Owner# {order.owner?.nick || order.owner?.login}
+                                </MyLink>
+                                :
+                                "No owner"
+                        }
+                    </Typography>
                     <OrderGoodsList orderGoods={order?.orderGoods} />
                 </Box>
             </Container>
@@ -80,11 +93,17 @@ const Order = ({ order = {} }) => {
 }
 const COrder = () => {
     const { _id } = useParams();
-    const { isLoading, data } = useGetOrderByIdQuery(_id);
+    let currentUser = useSelector(state => getCurrentUser(state));
+    const { isLoading, data } = useGetOrderByIdQuery({ _id, owner: new UserEntity(currentUser) });
     let order = isLoading ? { name: 'loading', order: {} } : data?.OrderFindOne;
     const dispatch = useDispatch();
     dispatch(actionSetCurrentEntity(frontEndNames.orders, _id));
-    return !isLoading && <Order order={order} />;
+    return !isLoading && 
+        order ?
+        <Order order={order} />
+        :
+        <Typography>Insuffcient permissions to view order</Typography>
+        ;
 }
 
 export { COrder };

@@ -159,11 +159,13 @@ const actionAboutMe = () =>
         }
     }
 
+const getCurrentUser = state => state.auth?.currentUser ?? {};
+
 const { logout: actionAuthLogout } = authSlice.actions;
 let authApiReducer = loginApi.reducer;
 let authReducer = authSlice.reducer;
 let authApiReducerPath = loginApi.reducerPath;
 
 export const { useLoginMutation, useUserFindQuery, useSaveUserMutation, useGetUsersQuery, useGetUsersCountQuery, useRegisterMutation } = loginApi;
-export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe }
+export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe, getCurrentUser  }
 
