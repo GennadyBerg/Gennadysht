@@ -40,6 +40,20 @@ export const loginApi = createApi({
                 variables: { login, password }
             })
         }),
+        register: builder.mutation({
+            query: ({ login, password, nick }) => ({
+                document: gql`
+                mutation UserRegistration($login: String, $password: String, $nick: String) {
+                    UserUpsert(user: {login: $login, password: $password, nick: $nick}) {
+                      _id
+                      createdAt
+                      nick
+                    }
+                  }
+                    `,
+                variables: { login, password, nick: nick || login }
+            })
+        }),
         userFind: builder.query({
             query: (_id) => ({
                 document: gql`
@@ -150,6 +164,6 @@ let authApiReducer = loginApi.reducer;
 let authReducer = authSlice.reducer;
 let authApiReducerPath = loginApi.reducerPath;
 
-export const { useLoginMutation, useUserFindQuery, useSaveUserMutation, useGetUsersQuery, useGetUsersCountQuery } = loginApi;
+export const { useLoginMutation, useUserFindQuery, useSaveUserMutation, useGetUsersQuery, useGetUsersCountQuery, useRegisterMutation } = loginApi;
 export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe }
 

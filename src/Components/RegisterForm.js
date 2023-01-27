@@ -1,19 +1,22 @@
 import React, { useState } from 'react';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Button from '@mui/material/Button';
 import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
 import { Box } from '@mui/system';
 import { connect, useDispatch } from 'react-redux';
 import { MyLink } from './MyLink';
-import { actionAboutMe, useLoginMutation } from '../reducers/authReducer';
+import { actionAboutMe, useLoginMutation, useRegisterMutation } from '../reducers/authReducer';
 
-const LoginForm = () => {
-    const [onLogin, { data, isLoading }] = useLoginMutation()
+const RegisterForm = () => {
+    const [onRegister, { data, isLoading }] = useRegisterMutation()
+    const [onLogin, { }] = useLoginMutation();
     const dispatch = useDispatch()
 
     const [login, setLogin] = useState('');
+    const [nick, setNick] = useState('');
     const [password, setPassword] = useState('');
-    const isButtonActive = !isLoading && login?.length > 3 && password?.length > 3;
+    const [passwordRetype, setPasswordRetype] = useState('');
+    const arePasswordsEqual = password === passwordRetype;
+    const isButtonActive = !isLoading && arePasswordsEqual && login?.length > 3 && password?.length > 3;
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -29,19 +32,31 @@ const LoginForm = () => {
                     <LockOutlinedIcon />
                 </Avatar>
                 <Typography component="h1" variant="h5">
-                    Sign in
+                    Sign up
                 </Typography>
                 <TextField
                     fullWidth
                     margin="normal"
                     autoFocus
                     required
-                    id="login-input"
+                    id="register-input"
+                    label="Nick"
+                    size="small"
+                    defaultValue=""
+                    onChange={e => setNick(e.target.value)}
+                />
+                <TextField
+                    fullWidth
+                    margin="normal"
+                    autoFocus
+                    required
+                    id="register-input"
                     label="Login"
                     size="small"
                     defaultValue=""
                     onChange={e => setLogin(e.target.value)}
                 />
+
                 <TextField
                     fullWidth
                     margin="normal"
@@ -52,6 +67,18 @@ const LoginForm = () => {
                     size="small"
                     defaultValue=""
                     onChange={e => setPassword(e.target.value)}
+                />
+                <TextField
+                    fullWidth
+                    margin="normal"
+                    required
+                    id="password-retype-input"
+                    label="Retype Password"
+                    type="password"
+                    size="small"
+                    defaultValue=""
+                    onChange={e => setPasswordRetype(e.target.value)}
+                    color={arePasswordsEqual ? 'primary' : 'error'}
                 />
                 <FormControlLabel
                     control={<Checkbox value="remember" color="primary" />}
@@ -64,25 +91,14 @@ const LoginForm = () => {
                     fullWidth
                     type="submit"
                     disabled={!isButtonActive}
-                    onClick={() => onLogin({ login, password }).then(() => dispatch(actionAboutMe()))}>
-                    Login...
+                    onClick={() => onRegister({ login, password, nick }).then(() => onLogin({ login, password })).then(() => dispatch(actionAboutMe()))}>
+                    Register...
                 </MyLink>
-                <Grid container>
-                    <Grid item xs>
-                        <Link href="#" variant='body2'>
-                            Forgot password?
-                        </Link>
-                    </Grid>
-                    <Grid item>
-                        <MyLink to="/register" variant='body2'>
-                            {"Don't have an account? Sign Up"}
-                        </MyLink>
-                    </Grid>
-                </Grid>
             </Box>
         </Container>
     )
 }
-const CLoginForm = connect(null, {})(LoginForm)
+const CRegisterForm = connect(null, {})(RegisterForm)
 
-export { CLoginForm };
+
+export { CRegisterForm };

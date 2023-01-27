@@ -2,18 +2,15 @@ import { useSelector } from "react-redux"
 import { useSaveUserMutation, useUserFindQuery } from "../reducers";
 import { useParams } from "react-router-dom";
 import { Button, Card, CardActions, CardContent, CardMedia, Checkbox, Container, FormControlLabel, FormGroup, Grid, InputAdornment, TextField, Typography } from "@mui/material";
-import { CSortedFileDropZone } from "./SortedFileDropZone";
-import { ModalContainer } from "./ModalContainer";
 import { useEffect, useState } from "react";
 import { getFullImageUrl, saveImage } from "../utills/utils";
-import { Input } from "@mui/icons-material";
 import { UserEntity } from "../Entities";
 
 const getRoleIdx = (user, role) => {
     let res = user?.acl?.indexOf(role);
     return res ?? -1;
 }
-const EditableUser = ({ user: userExt, maxWidth = 'md', saveUser, isAdminPermissions }) => {
+const EditableUser = ({ user: userExt = {_id: null, login: '', nick: ''}, maxWidth = 'md', saveUser, isAdminPermissions }) => {
     const copyUser = user => new UserEntity(user);
 
     let [user, setUser] = useState(copyUser(userExt));
