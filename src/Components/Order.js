@@ -5,7 +5,7 @@ import { connect, useDispatch } from "react-redux"
 import { actionOrderFindOne, getCurrentOrder, useGetOrderByIdQuery } from "../reducers/ordersReducer"
 import { OrderGoodsList } from "./OrderGoodsList"
 import { useParams } from 'react-router-dom/cjs/react-router-dom';
-import { actionSetCurrentOrder } from '../reducers/frontEndReducer';
+import { actionSetCurrentEntity, frontEndNames } from '../reducers/frontEndReducer';
 
 let exampleOrder = {
     "_id": "62cdc9b3b74e1f5f2ec1a0e9",
@@ -83,7 +83,7 @@ const COrder = () => {
     const { isLoading, data } = useGetOrderByIdQuery(_id);
     let order = isLoading ? { name: 'loading', order: {} } : data?.OrderFindOne;
     const dispatch = useDispatch();
-    dispatch(actionSetCurrentOrder(_id));
+    dispatch(actionSetCurrentEntity(frontEndNames.orders, _id));
     return !isLoading && <Order order={order} />;
 }
 

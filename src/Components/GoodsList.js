@@ -3,41 +3,40 @@ import { Container, Box } from '@mui/material';
 import { CGoodItem } from './GoodItem';
 import { useSelector } from 'react-redux';
 import { useGetGoodsCountQuery, useGetGoodsQuery } from '../reducers';
-import { CGoodsSearchInput } from './SearchInput';
-import { CGoodsPagination } from './Pagination';
-import { getCurrentCategory } from '../reducers/frontEndReducer';
+import { CSearchInput } from './SearchInput';
+import { CPagination } from './Pagination';
+import { frontEndNames, getCurrentEntity, getEntitiesListShowParams } from '../reducers/frontEndReducer';
 
-const GoodsList = ({ goods }) => {
+const GoodsList = ({  entities, entitiesTypeName }) => {
     return (
         <Container maxWidth='lg'>
-            <CGoodsSearchInput />
+            <CSearchInput entitiesTypeName={entitiesTypeName} />
             <Box sx={{ display: 'flex', flexWrap: 'wrap' }}>
                 {
-                    goods?.map(good => {
+                    entities?.map(good => {
                         return (
                             <CGoodItem key={good._id} good={good} maxWidth='xs' />
                         )
                     })}
             </Box>
-            <CGoodsPagination />
+            <CPagination entitiesTypeName={entitiesTypeName} />
         </Container>
     )
 }
 
 const CGoodsList = () => {
+    let entitiesTypeName = frontEndNames.goods;
     let state = useSelector(state => state);
-    const currentCategory = getCurrentCategory(state);
-    const searchStr = state.frontend.goodsSearchStr;
-    const fromPage = state.frontend.goodsPaging.fromPage;
-    const pageSize = state.frontend.goodsPaging.pageSize;
+    const currentCategory = getCurrentEntity(frontEndNames.category, state);
+    const { fromPage, pageSize, searchStr } = getEntitiesListShowParams(entitiesTypeName, state);
 
     let categoryFilter = currentCategory ? { "categories._id": currentCategory } : {};
     const goodsResult = useGetGoodsQuery({ fromPage, pageSize, searchStr, queryExt: categoryFilter });
     const goodsCountResult = useGetGoodsCountQuery({ searchStr, queryExt: categoryFilter });
     let isLoading = goodsResult.isLoading || goodsCountResult.isLoading;
 
-    let goods = goodsResult.data?.GoodFind;
-    return !isLoading && goods && <GoodsList goods={goods} />
+    let entities = goodsResult.data?.GoodFind;
+    return !isLoading && entities && <GoodsList entitiesTypeName={entitiesTypeName} entities={entities} />
 }
 
 

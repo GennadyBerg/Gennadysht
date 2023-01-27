@@ -5,11 +5,10 @@ import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMed
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
-import { actionAddGoodToCart } from '../reducers';
+import { actionAddGoodToCart, actionSetCurrentEntity, frontEndNames } from '../reducers';
 import { useDispatch } from 'react-redux';
 import { useGetGoodByIdQuery } from '../reducers';
 import { useParams } from 'react-router-dom';
-import { actionSetCurrentGood } from '../reducers/frontEndReducer';
 import { MyLink } from './MyLink';
 
 
@@ -128,7 +127,7 @@ const CGood = ({ good, maxWidth = 'md', showAddToCard = true, editable = true })
     const dispatch = useDispatch();
     if (!good) {
         good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
-        dispatch(actionSetCurrentGood(_id));
+        dispatch(actionSetCurrentEntity(frontEndNames.goods, _id));
     }
 
     return <Good good={good} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />

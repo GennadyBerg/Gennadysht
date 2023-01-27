@@ -5,8 +5,8 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
-import { connect } from 'react-redux';
-import { actionSetGoodsSearch, actionSetOrderSearch, actionSetUsersSearch } from '../reducers/frontEndReducer';
+import { useDispatch } from 'react-redux';
+import { actionSetSearch } from '../reducers/frontEndReducer';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -50,7 +50,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
   },
 }));
 
-function SearchInput({ onChange }) {
+function SearchInput({ onChange, entitiesTypeName }) {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Toolbar>
@@ -68,7 +68,7 @@ function SearchInput({ onChange }) {
           <StyledInputBase
             placeholder="Search…"
             inputProps={{ 'aria-label': 'search' }}
-            onChange={e => onChange(e.target.value)}
+            onChange={e => onChange(entitiesTypeName, e.target.value)}
           />
         </Search>
       </Toolbar>
@@ -76,23 +76,9 @@ function SearchInput({ onChange }) {
   );
 }
 
-export const COrdersSearchInput = connect(
-  state => { },
-  {
-    onChange: seacrhStr => actionSetOrderSearch(seacrhStr)
-  }
-)(SearchInput);
 
-export const CUsersSearchInput = connect(
-  state => { },
-  {
-    onChange: seacrhStr => actionSetUsersSearch(seacrhStr)
-  }
-)(SearchInput);
 
-export const CGoodsSearchInput = connect(
-  state => { },
-  {
-    onChange: seacrhStr => actionSetGoodsSearch(seacrhStr)
-  }
-)(SearchInput);
+export const CSearchInput = (props) => {
+  let dispatch = useDispatch();
+  return <SearchInput {...props} onChange={(entitiesTypeName, seacrhStr) => dispatch(actionSetSearch(entitiesTypeName, seacrhStr))} />
+}

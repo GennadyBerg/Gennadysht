@@ -1,7 +1,7 @@
 import { TablePagination } from '@mui/material';
 import { useDispatch, useSelector } from 'react-redux';
-import { actionSetUsersPaging, getOrdersCount, getUsersCount } from '../reducers';
-import { actionSetGoodsPaging, actionSetOrdersPaging, getGoodsCount } from '../reducers';
+import { actionSetPaging, getEntitiesListShowParams } from '../reducers';
+import { getEntitiesCount } from '../reducers';
 
 const Pagination = ({ allEntitiesCount, fromPage, pageSize, changePageFE, changeRowsPerPageFE }) => {
     allEntitiesCount = allEntitiesCount ?? 0;
@@ -26,36 +26,17 @@ const Pagination = ({ allEntitiesCount, fromPage, pageSize, changePageFE, change
 }
 
 
-export const COrdersPagination = () => {
+export const CPagination = ({entitiesTypeName}) => {
+    const setPaging = (paging) => actionSetPaging(entitiesTypeName, paging)
     let state = useSelector(state => state);
-    let allEntitiesCount = getOrdersCount(state);
+    let allEntitiesCount = getEntitiesCount(entitiesTypeName, state);
     let dispatch = useDispatch();
-    let changePageFE = (fromPage) => dispatch(actionSetOrdersPaging({ fromPage }));
+    let changePageFE = (fromPage) =>
+    {
+        dispatch(setPaging({ fromPage }));
+    }
     let changeRowsPerPageFE = pageSize => 
-        dispatch(actionSetOrdersPaging({ fromPage: 0, pageSize }));
-    let fromPage = state.frontend.ordersPaging.fromPage;
-    const pageSize = state.frontend.ordersPaging.pageSize;
-    return <Pagination allEntitiesCount={allEntitiesCount} fromPage={fromPage} pageSize={pageSize} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />
-}
-export const CGoodsPagination = () => {
-    let state = useSelector(state => state);
-    let allEntitiesCount = getGoodsCount(state);
-    let dispatch = useDispatch();
-    let changePageFE = (fromPage) => dispatch(actionSetGoodsPaging({ fromPage }));
-    let changeRowsPerPageFE = pageSize => dispatch(actionSetGoodsPaging({ fromPage: 0, pageSize }));
-    let fromPage = state.frontend.goodsPaging.fromPage;
-    const pageSize = state.frontend.goodsPaging.pageSize;
-    return <Pagination allEntitiesCount={allEntitiesCount} fromPage={fromPage} pageSize={pageSize} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />
-}
-
-export const CUsersPagination = () => {
-    let state = useSelector(state => state);
-    let allEntitiesCount = getUsersCount(state);
-    let dispatch = useDispatch();
-    let changePageFE = (fromPage) => dispatch(actionSetUsersPaging({ fromPage }));
-    let changeRowsPerPageFE = pageSize => 
-        dispatch(actionSetUsersPaging({ fromPage: 0, pageSize }));
-    let fromPage = state.frontend.usersPaging.fromPage;
-    const pageSize = state.frontend.usersPaging.pageSize;
+        dispatch(setPaging({ fromPage: 0, pageSize }));
+    let {fromPage, pageSize} = getEntitiesListShowParams(entitiesTypeName, state);
     return <Pagination allEntitiesCount={allEntitiesCount} fromPage={fromPage} pageSize={pageSize} changePageFE={changePageFE} changeRowsPerPageFE={changeRowsPerPageFE} />
 }

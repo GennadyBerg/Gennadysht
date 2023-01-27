@@ -95,21 +95,6 @@ let actionClearCart = () =>
         dispatch(cartReducerSlice.actions.cleanCart({}))
     }
 
-/*let actionClearCartData = () =>
-    async (dispatch, useState) => {
-        let commonState = useState();
-        dispatch(cartReducerSlice.actions.cleanCartData({ commonState }))
-    }*/
-
-/*let getCart = state => {
-    let res = {
-        goods: state.cart.goods,
-        goodsData: getCartData(state),
-        uniqueId: state.cart.uniqueId,
-    };
-    return res;
-}*/
-
 const setStateData = (state, goods, uniqueId = undefined) => {
     if (goods !== undefined)
         state.goods = goods;

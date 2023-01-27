@@ -1,15 +1,16 @@
 import { List, ListItem, ListItemButton, ListItemText, Breadcrumbs } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
+import { useEffect } from "react"
 import { connect, useDispatch } from "react-redux"
 import { useParams } from "react-router-dom"
 import { MyLink } from "."
 import { useGetCategoryByIdQuery } from "../reducers"
-import { getCurrentCategory, actionSetCurrentCategory } from "../reducers/frontEndReducer"
+import { actionSetCurrentEntity, frontEndNames, getCurrentEntity } from "../reducers/frontEndReducer"
 import { CGoodsList } from "./GoodsList"
 import { CatsList } from "./RootCats"
 
-const CSubCategories = connect(state => ({ cats: getCurrentCategory(state)?.subCategories }),
+const CSubCategories = connect(state => ({ cats: getCurrentEntity(frontEndNames.category, state)?.subCategories }),
     {})(CatsList);
 
 const Category = () => {
@@ -18,10 +19,9 @@ const Category = () => {
     let cat = isLoading ? { name: 'loading', goods: [] } : data?.CategoryFindOne;
     let csubCats = false;
     const dispatch = useDispatch();
-    dispatch(actionSetCurrentCategory(_id));
-    /*useEffect = () =>{
-        dispatch(actionSetCurrentCategory(_id));
-    }*/
+    useEffect(() => {
+        dispatch(actionSetCurrentEntity(frontEndNames.category, _id));
+    }, [_id]);
     return (
         <>
             <Container>

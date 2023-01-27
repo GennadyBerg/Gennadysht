@@ -2,13 +2,13 @@ import React from 'react';
 import { Container, Typography, Paper, Link } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
-import { COrdersPagination } from './Pagination';
-import { COrdersSearchInput } from './SearchInput';
+import { COrdersPagination, CPagination } from './Pagination';
+import { CSearchInput } from './SearchInput';
 import { MyLink } from '.';
 import { useSelector } from 'react-redux';
-import { useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
+import { frontEndNames, getEntitiesListShowParams, useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
 
-const OrderList = ({ orders, fromPage, pageSize }) => {
+const OrderList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
 
     let headCells = [
         {
@@ -55,7 +55,7 @@ const OrderList = ({ orders, fromPage, pageSize }) => {
     return (
         <>
             <Container maxWidth="lg">
-                <COrdersSearchInput />
+            <CSearchInput entitiesTypeName={entitiesTypeName} />
                 <TableContainer component={Paper} >
                     <Table sx={{ overflow: 'scroll' }} >
                         <TableHead>
@@ -67,10 +67,10 @@ const OrderList = ({ orders, fromPage, pageSize }) => {
                                 }
                             </TableRow>
                         </TableHead>
-                        {orders?.length > 0 && (
+                        {entities?.length > 0 && (
                             <TableBody>
                                 {
-                                    orders.map((order, index) => {
+                                    entities.map((order, index) => {
                                         return (
                                             <StyledTableRow key={order._id}>
                                                 <StyledTableCell align="right" >
@@ -111,7 +111,7 @@ const OrderList = ({ orders, fromPage, pageSize }) => {
                                 }
                             </TableBody>
                         )}
-                        <COrdersPagination />
+                        <CPagination entitiesTypeName={entitiesTypeName} />
                     </Table>
                 </TableContainer>
             </Container>
@@ -120,17 +120,16 @@ const OrderList = ({ orders, fromPage, pageSize }) => {
 
 }
 const COrdersList = () => {
+    let entitiesTypeName = frontEndNames.orders;
     let state = useSelector(state => state);
-    const searchStr = state.frontend.ordersSearchStr;
-    const fromPage = state.frontend.ordersPaging.fromPage;
-    const pageSize = state.frontend.ordersPaging.pageSize;
+    const { fromPage, pageSize, searchStr } = getEntitiesListShowParams(entitiesTypeName, state);
 
     const ordersResult = useGetOrdersQuery({ fromPage, pageSize, searchStr });
     const ordersCountResult = useGetOrdersCountQuery({ searchStr });
     let isLoading = ordersResult.isLoading || ordersCountResult.isLoading;
 
-    let orders = !isLoading && ordersResult.data?.OrderFind;
-    return !isLoading  && orders && <OrderList orders={orders} fromPage={fromPage} pageSize={pageSize} />
+    let entities = !isLoading && ordersResult.data?.OrderFind;
+    return !isLoading  && entities && <OrderList entities={entities} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />
 }
 
 export { COrdersList };

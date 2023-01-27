@@ -6,63 +6,58 @@ import { goodsApi } from "./goodsReducer";
 import { ordersApi } from "./ordersReducer";
 import { loginApi } from "./authReducer";
 
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+export class frontEndNames {
+    static category = "category";
+    static orders = "orders";
+    static users = "users";
+    static goods = "goods";
+    static entitiesPagingName = name => `${name}Paging`;
+    static currentEntityName = name => `current${capitalize(name)}`;
+    static entitiesCountName = name => `${name}Count`;
+    static searchStrName = name => `${name}SearchStr`;
+}
+
 const frontEndReducerSlice = createSlice({ //promiseReducer
     name: 'frontend', //префикс типа наподобие AUTH_
     initialState: {
         sidebar: {},
-        ordersPaging: { fromPage: 0, pageSize: 10 },
-        usersPaging: { fromPage: 0, pageSize: 10 },
-        goodsPaging: { fromPage: 0, pageSize: 5 }
+        [frontEndNames.entitiesPagingName(frontEndNames.orders)]: { fromPage: 0, pageSize: 10 },
+        [frontEndNames.entitiesPagingName(frontEndNames.users)]: { fromPage: 0, pageSize: 10 },
+        [frontEndNames.entitiesPagingName(frontEndNames.goods)]: { fromPage: 0, pageSize: 5 }
     }, //state={} в параметрах
     reducers: {
         setSidebar(state, action) {
             state.sidebar = { opened: action.payload.open };
             return state;
         },
+
         setOrdersPaging(state, action) {
-            let { fromPage, pageSize } = action.payload.page;
-            fromPage = fromPage ?? state.ordersPaging?.fromPage;
-            pageSize = pageSize ?? state.ordersPaging?.pageSize;
-            state.ordersPaging = { fromPage, pageSize };
-            return state;
+            return setEntitiesPaging(frontEndNames.orders, state, action.payload);
         },
         setOrdersSearch(state, action) {
-            state.ordersSearchStr = action.payload.searchStr;
-            return state;
-        },
-        setUsersPaging(state, action) {
-            let { fromPage, pageSize } = action.payload.page;
-            fromPage = fromPage ?? state.usersPaging?.fromPage;
-            pageSize = pageSize ?? state.usersPaging?.pageSize;
-            state.usersPaging = { fromPage, pageSize };
-            return state;
-        },
-        setUsersSearch(state, action) {
-            state.usersSearchStr = action.payload.searchStr;
-            return state;
-        },
-        setGoodsPaging(state, action) {
-            let { fromPage, pageSize } = action.payload.page;
-            fromPage = fromPage ?? state.goodsPaging?.fromPage;
-            pageSize = pageSize ?? state.goodsPaging?.pageSize;
-            state.goodsPaging = { fromPage, pageSize };
-            return state;
-        },
-        setGoodsSearch(state, action) {
-            state.goodsSearchStr = action.payload.searchStr;
-            return state;
-        },
-        setCurrentCategory(state, action) {
-            setCurrentCategory(state, action.payload._id);
-            return state;
-        },
-        setCurrentGood(state, action) {
-            setCurrentGood(state, action.payload._id);
-            return state;
+            return setEntitiesSearchStr(frontEndNames.orders, state, action);
         },
         setCurrentOrder(state, action) {
-            setCurrentOrder(state, action.payload._id);
-            return state;
+            return setCurrentEntity(frontEndNames.orders, state, action.payload._id);
+        },
+        setUsersPaging(state, action) {
+            return setEntitiesPaging(frontEndNames.users, state, action.payload);
+        },
+        setUsersSearch(state, action) {
+            return setEntitiesSearchStr(frontEndNames.users, state, action);
+        },
+        setGoodsPaging(state, action) {
+            return setEntitiesPaging(frontEndNames.goods, state, action.payload);
+        },
+        setGoodsSearch(state, action) {
+            return setEntitiesSearchStr(frontEndNames.goods, state, action);
+        },
+        setCurrentGood(state, action) {
+            return setCurrentEntity(frontEndNames.goods, state, action.payload._id);
+        },
+        setCurrentCategory(state, action) {
+            return setCurrentEntity(frontEndNames.category, state, action.payload._id);
         },
 
     },
@@ -77,11 +72,11 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             });
         builder.addMatcher(ordersApi.endpoints.getOrdersCount.matchFulfilled,
             (state, { payload }) => {
-                state.orders = { ordersCount: { payload: payload.OrderCount } }
+                setEntitiesCount(frontEndNames.orders, state, payload.OrderCount);
             });
         builder.addMatcher(loginApi.endpoints.getUsersCount.matchFulfilled,
             (state, { payload }) => {
-                state.users = { usersCount: { payload: payload.UserCount } }
+                setEntitiesCount(frontEndNames.users, state, payload.UserCount);
             });
         builder.addMatcher(ordersApi.endpoints.getOrders.matchFulfilled,
             (state, data) => {
@@ -96,97 +91,69 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
     }
 })
 
+let actionSetPaging = (name, { fromPage, pageSize }) =>
+    async dispatch => {
+        let pagingFunc = frontEndReducerSlice.actions[`set${capitalize(name)}Paging`];
+        dispatch(pagingFunc({ fromPage, pageSize }))
+    }
+const setEntitiesPaging = (name, state, { fromPage, pageSize }) => {
+    let paging = state[frontEndNames.entitiesPagingName(name)];
+    fromPage = fromPage ?? paging?.fromPage;
+    pageSize = pageSize ?? paging?.pageSize;
+    state[frontEndNames.entitiesPagingName(name)] = { fromPage, pageSize };
+    return state;
+}
+const getEntitiesPaging = (name, state) => {
+    let paging = state.frontend[frontEndNames.entitiesPagingName(name)];
+    return { fromPage: paging.fromPage, pageSize: paging.pageSize };
+}
+
+let actionSetCurrentEntity = (name, _id) =>
+    async dispatch => {
+        let setCurrentFunc = frontEndReducerSlice.actions[`setCurrent${capitalize(name)}`];
+        dispatch(setCurrentFunc({ _id }))
+    }
+const setCurrentEntity = (name, state, id) => {
+    state[frontEndNames.currentEntityName(name)] = { payload: id };
+    return state;
+}
+const getCurrentEntity = (name, state) => {
+    let result = state.frontend[frontEndNames.currentEntityName(name)]?.payload;
+    return result;
+}
+
+const setEntitiesCount = (name, state, count) => {
+    state[name] = { [frontEndNames.entitiesCountName(name)]: { payload: count } }
+    return state;
+}
+const getEntitiesCount = (name, state) => {
+    return state.frontend[name][frontEndNames.entitiesCountName(name)]?.payload ?? 0;
+}
+
+let actionSetSearch = (name, searchStr) =>
+    async dispatch => {
+        let pagingFunc = frontEndReducerSlice.actions[`set${capitalize(name)}Search`];
+        dispatch(pagingFunc({ searchStr }));
+    }
+
+const setEntitiesSearchStr = (name, state, action) => {
+    state[frontEndNames.searchStrName(name)] = action.payload.searchStr;
+    return state;
+}
+const getEntitiesSearchStr = (name, state) => {
+    return state.frontend[frontEndNames.searchStrName(name)];
+}
+
 let frontEndReducer = frontEndReducerSlice.reducer;
-let actionSetSidebar = open =>
+const actionSetSidebar = open =>
     async dispatch => {
         dispatch(frontEndReducerSlice.actions.setSidebar({ open }))
     }
 
-let actionSetOrdersPaging = ({ fromPage, pageSize }) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setOrdersPaging({ page: { fromPage, pageSize } }))
-    }
-
-let actionSetOrderSearch = (searchStr) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setOrdersSearch({ searchStr }))
-    }
-
-let actionSetUsersSearch = (searchStr) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setUsersSearch({ searchStr }))
-    }
-
-let actionSetCurrentCategory = (_id) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setCurrentCategory({ _id }))
-    }
-
-let actionSetCurrentOrder = (_id) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setCurrentOrder({ _id }))
-    }
-
-let actionSetCurrentGood = (_id) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setCurrentGood({ _id }))
-    }
-
-let actionSetGoodsPaging = ({ fromPage, pageSize }) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setGoodsPaging({ page: { fromPage, pageSize } }))
-    }
-
-let actionSetGoodsSearch = (searchStr) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setGoodsSearch({ searchStr }))
-    }
-
-const currentCategory = 'currentCategory';
-const getCurrentCategory = state => {
-    let result = state.frontend[currentCategory]?.payload
-    return result;
-}
-const setCurrentCategory = (state, id) => {
-    return state[currentCategory] = { payload: id };
+const getEntitiesListShowParams = (name, state) => {
+    return { ...getEntitiesPaging(name, state), ...getEntitiesSearchStr(name, state) };
 }
 
-const currentGood = 'currentGood';
-const getCurrentGood = state => {
-    let result = state.frontend[currentGood]?.payload
-    return result;
-}
-const setCurrentGood = (state, id) => {
-    return state[currentGood] = { payload: id };
-}
 
-const currentOrder = 'currentOrder';
-const getCurrentOrder = state => {
-    let result = state.frontend[currentOrder]?.payload
-    return result;
-}
-const setCurrentOrder = (state, id) => {
-    return state[currentOrder] = { payload: id };
-}
-
-const getGoodsCount = state => {
-    let result = state.frontend.goods.goodsCount?.payload ?? 0;
-    return result;
-}
-const getOrdersCount = state => {
-    let result = state.frontend.orders.ordersCount?.payload ?? 0;
-    return result;
-}
-const getUsersCount = state => {
-    let result = state.frontend.users.usersCount?.payload ?? 0;
-    return result;
-}
-let actionSetUsersPaging = ({ fromPage, pageSize }) =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setUsersPaging({ page: { fromPage, pageSize } }))
-    }
-
-
-export { frontEndReducer, actionSetSidebar, actionSetOrdersPaging, actionSetOrderSearch, actionSetGoodsPaging, actionSetGoodsSearch };
-export { getCurrentCategory, getCurrentGood, actionSetCurrentCategory, actionSetCurrentGood, getGoodsCount, getCurrentOrder, actionSetCurrentOrder }
-export { getOrdersCount, getUsersCount, actionSetUsersPaging, actionSetUsersSearch };
+export { frontEndReducer, actionSetSidebar };
+export { actionSetPaging, actionSetSearch, getEntitiesCount, getCurrentEntity, actionSetCurrentEntity, getEntitiesSearchStr, getEntitiesPaging, getEntitiesListShowParams }

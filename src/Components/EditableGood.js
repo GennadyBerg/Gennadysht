@@ -4,9 +4,8 @@ import { styled } from '@mui/material/styles';
 import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box, Modal } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
 import { useDispatch } from 'react-redux';
-import { useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
+import { actionSetCurrentEntity, frontEndNames, useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
 import { useParams } from 'react-router-dom';
-import { actionSetCurrentGood } from '../reducers/frontEndReducer';
 import { CSortedFileDropZone } from './SortedFileDropZone';
 import { saveImage } from '../utills/utils';
 import { CGood } from './Good';
@@ -161,7 +160,7 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
     const { isLoading, data } = useGetGoodByIdQuery(_id);
     let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
     const dispatch = useDispatch();
-    dispatch(actionSetCurrentGood(_id));
+    dispatch(actionSetCurrentEntity(frontEndNames.goods, _id));
     const [saveGoodMutation, { }] = useSaveGoodMutation();
 
 

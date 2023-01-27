@@ -2,13 +2,13 @@ import React from 'react';
 import { Container, Typography, Paper, Link } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
-import { CUsersPagination } from './Pagination';
-import { CUsersSearchInput } from './SearchInput';
+import { CPagination, CUsersPagination } from './Pagination';
+import { CSearchInput } from './SearchInput';
 import { MyLink } from '.';
 import { useSelector } from 'react-redux';
-import { useGetUsersCountQuery, useGetUsersQuery } from '../reducers';
+import { frontEndNames, getEntitiesListShowParams, useGetUsersCountQuery, useGetUsersQuery } from '../reducers';
 
-const UsersList = ({ users, fromPage, pageSize }) => {
+const UsersList = ({ entities, fromPage, pageSize, entitiesTypeName }) => {
 
     let headCells = [
         {
@@ -53,7 +53,7 @@ const UsersList = ({ users, fromPage, pageSize }) => {
     return (
         <>
             <Container maxWidth="lg">
-                <CUsersSearchInput />
+                <CSearchInput entitiesTypeName={entitiesTypeName}/>
                 <TableContainer component={Paper} >
                     <Table sx={{ overflow: 'scroll' }} >
                         <TableHead>
@@ -65,10 +65,10 @@ const UsersList = ({ users, fromPage, pageSize }) => {
                                 }
                             </TableRow>
                         </TableHead>
-                        {users?.length > 0 && (
+                        {entities?.length > 0 && (
                             <TableBody>
                                 {
-                                    users.map((user, index) => {
+                                    entities.map((user, index) => {
                                         return (
                                             <StyledTableRow key={user._id}>
                                                 <StyledTableCell align="right" width="10%">
@@ -105,25 +105,27 @@ const UsersList = ({ users, fromPage, pageSize }) => {
                             </TableBody>
                         )}
                     </Table>
-                    <CUsersPagination />
+                    <CPagination entitiesTypeName={entitiesTypeName} />
                 </TableContainer>
             </Container>
         </>
     )
-
 }
+
 const CUsersList = () => {
+    let entitiesTypeName = frontEndNames.users;
     let state = useSelector(state => state);
-    const searchStr = state.frontend.usersSearchStr;
-    const fromPage = state.frontend.usersPaging.fromPage;
-    const pageSize = state.frontend.usersPaging.pageSize;
+    const { fromPage, pageSize, searchStr } = getEntitiesListShowParams(entitiesTypeName, state);
 
     const usersResult = useGetUsersQuery({ fromPage, pageSize, searchStr });
     const usersCountResult = useGetUsersCountQuery({ searchStr });
     let isLoading = usersResult.isLoading || usersCountResult.isLoading;
 
-    let users = !isLoading && usersResult.data?.UserFind;
-    return !isLoading && users && <UsersList users={users} fromPage={fromPage} pageSize={pageSize} />
+    let entities = !isLoading && usersResult.data?.UserFind;
+    return !isLoading && entities && <UsersList entities={entities} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />
 }
+
+
+
 
 export { CUsersList };

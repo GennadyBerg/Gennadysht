@@ -1,3 +1,4 @@
+import React from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
@@ -6,14 +7,26 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { actionSetSidebar } from '../reducers/frontEndReducer';
 import { connect } from 'react-redux';
+import { ClickAwayListener } from '@mui/material';
+import { useState } from 'react';
 
 function Sidebar(props) {
-    let {drawerWidth, menuComponent, opened, openSidebar} = props;
+    let { drawerWidth, menuComponent, opened, openSidebar } = props;
+    const [openedComp, setOpenedComp] = React.useState(undefined);
     let MenuComponent = menuComponent;
     drawerWidth = drawerWidth || 200;
     const theme = useTheme();
     const handleDrawerClose = () => {
         openSidebar(false);
+        setOpenedComp(undefined)
+    };
+    const handleClickAwayListener = () => {
+        if (openedComp === undefined) {
+            setOpenedComp(true)
+        }
+        else if (openedComp === true)
+            handleDrawerClose();
+
     };
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
@@ -25,28 +38,30 @@ function Sidebar(props) {
     }));
     return (
         <>
-            <Drawer
-                sx={{
-                    width: drawerWidth,
-                    flexShrink: 0,
-                    '& .MuiDrawer-paper': {
+            <ClickAwayListener onClickAway={handleClickAwayListener}>
+                <Drawer
+                    sx={{
                         width: drawerWidth,
-                        boxSizing: 'border-box',
-                    },
-                }}
-                variant="persistent"
-                anchor="left"
-                open={opened}
-            >
-                <DrawerHeader>
-                    <IconButton onClick={handleDrawerClose}>
-                        {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-                    </IconButton>
-                </DrawerHeader>
-                <Divider />
-                <MenuComponent {...props} />
-                <Divider />
-            </Drawer>
+                        flexShrink: 0,
+                        '& .MuiDrawer-paper': {
+                            width: drawerWidth,
+                            boxSizing: 'border-box',
+                        },
+                    }}
+                    variant="persistent"
+                    anchor="left"
+                    open={opened}
+                >
+                    <DrawerHeader>
+                        <IconButton onClick={handleDrawerClose}>
+                            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+                        </IconButton>
+                    </DrawerHeader>
+                    <Divider />
+                    <MenuComponent {...props} />
+                    <Divider />
+                </Drawer>
+            </ClickAwayListener>
         </>);
 }
 
