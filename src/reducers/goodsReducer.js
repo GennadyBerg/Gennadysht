@@ -63,7 +63,7 @@ export const goodsApi = createApi({
                     document: gql`
                         query GoodFindOne($q: String) {
                             GoodFindOne(query: $q) {
-                                _id name  price description
+                                _id name  price description categories { _id name }
                                 images { _id url }
                             }
                         }

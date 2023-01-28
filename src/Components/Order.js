@@ -9,6 +9,7 @@ import { actionSetCurrentEntity, frontEndNames } from '../reducers/frontEndReduc
 import { MyLink } from './MyLink';
 import { getCurrentUser } from '../reducers';
 import { UserEntity } from '../Entities';
+import { LackPermissions } from './LackPermissions';
 
 let exampleOrder = {
     "_id": "62cdc9b3b74e1f5f2ec1a0e9",
@@ -102,7 +103,7 @@ const COrder = () => {
         order ?
         <Order order={order} />
         :
-        <Typography>Insuffcient permissions to view order</Typography>
+        <LackPermissions name="order"/>
         ;
 }
 

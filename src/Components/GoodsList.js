@@ -30,7 +30,7 @@ const CGoodsList = () => {
     const currentCategory = getCurrentEntity(frontEndNames.category, state);
     const { fromPage, pageSize, searchStr } = getEntitiesListShowParams(entitiesTypeName, state);
 
-    let categoryFilter = currentCategory ? { "categories._id": currentCategory } : {};
+    let categoryFilter = currentCategory ? { "categories._id": currentCategory._id } : {};
     const goodsResult = useGetGoodsQuery({ fromPage, pageSize, searchStr, queryExt: categoryFilter });
     const goodsCountResult = useGetGoodsCountQuery({ searchStr, queryExt: categoryFilter });
     let isLoading = goodsResult.isLoading || goodsCountResult.isLoading;

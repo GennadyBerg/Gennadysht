@@ -57,7 +57,7 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             return setCurrentEntity(frontEndNames.goods, state, action.payload._id);
         },
         setCurrentCategory(state, action) {
-            return setCurrentEntity(frontEndNames.category, state, action.payload._id);
+            return setCurrentEntity(frontEndNames.category, state, action.payload.entity);
         },
 
     },
@@ -118,16 +118,24 @@ const getEntitiesPaging = (name, state) => {
     return { fromPage: paging.fromPage, pageSize: paging.pageSize };
 }
 
-let actionSetCurrentEntity = (name, _id) =>
+let actionSetCurrentEntity = (name, entity) =>
     async dispatch => {
         let setCurrentFunc = frontEndReducerSlice.actions[`setCurrent${capitalize(name)}`];
-        dispatch(setCurrentFunc({ _id }))
+        dispatch(setCurrentFunc({ entity }))
     }
-const setCurrentEntity = (name, state, id) => {
-    state[frontEndNames.currentEntityName(name)] = { payload: id };
+const setCurrentEntity = (name, state, entity) => {
+    if (name === frontEndNames.category) {
+        if ((entity?._id != "6262ca7dbf8b206433f5b3d1")) {
+            let a = '';
+        }
+    }
+    state[frontEndNames.currentEntityName(name)] = { payload: entity };
     return state;
 }
 const getCurrentEntity = (name, state) => {
+    if (name === frontEndNames.category) {
+        let a = '';
+    }
     let result = state.frontend[frontEndNames.currentEntityName(name)]?.payload;
     return result;
 }

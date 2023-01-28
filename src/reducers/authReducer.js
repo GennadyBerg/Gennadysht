@@ -161,6 +161,10 @@ const actionAboutMe = () =>
     }
 
 const getCurrentUser = state => state.auth?.currentUser ?? {};
+const isCurrentUserAdmin = state =>{
+    let currentUser = getCurrentUser(state);
+    return currentUser ? new UserEntity(currentUser).isAdminRole : false;
+}
 
 const { logout: actionAuthLogout } = authSlice.actions;
 let authApiReducer = loginApi.reducer;
@@ -168,5 +172,5 @@ let authReducer = authSlice.reducer;
 let authApiReducerPath = loginApi.reducerPath;
 
 export const { useLoginMutation, useUserFindQuery, useSaveUserMutation, useGetUsersQuery, useGetUsersCountQuery, useRegisterMutation } = loginApi;
-export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe, getCurrentUser  }
+export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe, getCurrentUser, isCurrentUserAdmin  }
 

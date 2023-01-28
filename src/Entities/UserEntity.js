@@ -19,7 +19,7 @@ export class UserEntity {
         if( this.login === 'berg'){
             let a = '';
         }
-        let onlyAllowedAcls = acl.filter(a => a === '_id' || a === "user" || a === "admin");
+        let onlyAllowedAcls = acl.filter(a => a === this._id || a === "user" || a === "admin");
         if (onlyAllowedAcls.length != acl.length) {
             let uniqueRoles = new Set(onlyAllowedAcls);
             if (uniqueRoles.length != acl.length) {

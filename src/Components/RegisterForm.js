@@ -96,13 +96,6 @@ const RegisterForm = () => {
                     disabled={!isButtonActive}
                     onClick={() => (
                         onRegister({ login, password, nick })
-                            .then(res => {
-                                let a = '';
-                                if (res.data?.UserUpsert) {
-                                    a = '';
-                                    onSaveUser(new UserEntity(res.data.UserUpsert));
-                            }
-                            })
                             .then(() => onLogin({ login, password }))
                             .then(() => dispatch(actionAboutMe()))
                     )}>

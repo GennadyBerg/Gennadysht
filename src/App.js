@@ -92,6 +92,7 @@ function App() {
               <Route path="/goods" component={CGoodsList} />
               <Route path="/good/:_id" component={CGood} />
               <Route path="/editgood/:_id" component={CEditableGood} />
+              <Route path="/editgood" component={CEditableGood} />
               <Route path="/category/:_id" component={CCategory} />
               <Route path="/order/:_id" component={COrder} />
               <Route path="/cart" component={CCart} />

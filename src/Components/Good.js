@@ -5,8 +5,8 @@ import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMed
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
-import { actionAddGoodToCart, actionSetCurrentEntity, frontEndNames } from '../reducers';
-import { useDispatch } from 'react-redux';
+import { actionAddGoodToCart, actionSetCurrentEntity, frontEndNames, getCurrentUser, isCurrentUserAdmin } from '../reducers';
+import { useDispatch, useSelector } from 'react-redux';
 import { useGetGoodByIdQuery } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { MyLink } from './MyLink';
@@ -37,7 +37,7 @@ export const AvatarGroupOriented = styled((props) => {
     },
     ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
 }));
-const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart, editable }) => {
+const Good = ({ good, maxWidth = 'md', isAdmin, showAddToCard = true, actionAddGoodToCart, editable }) => {
     let [currentImageIndex, setCurrentImageIndex] = useState(0);
     let [expanded, setExpanded] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
@@ -100,13 +100,15 @@ const Good = ({ good, maxWidth = 'md', showAddToCard = true, actionAddGoodToCart
                             </Button>
                         )
                     }
-                    <MyLink to={`/editgood/${good._id}`}>
-                        {
-                            editable && <Button size='small' color='primary'>
-                                Edit
-                            </Button>
-                        }
-                    </MyLink>
+                    {
+                        isAdmin && <MyLink to={`/editgood/${good._id}`}>
+                            {
+                                editable && <Button size='small' color='primary'>
+                                    Edit
+                                </Button>
+                            }
+                        </MyLink>
+                    }
                 </CardActions>
                 <Collapse in={expanded} timeout='auto' unmountOnExit>
                     <Typography paragraph sx={{ marginLeft: 1 }}>
@@ -129,8 +131,9 @@ const CGood = ({ good, maxWidth = 'md', showAddToCard = true, editable = true })
         good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
         dispatch(actionSetCurrentEntity(frontEndNames.goods, _id));
     }
-
-    return <Good good={good} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
+    let state = useSelector(state => state);
+    let isAdmin = isCurrentUserAdmin(state);
+    return <Good good={good} isAdmin={isAdmin} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
 }
 let a = '';
 export { CGood };

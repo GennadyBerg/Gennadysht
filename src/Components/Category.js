@@ -1,11 +1,11 @@
-import { List, ListItem, ListItemButton, ListItemText, Breadcrumbs } from "@mui/material"
+import { List, ListItem, ListItemButton, ListItemText, Breadcrumbs, Button } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
 import { useEffect } from "react"
-import { connect, useDispatch } from "react-redux"
+import { connect, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { MyLink } from "."
-import { useGetCategoryByIdQuery } from "../reducers"
+import { isCurrentUserAdmin, useGetCategoryByIdQuery } from "../reducers"
 import { actionSetCurrentEntity, frontEndNames, getCurrentEntity } from "../reducers/frontEndReducer"
 import { CGoodsList } from "./GoodsList"
 import { CatsList } from "./RootCats"
@@ -19,10 +19,14 @@ const Category = () => {
     let cat = isLoading ? { name: 'loading', goods: [] } : data?.CategoryFindOne;
     let csubCats = false;
     const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(actionSetCurrentEntity(frontEndNames.category, _id));
-    }, [_id]);
-    return (
+    if (cat?._id)
+        dispatch(actionSetCurrentEntity(frontEndNames.category, cat));
+    let state = useSelector(state => state);
+    let isAdmin = isCurrentUserAdmin(state);
+    /*useEffect(() => {
+        dispatch(actionSetCurrentEntity(frontEndNames.category, cat));
+    }, [_id]);*/
+    return isLoading ? <Typography>Loading</Typography> : (
         <>
             <Container>
                 <Box>
@@ -41,6 +45,15 @@ const Category = () => {
                         )}
                         <Typography color="text.primary">{cat.name}</Typography>
                     </Breadcrumbs>
+                    {
+                        isAdmin && (
+                            <MyLink to="/editgood">
+                                <Button size='small' variant="contained" >
+                                    Add Good
+                                </Button>
+                            </MyLink>
+                        )
+                    }
                     <Typography paragraph gutterBottom component={'h3'} variant={'h3'}>
                         {cat.name}
                     </Typography>

@@ -3,13 +3,15 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box, Modal } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
-import { useDispatch } from 'react-redux';
-import { actionSetCurrentEntity, frontEndNames, useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
+import { useDispatch, useSelector } from 'react-redux';
+import { actionSetCurrentEntity, frontEndNames, getCurrentEntity, isCurrentUserAdmin, useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { CSortedFileDropZone } from './SortedFileDropZone';
 import { saveImage } from '../utills/utils';
 import { CGood } from './Good';
 import { ModalContainer } from './ModalContainer';
+import { history } from '../App';
+import { LackPermissions } from './LackPermissions';
 
 
 export const ExpandMore = styled(props => {
@@ -57,6 +59,7 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
         setShowPreview(show);
     }
 
+    let isExistingGood = good?._id;
     const saveFullGood = async () => {
         let addedImages = imagesContainer.images.filter(img => !img._id);
         let results = await Promise.all(addedImages.map(img => saveImage(img)));
@@ -64,10 +67,19 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
             addedImages[i]._id = results[i]._id;
             addedImages[i].url = results[i].url;
         }
-        good = { ...good, images: imagesContainer.images };
-        saveGood({ good });
+        let images = imagesContainer.images.map(img => ({ _id: img._id }));
+        good = { ...good, images };
+        saveGood({ good })
+            .then(res => {
+                let _id = res.data?.GoodUpsert?._id;
+                if (_id && !isExistingGood) {
+                    history.push(`/editgood/${_id}`);
+                }
+                return res;
+            });
     }
-
+    if (good)
+        good.categories ??= [];
     return good && (
         <Container maxWidth={maxWidth}>
             <Card variant='outlined'>
@@ -85,6 +97,22 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
                             <Grid item xs={8}>
                                 <CardContent>
                                     <Grid container rowSpacing={2}>
+                                        {
+                                            good.categories.map(cat => (
+                                                <Grid item width="100%">
+                                                    <TextField
+                                                        required
+                                                        id="outlined-required"
+                                                        label="Categories"
+                                                        value={cat.name}
+                                                        onChange={event => setGoodData({ description: event.target.value })}
+                                                        multiline={true}
+                                                        rows={1}
+                                                        fullWidth
+                                                    />
+                                                </Grid>
+                                            ))
+                                        }
                                         <Grid item width="100%">
                                             <TextField
                                                 required
@@ -157,14 +185,23 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
 
 const CEditableGood = ({ maxWidth = 'md' }) => {
     const { _id } = useParams();
-    const { isLoading, data } = useGetGoodByIdQuery(_id);
+    const { isLoading, data } = useGetGoodByIdQuery(_id || 'fwkjelnfvkjwe');
     let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
     const dispatch = useDispatch();
     dispatch(actionSetCurrentEntity(frontEndNames.goods, _id));
     const [saveGoodMutation, { }] = useSaveGoodMutation();
+    const state = useSelector(state => state);
+    let currentCategory = getCurrentEntity(frontEndNames.category, state)
 
+    let isAdmin = isCurrentUserAdmin(state);
 
-    return !isLoading && <EditableGood good={good} saveGood={saveGoodMutation} maxWidth={maxWidth} />
+    if (!isLoading && !good && isAdmin) {
+        let categories = currentCategory ? [{ _id: currentCategory._id, name: currentCategory.name }] : [];
+        good = { _id: undefined, categories };
+    }
+
+    return !isLoading && 
+        (isAdmin ? <EditableGood good={good} saveGood={saveGoodMutation} maxWidth={maxWidth} /> : <LackPermissions name="good"/>)
 }
 
 export { CEditableGood }
