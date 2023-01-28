@@ -66,7 +66,10 @@ const ordersApi = createApi({
                     document: gql`
                             query OrderFindOne($q: String) {
                                 OrderFindOne(query: $q) {
-                                    _id total createdAt #owner
+                                    _id total createdAt 
+                                    owner {
+                                        _id nick login
+                                    }
                                     orderGoods {
                                         _id price count total createdAt
                                         good {

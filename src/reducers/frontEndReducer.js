@@ -142,8 +142,8 @@ const getEntitiesCount = (name, state) => {
 
 let actionSetSearch = (name, searchStr) =>
     async dispatch => {
-        let pagingFunc = frontEndReducerSlice.actions[`set${capitalize(name)}Search`];
-        dispatch(pagingFunc({ searchStr }));
+        let searcFunc = frontEndReducerSlice.actions[`set${capitalize(name)}Search`];
+        dispatch(searcFunc({ searchStr }));
     }
 
 const setEntitiesSearchStr = (name, state, action) => {
@@ -151,7 +151,7 @@ const setEntitiesSearchStr = (name, state, action) => {
     return state;
 }
 const getEntitiesSearchStr = (name, state) => {
-    return state.frontend[frontEndNames.searchStrName(name)];
+    return { searchStr: state.frontend[frontEndNames.searchStrName(name)] };
 }
 
 let frontEndReducer = frontEndReducerSlice.reducer;

@@ -48,6 +48,7 @@ export const loginApi = createApi({
                       _id
                       createdAt
                       nick
+                      acl
                     }
                   }
                     `,
@@ -72,7 +73,7 @@ export const loginApi = createApi({
                 document: gql`
                             mutation UserUpsert($user: UserInput) {
                                 UserUpsert(user: $user) {
-                                    _id
+                                    _id acl
                                 }
                             }
                         `,

@@ -1,14 +1,58 @@
+import { arrayMoveImmutable } from "array-move";
+
 export class UserEntity {
+    #acl = [];
+    get acl() {
+        return [...this.#acl];
+    }
     constructor(user) {
         this._id = user._id;
         this.nick = user.nick;
         this.login = user.login;
         this.avatar = user.avatar ? { ...user.avatar } : null;
-        this.acl = [...(user.acl ?? [])];
+        this.#acl = [...(user.acl ?? [])];
+        this.#fixRoles();
+    }
+    #fixRoles = () => {
+        let _id = this._id;
+        let acl = this.#acl;
+        if( this.login === 'berg'){
+            let a = '';
+        }
+        let onlyAllowedAcls = acl.filter(a => a === '_id' || a === "user" || a === "admin");
+        if (onlyAllowedAcls.length != acl.length) {
+            let uniqueRoles = new Set(onlyAllowedAcls);
+            if (uniqueRoles.length != acl.length) {
+                this.#acl = acl = [...uniqueRoles];
+            }
+        }
+        if (_id) {
+            let myRoleIdx = this.#getRoleIdx(_id);
+            if (myRoleIdx < 0) {
+                acl.splice(0, 0, _id);
+            }
+            else if (myRoleIdx > 0) {
+                this.#acl = acl = arrayMoveImmutable(acl, myRoleIdx, 0);
+            }
+        }
+        let rolesCnt = this.acl.length;
+        let offset = _id ? 1 : 0;
+        if (rolesCnt === offset) {
+            acl.push("user")
+        }
+        else if (rolesCnt > offset && acl[offset] !== "user") {
+            if (rolesCnt === offset + 1) {
+                acl.splice(1, 0, "user")
+            }
+            else {
+                this.#acl = acl = arrayMoveImmutable(acl, offset, offset + 1);
+            }
+        }
     }
 
+
     #getRoleIdx = (role) => {
-        let res = this.acl?.indexOf(role);
+        let res = this.#acl?.indexOf(role);
         return res ?? -1;
     }
     #isRole = (role) => this.#getRoleIdx(role) >= 0;
@@ -17,22 +61,25 @@ export class UserEntity {
         let a = '';
         return this.#isRole("user");
     }
-
+    onSetRoleInt = () => {
+        this.onSetRole(this);
+        this.#fixRoles();
+    }
     #setRole = (role, isSet, onSetRole = undefined) => {
-        this.acl ??= [];
+        this.#acl ??= [];
         let roleIdx = this.#getRoleIdx(role);
         if (isSet) {
             if (roleIdx < 0) {
-                this.acl.push(role);
-                if (onSetRole)
-                    onSetRole(this);
+                this.#acl.push(role);
+                if (this.onSetRole)
+                    this.onSetRoleInt();
             }
         }
         else {
             if (roleIdx >= 0) {
-                this.acl.splice(roleIdx, 1);
+                this.#acl.splice(roleIdx, 1);
                 if (onSetRole)
-                    onSetRole(this);
+                    this.onSetRoleInt();
             }
         }
     }

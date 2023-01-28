@@ -4,10 +4,13 @@ import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel
 import { Box } from '@mui/system';
 import { connect, useDispatch } from 'react-redux';
 import { MyLink } from './MyLink';
-import { actionAboutMe, useLoginMutation, useRegisterMutation } from '../reducers/authReducer';
+import { actionAboutMe, useLoginMutation, useRegisterMutation, useSaveUserMutation } from '../reducers/authReducer';
+import { UserEntity } from '../Entities';
 
 const RegisterForm = () => {
-    const [onRegister, { data, isLoading }] = useRegisterMutation()
+    const [onRegister, { isLoading: isLoadingReg }] = useRegisterMutation();
+    const [onSaveUser, { data, isLoading }] = useSaveUserMutation();
+
     const [onLogin, { }] = useLoginMutation();
     const dispatch = useDispatch()
 
@@ -16,7 +19,7 @@ const RegisterForm = () => {
     const [password, setPassword] = useState('');
     const [passwordRetype, setPasswordRetype] = useState('');
     const arePasswordsEqual = password === passwordRetype;
-    const isButtonActive = !isLoading && arePasswordsEqual && login?.length > 3 && password?.length > 3;
+    const isButtonActive = !isLoading && !isLoadingReg && arePasswordsEqual && login?.length > 3 && password?.length > 3;
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -91,11 +94,22 @@ const RegisterForm = () => {
                     fullWidth
                     type="submit"
                     disabled={!isButtonActive}
-                    onClick={() => onRegister({ login, password, nick }).then(() => onLogin({ login, password })).then(() => dispatch(actionAboutMe()))}>
+                    onClick={() => (
+                        onRegister({ login, password, nick })
+                            .then(res => {
+                                let a = '';
+                                if (res.data?.UserUpsert) {
+                                    a = '';
+                                    onSaveUser(new UserEntity(res.data.UserUpsert));
+                            }
+                            })
+                            .then(() => onLogin({ login, password }))
+                            .then(() => dispatch(actionAboutMe()))
+                    )}>
                     Register...
                 </MyLink>
             </Box>
-        </Container>
+        </Container >
     )
 }
 const CRegisterForm = connect(null, {})(RegisterForm)
