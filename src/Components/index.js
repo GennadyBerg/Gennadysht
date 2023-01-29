@@ -15,3 +15,4 @@ export { CEditableGood } from './EditableGood'
 export { CEditableUser as CUser } from './EditableUser';
 export { CUsersList } from './UsersList';
 export { CRegisterForm } from './RegisterForm';
+export { CCategoryTree } from './CategoryTree';

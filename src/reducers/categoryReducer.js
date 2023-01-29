@@ -19,11 +19,11 @@ export const categoryApi = createApi({
     }),
     endpoints: (builder) => ({
         getRootCategories: builder.query({
-            query: () => ({
+            query: (withChildren = false) => ({
                 document: gql`
                 query GetCategories{
                     CategoryFind(query: "[{\\"parent\\": null}]") {
-                        _id name
+                        _id name ${withChildren ? 'subCategories { _id name } ' : ''}
                         }
                     }
                 `}),
@@ -44,7 +44,7 @@ export const categoryApi = createApi({
                     `,
                 variables: { q: JSON.stringify([{ _id }]) }
             }),
-            invalidatesTags: (result, error, arg) => ([{type: 'GoodsCount', id: arg._id}])
+            invalidatesTags: (result, error, arg) => ([{ type: 'GoodsCount', id: arg._id }])
         }),
     }),
 })

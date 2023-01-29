@@ -12,6 +12,7 @@ import { CGood } from './Good';
 import { ModalContainer } from './ModalContainer';
 import { history } from '../App';
 import { LackPermissions } from './LackPermissions';
+import { CCategoryDropDownList } from './DropDownList';
 
 
 export const ExpandMore = styled(props => {
@@ -44,6 +45,10 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
     let [good, setGood] = useState({ ...goodExt, images: goodExt.images });
     let [showPreview, setShowPreview] = useState(false);
     let [imagesContainer, setImagesContainer] = useState({ images: goodExt.images });
+
+    const onSetCategory = (catItem) => {
+        good.categories = catItem.cat ? [{ _id: catItem.cat._id }] : [];
+    }
     const setGoodData = (data) => {
         let goodData = { ...good, ...data };
         setGood(goodData);
@@ -55,7 +60,6 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
         setGood(good);
     }
     const preview = show => {
-        let a = '';
         setShowPreview(show);
     }
 
@@ -97,22 +101,11 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
                             <Grid item xs={8}>
                                 <CardContent>
                                     <Grid container rowSpacing={2}>
-                                        {
-                                            good.categories.map(cat => (
-                                                <Grid item width="100%">
-                                                    <TextField
-                                                        required
-                                                        id="outlined-required"
-                                                        label="Categories"
-                                                        value={cat.name}
-                                                        onChange={event => setGoodData({ description: event.target.value })}
-                                                        multiline={true}
-                                                        rows={1}
-                                                        fullWidth
-                                                    />
-                                                </Grid>
-                                            ))
-                                        }
+                                        <Grid item width="100%">
+                                            {
+                                                <CCategoryDropDownList currentCat={good.categories?.length > 0 ? good.categories[0] : undefined} onSetCategory={onSetCategory} />
+                                            }
+                                        </Grid>
                                         <Grid item width="100%">
                                             <TextField
                                                 required
@@ -200,8 +193,25 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
         good = { _id: undefined, categories };
     }
 
-    return !isLoading && 
-        (isAdmin ? <EditableGood good={good} saveGood={saveGoodMutation} maxWidth={maxWidth} /> : <LackPermissions name="good"/>)
+    return !isLoading &&
+        (isAdmin ? <EditableGood good={good} saveGood={saveGoodMutation} maxWidth={maxWidth} /> : <LackPermissions name="good" />)
 }
 
+
 export { CEditableGood }
+
+
+/*-good.categories.map(cat => (
+    <Grid item width="100%">
+        <TextField
+            required
+            id="outlined-required"
+            label="Categories"
+            value={cat.name}
+            onChange={event => setGoodData({ description: event.target.value })}
+            multiline={true}
+            rows={1}
+            fullWidth
+        />
+    </Grid>
+))*/

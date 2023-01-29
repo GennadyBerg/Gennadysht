@@ -44,7 +44,12 @@ const MainAppBar = ({ token, openSidebar }) => {
                         <>
                             <MyLink to="/logout"><Button sx={{ color: "white" }}>Logout</Button></MyLink>
                             <MyLink to="/orders"><Button sx={{ color: "white" }}>Orders</Button></MyLink>
-                            {isAdmin && <MyLink to="/users"><Button sx={{ color: "white" }}>Users</Button></MyLink>}
+                            {isAdmin && (
+                                <>
+                                    <MyLink to="/users"><Button sx={{ color: "white" }}>Users</Button></MyLink>
+                                    <MyLink to="/catree"><Button sx={{ color: "white" }}>Categories</Button></MyLink>
+                                </>
+                            )}
                             <MyLink to="/user"><Button sx={{ color: "white" }}>About Me</Button></MyLink>
                         </>
                     }
