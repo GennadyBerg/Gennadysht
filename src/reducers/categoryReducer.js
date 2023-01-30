@@ -1,8 +1,10 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
 import { gql } from "graphql-request";
+import { createFullQuery } from '../gql';
 //import { prepareHeaders } from "./index";
 
+const getCategorySearchParams = (query, queryExt) => ({ searchStr: query, searchFieldNames: ["name"], queryExt });
 export const prepareHeaders = (headers, { getState }) => {
     const token = getState().auth.token;
     if (token) {
@@ -28,6 +30,34 @@ export const categoryApi = createApi({
                     }
                 `}),
         }),
+        getCategories: builder.query({
+            query: ({ withOwner = false, withChildren = false, withParent = false, queryExt = {}, fromPage, pageSize, searchStr = '' }) => {
+                let params = createFullQuery(getCategorySearchParams(searchStr, queryExt), { fromPage, pageSize, sort: { name: 1 } });
+                return {
+                    document: gql`
+                    query GetCategories($q: String){
+                        CategoryFind(query: $q) {
+                            _id name ${withChildren ? 'subCategories { _id name } ' : ''}
+                            ${withParent ? 'parent { _id name } ' : ''}
+                            ${withOwner ? 'owner { _id login nick} ' : ''}
+                            }
+                        }
+                `,
+                    variables: params
+                }
+            },
+        }),
+        getCategoriesCount: builder.query({
+            query: ({ searchStr = '', queryExt = {} }) => {
+                let params = createFullQuery(getCategorySearchParams(searchStr, queryExt = {}));
+                return {
+                    document: gql`
+                            query CategoriesCount($q: String) { CategoryCount(query: $q) }
+                    `,
+                    variables: params
+                }
+            },
+        }),
         getCategoryById: builder.query({
             query: (_id) => ({
                 document: gql`
@@ -49,5 +79,5 @@ export const categoryApi = createApi({
     }),
 })
 
-export const { useGetRootCategoriesQuery, useGetCategoryByIdQuery } = categoryApi;
+export const { useGetRootCategoriesQuery, useGetCategoryByIdQuery, useGetCategoriesQuery, useGetCategoriesCountQuery } = categoryApi;
 

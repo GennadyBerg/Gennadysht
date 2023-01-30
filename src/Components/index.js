@@ -15,4 +15,6 @@ export { CEditableGood } from './EditableGood'
 export { CEditableUser as CUser } from './EditableUser';
 export { CUsersList } from './UsersList';
 export { CRegisterForm } from './RegisterForm';
+export { CCategoriesList } from './CategoryList';
 export { CCategoryTree } from './CategoryTree';
+export { ReferenceLink } from './ReferenceLink';

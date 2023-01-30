@@ -24,7 +24,8 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
         sidebar: {},
         [frontEndNames.entitiesPagingName(frontEndNames.orders)]: { fromPage: 0, pageSize: 10 },
         [frontEndNames.entitiesPagingName(frontEndNames.users)]: { fromPage: 0, pageSize: 10 },
-        [frontEndNames.entitiesPagingName(frontEndNames.goods)]: { fromPage: 0, pageSize: 5 }
+        [frontEndNames.entitiesPagingName(frontEndNames.goods)]: { fromPage: 0, pageSize: 5 },
+        [frontEndNames.entitiesPagingName(frontEndNames.category)]: { fromPage: 0, pageSize: 5 }
     }, //state={} в параметрах
     reducers: {
         setSidebar(state, action) {
@@ -59,6 +60,12 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
         setCurrentCategory(state, action) {
             return setCurrentEntity(frontEndNames.category, state, action.payload.entity);
         },
+        setCategoryPaging(state, action) {
+            return setEntitiesPaging(frontEndNames.category, state, action.payload);
+        },
+        setCategorySearch(state, action) {
+            return setEntitiesSearchStr(frontEndNames.category, state, action);
+        },
 
     },
     extraReducers: builder => {
@@ -77,6 +84,10 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
         builder.addMatcher(loginApi.endpoints.getUsersCount.matchFulfilled,
             (state, { payload }) => {
                 setEntitiesCount(frontEndNames.users, state, payload.UserCount);
+            });
+        builder.addMatcher(categoryApi.endpoints.getCategoriesCount.matchFulfilled,
+            (state, { payload }) => {
+                setEntitiesCount(frontEndNames.category, state, payload.CategoryCount);
             });
         builder.addMatcher(ordersApi.endpoints.getOrders.matchFulfilled,
             (state, data) => {

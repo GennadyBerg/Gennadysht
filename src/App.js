@@ -4,7 +4,7 @@ import { Router, Route, Switch } from 'react-router-dom';
 import { createBrowserHistory } from "history";
 import { Provider } from 'react-redux';
 import { promiseReducer, frontEndReducer, cartReducer, actionRestoreCart, goodsApi, cartGoodsApi } from './reducers';
-import { CCategoryTree, CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CRegisterForm, CUser, CUsersList } from "./Components";
+import { CCategoriesList, CCategoryTree, CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CRegisterForm, CUser, CUsersList } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -98,7 +98,7 @@ function App() {
               <Route path="/user/:_id" component={CUser} />
               <Route path="/user" component={CUser} />
               <Route path="/logout" component={CLogout} />
-              <Route path="/catree" component={CCategoryTree} />
+              <Route path="/catree" component={CCategoriesList} />
               <Route path="*" component={NotFound} />
             </Switch>
           </div>
