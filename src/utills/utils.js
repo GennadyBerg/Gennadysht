@@ -17,6 +17,9 @@ function saveImage(image) {
     return res;
 }
 
-export { getFullImageUrl, findObjectIndexById, saveImage };
+const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+
+export { getFullImageUrl, findObjectIndexById, saveImage, capitalize };
 
 

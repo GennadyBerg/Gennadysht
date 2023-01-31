@@ -87,7 +87,7 @@ const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >
                                                     {
-                                                        <ReferenceLink entity={entity} refName='owner' path='editableUser' getText={ref => ref ? ref.nick || ref.login : "No owner"} />
+                                                        <ReferenceLink entity={entity} refName='owner' typeName={frontEndNames.users} getText={ref => ref ? ref.nick || ref.login : "No owner"} />
                                                     }
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >

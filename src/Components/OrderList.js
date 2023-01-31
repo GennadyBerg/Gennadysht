@@ -4,7 +4,7 @@ import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/mate
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
 import { COrdersPagination, CPagination } from './Pagination';
 import { CSearchInput } from './SearchInput';
-import { MyLink } from '.';
+import { MyLink, ReferenceLink } from '.';
 import { useSelector } from 'react-redux';
 import { frontEndNames, getCurrentUser, getEntitiesListShowParams, useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
 import { UserEntity } from '../Entities';
@@ -96,14 +96,7 @@ const OrderList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >
                                                     {
-                                                        order.owner ?
-                                                        <MyLink to={`/user/${order.owner._id}`}>
-                                                            <Typography>
-                                                                {order.owner?.nick || order.owner.login}
-                                                            </Typography>
-                                                        </MyLink>
-                                                        :
-                                                        <Typography>No owner</Typography>
+                                                        <ReferenceLink entity={order} refName='owner' typeName={frontEndNames.users} getText={ref => ref ? ref.nick || ref.login : "No owner"} />
                                                     }
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >
@@ -130,7 +123,7 @@ const COrdersList = () => {
     let state = useSelector(state => state);
     const { fromPage, pageSize, searchStr } = getEntitiesListShowParams(entitiesTypeName, state);
     let currentUser = useSelector(state => new UserEntity(getCurrentUser(state)));
-    
+
     const ordersResult = useGetOrdersQuery({ fromPage, pageSize, searchStr, owner: currentUser });
     const ordersCountResult = useGetOrdersCountQuery({ searchStr, owner: currentUser });
     let isLoading = ordersResult.isLoading || ordersCountResult.isLoading;

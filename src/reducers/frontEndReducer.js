@@ -1,12 +1,10 @@
 import { createSlice, current } from "@reduxjs/toolkit"
-import { v4 } from "uuid";
-import { actionClearCart } from "./cartReducer";
 import { categoryApi } from "./categoryReducer";
 import { goodsApi } from "./goodsReducer";
 import { ordersApi } from "./ordersReducer";
 import { authApi } from "./authReducer";
+import { capitalize } from "../utills";
 
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 export class frontEndNames {
     static category = "category";
     static orders = "orders";
