@@ -1,26 +1,54 @@
-export function createStore(reducer) {
-    let state = reducer(undefined, {})              //стартовая инициализация состояния, запуск редьюсера со state === undefined
-    let cbs = []                                      //массив подписчиков
+import storage from "redux-persist/lib/storage";
+import { combineReducers, configureStore } from '@reduxjs/toolkit';
+import { frontEndSlice, goodsApi } from './reducers';
+import { categoryApi } from './reducers/categoryReducer';
+import { ordersApi } from './reducers/ordersReducer';
+import { authApi, authSlice, cartSlice } from './reducers';
+import {
+  persistReducer, persistStore, FLUSH,
+  REHYDRATE,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER
+} from 'redux-persist';
+import thunk from 'redux-thunk';
 
-    const getState = () => { return state; }                   //функция, возвращающая переменную из замыкания
-    const subscribe = cb => (cbs.push(cb),            //запоминаем подписчиков в массиве
-        () => cbs = cbs.filter(c => c !== cb))      //возвращаем функцию unsubscribe, которая удаляет подписчика из списка
+const persistConfig = {
+  key: 'root',
+  storage,
+  blacklist: [
+    //authSlice.name,
+    //authApi.reducerPath,
+    /*cartSlice.name,
+    categoryApi.reducerPath,
+    goodsApi.reducerPath,
+    ordersApi.reducerPath,
+    frontEndSlice.name,*/
+  ]
+};
+const combineReducer = combineReducers({
+  [authSlice.name]: authSlice.reducer,
+  [authApi.reducerPath]: authApi.reducer,
+  [categoryApi.reducerPath]: categoryApi.reducer,
+  [goodsApi.reducerPath]: goodsApi.reducer,
+  [ordersApi.reducerPath]: ordersApi.reducer,
+  [frontEndSlice.name]: frontEndSlice.reducer,
+  [cartSlice.name]: cartSlice.reducer,
+});
 
-    function dispatch(action) {
-        if (typeof action === 'function') {         //если action - не объект, а функция
-            return action(dispatch, getState)       //запускаем эту функцию и даем ей dispatch и getState для работы
-        }
-        const newState = reducer(state, action)      //пробуем запустить редьюсер
-        if (newState !== state) {                    //проверяем, смог ли редьюсер обработать action
-            state = newState                        //если смог, то обновляем state 
-            for (let cb of cbs) cb()                //и запускаем подписчиков
-        }
-    }
+const rootReducer = persistReducer(persistConfig, combineReducer);
 
-    return {
-        getState,                                   //добавление функции getState в результирующий объект
-        dispatch,
-        subscribe                                   //добавление subscribe в объект
-    }
-}
-
+export const store = configureStore({
+  middleware: (getDefaultMiddleware) => [
+    thunk,
+    ...getDefaultMiddleware({ serializableCheck: { ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER] } }),
+    categoryApi.middleware,
+    goodsApi.middleware,
+    ordersApi.middleware,
+    authApi.middleware,
+  ],
+  reducer: rootReducer
+});
+store.subscribe(() => console.log(store.getState()));
+export const persistedStore = persistStore(store);

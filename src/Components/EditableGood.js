@@ -3,14 +3,14 @@ import Button from '@mui/material/Button';
 import { styled } from '@mui/material/styles';
 import { Container, Grid, Card, CardContent, CardMedia, AvatarGroup, CardActions, IconButton, TextField, InputAdornment, Box, Modal } from '@mui/material';
 import { getFullImageUrl } from "./../utills";
-import { useDispatch, useSelector } from 'react-redux';
-import { actionSetCurrentEntity, frontEndNames, getCurrentEntity, isCurrentUserAdmin, useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
+import { useSelector } from 'react-redux';
+import { frontEndNames, getCurrentEntity, isCurrentUserAdmin, useGetGoodByIdQuery, useSaveGoodMutation } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { CSortedFileDropZone } from './SortedFileDropZone';
 import { saveImage } from '../utills/utils';
 import { CGood } from './Good';
 import { ModalContainer } from './ModalContainer';
-import { history } from '../App';
+import { history } from "../App";
 import { LackPermissions } from './LackPermissions';
 import { CCategoryDropDownList } from './DropDownList';
 
@@ -180,8 +180,6 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
     const { _id } = useParams();
     const { isLoading, data } = useGetGoodByIdQuery(_id || 'fwkjelnfvkjwe');
     let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
-    const dispatch = useDispatch();
-    dispatch(actionSetCurrentEntity(frontEndNames.goods, _id));
     const [saveGoodMutation, { }] = useSaveGoodMutation();
     const state = useSelector(state => state);
     let currentCategory = getCurrentEntity(frontEndNames.category, state)

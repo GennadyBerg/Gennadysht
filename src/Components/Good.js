@@ -127,10 +127,8 @@ const CGood = ({ good, maxWidth = 'md', showAddToCard = true, editable = true })
     const { _id } = useParams();
     const { isLoading, data } = useGetGoodByIdQuery(_id);
     const dispatch = useDispatch();
-    if (!good) {
+    if (!good) 
         good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
-        dispatch(actionSetCurrentEntity(frontEndNames.goods, _id));
-    }
     let state = useSelector(state => state);
     let isAdmin = isCurrentUserAdmin(state);
     return <Good good={good} isAdmin={isAdmin} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />

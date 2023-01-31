@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
 import { connect, useSelector } from "react-redux"
-import { frontEndNames, getCurrentEntity, getCurrentUser, useAddOrderMutation, useGetCartGoodsQuery } from "../reducers"
+import { getCurrentUser, useAddOrderMutation, useGetGoodsByIdQuery } from "../reducers"
 import { CartGoodsList } from "./CartGoodsList"
 import { findObjectIndexById } from '../utills';
 import { MyLink } from './MyLink';
@@ -16,12 +16,12 @@ const mapCountToGood = (goodData, goodsCounts) => {
 }
 
 const Cart = () => {
-    let goods = useSelector(state => state.cart.goods) ?? [];
-    let { isLoading, data } = useGetCartGoodsQuery({ goods });
+    let goods = useSelector(state => state.cart?.goods) ?? [];
+    let { isLoading, data } = useGetGoodsByIdQuery({ goods });
     let goodsData = data?.GoodFind?.map(gd => ({ ...gd, count: mapCountToGood(gd, goods) })) ?? [];
     let state = useSelector(state => state);
     let order = [];
-    for (let good of Object.values(state.cart.goods)) {
+    for (let good of Object.values(goods)) {
         order.push({ good: { _id: good._id }, count: good.count });
     }
     let currentUser = useSelector(state => getCurrentUser(state));

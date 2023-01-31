@@ -1,6 +1,7 @@
 import { List, ListItem, ListItemButton, ListItemText, Breadcrumbs, Button } from "@mui/material"
 import { Typography } from "@mui/material"
 import { Box, Container } from "@mui/system"
+import { useState } from "react"
 import { useEffect } from "react"
 import { connect, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
@@ -19,13 +20,14 @@ const Category = () => {
     let cat = isLoading ? { name: 'loading', goods: [] } : data?.CategoryFindOne;
     let csubCats = false;
     const dispatch = useDispatch();
-    if (cat?._id)
-        dispatch(actionSetCurrentEntity(frontEndNames.category, cat));
     let state = useSelector(state => state);
+    useEffect(() => {
+        if (getCurrentEntity(frontEndNames.category, state)?._id != _id) 
+            dispatch(actionSetCurrentEntity(frontEndNames.category, { _id }));
+        if (!isLoading)
+            dispatch(actionSetCurrentEntity(frontEndNames.category, data.CategoryFindOne));
+    }, [_id, isLoading, data]);
     let isAdmin = isCurrentUserAdmin(state);
-    /*useEffect(() => {
-        dispatch(actionSetCurrentEntity(frontEndNames.category, cat));
-    }, [_id]);*/
     return isLoading ? <Typography>Loading</Typography> : (
         <>
             <Container>

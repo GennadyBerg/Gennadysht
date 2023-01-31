@@ -23,7 +23,7 @@ export const prepareHeaders = (headers, { getState }) => {
     return headers;
 }
 
-export const loginApi = createApi({
+const authApi = createApi({
     reducerPath: "authApi",
     baseQuery: graphqlRequestBaseQuery({
         url: '/graphql',
@@ -111,9 +111,8 @@ export const loginApi = createApi({
     }),
 })
 
-export let authReducerPath = 'auth';
 const authSlice = createSlice({
-    name: authReducerPath,
+    name: 'auth',
     initialState: {},
     reducers: {
         logout(state) { //type - auth/logout
@@ -123,7 +122,7 @@ const authSlice = createSlice({
         }
     },
     extraReducers: builder => {
-        builder.addMatcher(loginApi.endpoints.login.matchFulfilled,
+        builder.addMatcher(authApi.endpoints.login.matchFulfilled,
             (state, { payload }) => {
                 const tokenPayload = jwtDecode(payload.login);
                 if (tokenPayload) {
@@ -133,18 +132,18 @@ const authSlice = createSlice({
                     history.push('/');
                 }
             });
-        builder.addMatcher(loginApi.endpoints.userFind.matchFulfilled,
+        builder.addMatcher(authApi.endpoints.userFind.matchFulfilled,
             (state, { payload }) => {
                 let retrievedUser = payload?.UserFindOne;
                 if (retrievedUser?._id === state.currentUser?._id)
                     state.currentUser = retrievedUser;
             });
-        builder.addMatcher(loginApi.endpoints.saveUser.matchFulfilled,
+        builder.addMatcher(authApi.endpoints.saveUser.matchFulfilled,
             (state, { payload }) => {
                 let a = '';
                 let b = '';
             });
-        builder.addMatcher(loginApi.endpoints.saveUser.matchRejected,
+        builder.addMatcher(authApi.endpoints.saveUser.matchRejected,
             (state, data) => {
                 let a = '';
                 let b = '';
@@ -156,7 +155,7 @@ const actionAboutMe = () =>
     async (dispatch, getState) => {
         const auth = getState().auth
         if (auth.token) {
-            dispatch(loginApi.endpoints.userFind.initiate(auth.currentUser._id))
+            dispatch(authApi.endpoints.userFind.initiate(auth.currentUser._id))
         }
     }
 
@@ -167,10 +166,7 @@ const isCurrentUserAdmin = state =>{
 }
 
 const { logout: actionAuthLogout } = authSlice.actions;
-let authApiReducer = loginApi.reducer;
-let authReducer = authSlice.reducer;
-let authApiReducerPath = loginApi.reducerPath;
 
-export const { useLoginMutation, useUserFindQuery, useSaveUserMutation, useGetUsersQuery, useGetUsersCountQuery, useRegisterMutation } = loginApi;
-export { authApiReducer, authReducer, authApiReducerPath, actionAuthLogout, actionAboutMe, getCurrentUser, isCurrentUserAdmin  }
+export const { useLoginMutation, useUserFindQuery, useSaveUserMutation, useGetUsersQuery, useGetUsersCountQuery, useRegisterMutation } = authApi;
+export { authApi, authSlice, actionAuthLogout, actionAboutMe, getCurrentUser, isCurrentUserAdmin  }
 

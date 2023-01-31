@@ -97,13 +97,11 @@ const COrder = () => {
     let currentUser = useSelector(state => getCurrentUser(state));
     const { isLoading, data } = useGetOrderByIdQuery({ _id, owner: new UserEntity(currentUser) });
     let order = isLoading ? { name: 'loading', order: {} } : data?.OrderFindOne;
-    const dispatch = useDispatch();
-    dispatch(actionSetCurrentEntity(frontEndNames.orders, _id));
     return !isLoading && 
         order ?
         <Order order={order} />
         :
-        <LackPermissions name="order"/>
+        isLoading ? <Typography>Loading...</Typography> : <LackPermissions name="order"/>
         ;
 }
 

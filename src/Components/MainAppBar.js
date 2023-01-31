@@ -8,13 +8,13 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { MyLink } from './MyLink';
 import { connect, useSelector } from 'react-redux';
 import { useTheme } from '@emotion/react';
-import { actionSetSidebar } from '../reducers/frontEndReducer';
+import { actionSetSidebar, getIsSideBarOpen } from '../reducers';
 import { UserEntity } from '../Entities';
 
 const MainAppBar = ({ token, openSidebar }) => {
     const theme = useTheme();
-    let currentUser = useSelector(state => new UserEntity(state.auth.currentUser ?? { _id: null }));
-    let isAdmin = currentUser.isAdminRole;
+    let currentUser = useSelector(state => new UserEntity(state.auth?.currentUser ?? { _id: null }));
+    let isAdmin = currentUser?.isAdminRole === true;
     let isLoggedIn = token && true;
     return (
         <Box sx={{ flexGrow: 1 }}>
@@ -60,4 +60,4 @@ const MainAppBar = ({ token, openSidebar }) => {
     );
 }
 
-export const CMainAppBar = connect(state => ({ token: state.auth?.token, sidebarOpened: state.frontend.sidebar.opened }), { openSidebar: actionSetSidebar })(MainAppBar);
+export const CMainAppBar = connect(state => ({ token: state.auth?.token, sidebarOpened: getIsSideBarOpen(state) }), { openSidebar: actionSetSidebar })(MainAppBar);

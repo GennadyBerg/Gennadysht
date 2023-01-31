@@ -4,7 +4,7 @@ import { actionClearCart } from "./cartReducer";
 import { categoryApi } from "./categoryReducer";
 import { goodsApi } from "./goodsReducer";
 import { ordersApi } from "./ordersReducer";
-import { loginApi } from "./authReducer";
+import { authApi } from "./authReducer";
 
 const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 export class frontEndNames {
@@ -18,7 +18,7 @@ export class frontEndNames {
     static searchStrName = name => `${name}SearchStr`;
 }
 
-const frontEndReducerSlice = createSlice({ //promiseReducer
+const frontEndSlice = createSlice({ //promiseReducer
     name: 'frontend', //префикс типа наподобие AUTH_
     initialState: {
         sidebar: {},
@@ -32,39 +32,21 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             state.sidebar = { opened: action.payload.open };
             return state;
         },
-
-        setOrdersPaging(state, action) {
-            return setEntitiesPaging(frontEndNames.orders, state, action.payload);
+        setPaging(state, action) {
+            let name = action.payload.name;
+            let { fromPage, pageSize } = action.payload;
+            let paging = state[frontEndNames.entitiesPagingName(name)];
+            fromPage = fromPage ?? paging?.fromPage;
+            pageSize = pageSize ?? paging?.pageSize;
+            state[frontEndNames.entitiesPagingName(name)] = { fromPage, pageSize };
+            return state;
         },
-        setOrdersSearch(state, action) {
-            return setEntitiesSearchStr(frontEndNames.orders, state, action);
+        setSearch(state, action) {
+            state[frontEndNames.searchStrName(action.payload.name)] = action.payload.searchStr;
         },
-        setCurrentOrders(state, action) {
-            return setCurrentEntity(frontEndNames.orders, state, action.payload._id);
-        },
-        setUsersPaging(state, action) {
-            return setEntitiesPaging(frontEndNames.users, state, action.payload);
-        },
-        setUsersSearch(state, action) {
-            return setEntitiesSearchStr(frontEndNames.users, state, action);
-        },
-        setGoodsPaging(state, action) {
-            return setEntitiesPaging(frontEndNames.goods, state, action.payload);
-        },
-        setGoodsSearch(state, action) {
-            return setEntitiesSearchStr(frontEndNames.goods, state, action);
-        },
-        setCurrentGoods(state, action) {
-            return setCurrentEntity(frontEndNames.goods, state, action.payload._id);
-        },
-        setCurrentCategory(state, action) {
-            return setCurrentEntity(frontEndNames.category, state, action.payload.entity);
-        },
-        setCategoryPaging(state, action) {
-            return setEntitiesPaging(frontEndNames.category, state, action.payload);
-        },
-        setCategorySearch(state, action) {
-            return setEntitiesSearchStr(frontEndNames.category, state, action);
+        setCurrent(state, action) {
+            state[frontEndNames.currentEntityName(action.payload.name)] = { payload: action.payload.entity };
+            return state;
         },
 
     },
@@ -81,7 +63,7 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
             (state, { payload }) => {
                 setEntitiesCount(frontEndNames.orders, state, payload.OrderCount);
             });
-        builder.addMatcher(loginApi.endpoints.getUsersCount.matchFulfilled,
+        builder.addMatcher(authApi.endpoints.getUsersCount.matchFulfilled,
             (state, { payload }) => {
                 setEntitiesCount(frontEndNames.users, state, payload.UserCount);
             });
@@ -109,44 +91,65 @@ const frontEndReducerSlice = createSlice({ //promiseReducer
                 let a = '';
                 let b = '';
             });
-    }
+        builder.addMatcher(goodsApi.endpoints.saveGood.matchFulfilled,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(goodsApi.endpoints.saveGood.matchRejected,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(goodsApi.endpoints.getGoodById.matchFulfilled,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(goodsApi.endpoints.getGoodById.matchRejected,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+            builder.addMatcher(goodsApi.endpoints.getGoods.matchFulfilled,
+                (state, data) => {
+                    let a = '';
+                    let b = '';
+                });
+            builder.addMatcher(goodsApi.endpoints.getGoods.matchRejected,
+                (state, data) => {
+                    let a = '';
+                    let b = '';
+                });
+        }
 })
+
 
 let actionSetPaging = (name, { fromPage, pageSize }) =>
     async dispatch => {
-        let pagingFunc = frontEndReducerSlice.actions[`set${capitalize(name)}Paging`];
-        dispatch(pagingFunc({ fromPage, pageSize }))
+        dispatch(frontEndSlice.actions.setPaging({ fromPage, pageSize, name }))
     }
-const setEntitiesPaging = (name, state, { fromPage, pageSize }) => {
-    let paging = state[frontEndNames.entitiesPagingName(name)];
-    fromPage = fromPage ?? paging?.fromPage;
-    pageSize = pageSize ?? paging?.pageSize;
-    state[frontEndNames.entitiesPagingName(name)] = { fromPage, pageSize };
-    return state;
-}
+
+let actionSetCurrentEntity = (name, entity) =>
+    async dispatch => {
+        dispatch(frontEndSlice.actions.setCurrent({ entity, name }))
+    }
+
+let actionSetSearch = (name, searchStr) =>
+    async dispatch => {
+        dispatch(frontEndSlice.actions.setSearch({ searchStr, name }));
+    }
+
 const getEntitiesPaging = (name, state) => {
     let paging = state.frontend[frontEndNames.entitiesPagingName(name)];
     return { fromPage: paging.fromPage, pageSize: paging.pageSize };
 }
 
-let actionSetCurrentEntity = (name, entity) =>
-    async dispatch => {
-        let setCurrentFunc = frontEndReducerSlice.actions[`setCurrent${capitalize(name)}`];
-        dispatch(setCurrentFunc({ entity }))
-    }
-const setCurrentEntity = (name, state, entity) => {
-    if (name === frontEndNames.category) {
-        if ((entity?._id != "6262ca7dbf8b206433f5b3d1")) {
-            let a = '';
-        }
-    }
-    state[frontEndNames.currentEntityName(name)] = { payload: entity };
-    return state;
+const getEntitiesSearchStr = (name, state) => {
+    return { searchStr: state.frontend[frontEndNames.searchStrName(name)] };
 }
+
 const getCurrentEntity = (name, state) => {
-    if (name === frontEndNames.category) {
-        let a = '';
-    }
     let result = state.frontend[frontEndNames.currentEntityName(name)]?.payload;
     return result;
 }
@@ -159,30 +162,18 @@ const getEntitiesCount = (name, state) => {
     return state.frontend[name][frontEndNames.entitiesCountName(name)]?.payload ?? 0;
 }
 
-let actionSetSearch = (name, searchStr) =>
-    async dispatch => {
-        let searcFunc = frontEndReducerSlice.actions[`set${capitalize(name)}Search`];
-        dispatch(searcFunc({ searchStr }));
-    }
-
-const setEntitiesSearchStr = (name, state, action) => {
-    state[frontEndNames.searchStrName(name)] = action.payload.searchStr;
-    return state;
-}
-const getEntitiesSearchStr = (name, state) => {
-    return { searchStr: state.frontend[frontEndNames.searchStrName(name)] };
-}
-
-let frontEndReducer = frontEndReducerSlice.reducer;
-const actionSetSidebar = open =>
-    async dispatch => {
-        dispatch(frontEndReducerSlice.actions.setSidebar({ open }))
-    }
-
 const getEntitiesListShowParams = (name, state) => {
     return { ...getEntitiesPaging(name, state), ...getEntitiesSearchStr(name, state) };
 }
 
+const actionSetSidebar = open =>
+    async dispatch => {
+        dispatch(frontEndSlice.actions.setSidebar({ open }))
+    }
 
-export { frontEndReducer, actionSetSidebar };
-export { actionSetPaging, actionSetSearch, getEntitiesCount, getCurrentEntity, actionSetCurrentEntity, getEntitiesSearchStr, getEntitiesPaging, getEntitiesListShowParams }
+const getIsSideBarOpen = state => {
+    return state.frontend?.sidebar.opened === true;
+}
+
+export { frontEndSlice, actionSetSidebar };
+export { getIsSideBarOpen, actionSetPaging, actionSetSearch, getEntitiesCount, getCurrentEntity, actionSetCurrentEntity, getEntitiesSearchStr, getEntitiesPaging, getEntitiesListShowParams }

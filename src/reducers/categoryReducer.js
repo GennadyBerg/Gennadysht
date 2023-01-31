@@ -19,6 +19,7 @@ export const categoryApi = createApi({
         url: '/graphql',
         prepareHeaders
     }),
+    tagTypes: ['Category', 'CategoryCount'],
     endpoints: (builder) => ({
         getRootCategories: builder.query({
             query: (withChildren = false) => ({
@@ -29,6 +30,11 @@ export const categoryApi = createApi({
                         }
                     }
                 `}),
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [...result.CategoryFind.map(obj => ({ type: 'Category', _id: obj._id })), 'Category']
+                    : ['Category'];
+            }
         }),
         getCategories: builder.query({
             query: ({ withOwner = false, withChildren = false, withParent = false, queryExt = {}, fromPage, pageSize, searchStr = '' }) => {
@@ -46,6 +52,11 @@ export const categoryApi = createApi({
                     variables: params
                 }
             },
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [...result.CategoryFind.map(obj => ({ type: 'Category', _id: obj._id })), 'Category']
+                    : ['Category'];
+            }
         }),
         getCategoriesCount: builder.query({
             query: ({ searchStr = '', queryExt = {} }) => {
@@ -57,6 +68,7 @@ export const categoryApi = createApi({
                     variables: params
                 }
             },
+            providesTags: ['CategoryCount'],
         }),
         getCategoryById: builder.query({
             query: (_id) => ({
@@ -74,7 +86,12 @@ export const categoryApi = createApi({
                     `,
                 variables: { q: JSON.stringify([{ _id }]) }
             }),
-            invalidatesTags: (result, error, arg) => ([{ type: 'GoodsCount', id: arg._id }])
+            invalidatesTags: (result, error, arg) => {
+                if (!error) {
+                    let catInv = { type: 'Category', _id: arg.category._id };
+                    return [catInv, 'CategoryCount'];
+                }
+            },
         }),
     }),
 })

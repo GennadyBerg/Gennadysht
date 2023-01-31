@@ -5,10 +5,9 @@ import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { actionSetSidebar } from '../reducers/frontEndReducer';
+import { actionSetSidebar, getIsSideBarOpen } from '../reducers/frontEndReducer';
 import { connect } from 'react-redux';
 import { ClickAwayListener } from '@mui/material';
-import { useState } from 'react';
 
 function Sidebar(props) {
     let { drawerWidth, menuComponent, opened, openSidebar } = props;
@@ -65,4 +64,4 @@ function Sidebar(props) {
         </>);
 }
 
-export const CSidebar = connect(state => ({ opened: state.frontend.sidebar.opened }), { openSidebar: actionSetSidebar })(Sidebar);
+export const CSidebar = connect(state => ({ opened: getIsSideBarOpen(state) }), { openSidebar: actionSetSidebar })(Sidebar);

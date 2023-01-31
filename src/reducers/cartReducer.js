@@ -5,7 +5,7 @@ import { findObjectIndexById } from "../utills";
 import { ordersApi } from "./ordersReducer";
 //import { clearCartData, getCartData } from "./cartGoodsReducer";
 
-const cartReducerSlice = createSlice({ //promiseReducer
+const cartSlice = createSlice({ //promiseReducer
     name: 'cart', //префикс типа наподобие AUTH_
     initialState: {
         goods: []
@@ -74,25 +74,24 @@ function cleanCartInt(state) {
     return state;
 }
 
-let cartReducer = cartReducerSlice.reducer;
 let actionAddGoodToCart = (good, count = 1) =>
     async (dispatch, state) => {
-        dispatch(cartReducerSlice.actions.addGood({ good: { ...good, count } }))
+        dispatch(cartSlice.actions.addGood({ good: { ...good, count } }))
     }
 
 let actionDeleteGoodFromCart = good =>
     async dispatch => {
-        dispatch(cartReducerSlice.actions.deleteGood({ good }))
+        dispatch(cartSlice.actions.deleteGood({ good }))
     }
 
 let actionRestoreCart = () =>
     async dispatch => {
-        dispatch(cartReducerSlice.actions.restoreCart({}))
+        dispatch(cartSlice.actions.restoreCart({}))
     }
 
 let actionClearCart = () =>
     async dispatch => {
-        dispatch(cartReducerSlice.actions.cleanCart({}))
+        dispatch(cartSlice.actions.cleanCart({}))
     }
 
 const setStateData = (state, goods, uniqueId = undefined) => {
@@ -105,7 +104,7 @@ const setStateData = (state, goods, uniqueId = undefined) => {
 
 
 export {
-    cartReducer, /*getCart,*/
+    cartSlice, /*getCart,*/
     actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart,
     actionClearCart/*, actionClearCartData*/
 };

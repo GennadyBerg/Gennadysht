@@ -19,6 +19,7 @@ const ordersApi = createApi({
         url: '/graphql',
         prepareHeaders
     }),
+    tagTypes: ['Order', 'OrderCount'],
     endpoints: (builder) => ({
         getOrders: builder.query({
             query: ({ owner, fromPage, pageSize, searchStr = '' }) => {
@@ -45,6 +46,11 @@ const ordersApi = createApi({
                     variables: params
                 }
             },
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [...result.OrderFind.map(obj => ({ type: 'Order', _id: obj._id })), 'Order']
+                    : ['Order'];
+            }
         }),
         getOrdersCount: builder.query({
             query: ({ owner, searchStr = '' }) => {
@@ -57,6 +63,7 @@ const ordersApi = createApi({
                     variables: params
                 }
             },
+            providesTags: ['OrderCount'],
         }),
         getOrderById: builder.query({
             query: ({ owner, _id }) => {
@@ -84,6 +91,11 @@ const ordersApi = createApi({
                     variables: params
                 }
             },
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [{ type: 'Order', _id: result.OrderFindOne._id }, 'Order']
+                    : ['Order'];
+            }
         }),
         addOrder: builder.mutation({
             query: ({ order, id = null }) => (
@@ -97,7 +109,13 @@ const ordersApi = createApi({
                         `,
                     variables: { order: { "_id": id, "orderGoods": order } }
                 }
-            )
+            ),
+            invalidatesTags: (result, error, arg) => {
+                if (!error) {
+                    let orderInv = { type: 'Order', _id: arg.order._id };
+                    return [orderInv, 'OrderCount'];
+                }
+            },
         }),
     }),
 });

@@ -24,6 +24,7 @@ export const goodsApi = createApi({
         url: '/graphql',
         prepareHeaders
     }),
+    tagTypes: ['Good', 'GoodCount'],
     endpoints: (builder) => ({
         getGoods: builder.query({
             query: ({ fromPage, pageSize, searchStr = '', queryExt = {} }) => {
@@ -42,6 +43,11 @@ export const goodsApi = createApi({
                     variables: params
                 }
             },
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [...result.GoodFind.map(obj => ({ type: 'Good', _id: obj._id })), 'Good']
+                    : ['Good'];
+            }
         }),
         getGoodsCount: builder.query({
             query: ({ searchStr = '', queryExt = {} }) => {
@@ -54,7 +60,7 @@ export const goodsApi = createApi({
                     variables: params
                 }
             },
-            providesTags: (result, error, id) => ([{ type: 'GoodsCount', id }]),
+            providesTags: ['GoodCount'],
         }),
         getGoodById: builder.query({
             query: (_id) => {
@@ -71,22 +77,57 @@ export const goodsApi = createApi({
                     variables: params
                 }
             },
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [{ type: 'Good', _id: result.GoodFindOne._id }, 'Good']
+                    : ['Good'];
+            }
         }),
-
+        getGoodsById: builder.query({
+            query: ({ goods }) => {
+                let params = createFullQuery({queryExt: { _id: { "$in": goods.map(g => g._id) } } })
+                return {
+                    document: gql`
+                        query GoodFind($q: String) {
+                            GoodFind(query: $q) {
+                                _id name  price description
+                                images { url }
+                            }
+                        }
+                    `,
+                    variables: params
+                }
+            },
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [...result.GoodFind.map(obj => ({ type: 'Good', _id: obj._id })), 'Good']
+                    : ['Good'];
+            }
+        }),
         saveGood: builder.mutation({
-            query: ({ good }) => ({
-                document: gql`
+            query: ({ good }) => {
+                return (
+                    {
+                        document: gql`
                             mutation GoodUpsert($good: GoodInput) {
                                 GoodUpsert(good: $good) {
                                     _id
                                 }
                             }
                         `,
-                variables: { good: { ...good, images: good?.images.map(img => ({ _id: img._id })) ?? [] } }
-            })
+                        variables: { good: { ...good, images: good?.images.map(img => ({ _id: img._id })) ?? [] } }
+                    }
+                )
+            },
+            invalidatesTags: (result, error, arg) => {
+                if (!error) {
+                    let goodInv = { type: 'Good', _id: arg.good._id };
+                    return [goodInv, 'GoodCount'];
+                }
+            },
         }),
     }),
 })
 
-export const { useGetGoodsQuery, useGetGoodsCountQuery, useGetGoodByIdQuery, useSaveGoodMutation } = goodsApi;
+export const { useGetGoodsQuery, useGetGoodsCountQuery, useGetGoodByIdQuery, useGetGoodsByIdQuery, useSaveGoodMutation } = goodsApi;
 
