@@ -109,17 +109,27 @@ const frontEndSlice = createSlice({ //promiseReducer
                 let a = '';
                 let b = '';
             });
-            builder.addMatcher(goodsApi.endpoints.getGoods.matchFulfilled,
-                (state, data) => {
-                    let a = '';
-                    let b = '';
-                });
-            builder.addMatcher(goodsApi.endpoints.getGoods.matchRejected,
-                (state, data) => {
-                    let a = '';
-                    let b = '';
-                });
-        }
+        builder.addMatcher(goodsApi.endpoints.getGoods.matchFulfilled,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(goodsApi.endpoints.getGoods.matchRejected,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(categoryApi.endpoints.saveCategory.matchFulfilled,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+        builder.addMatcher(categoryApi.endpoints.saveCategory.matchRejected,
+            (state, data) => {
+                let a = '';
+                let b = '';
+            });
+    }
 })
 
 

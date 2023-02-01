@@ -3,8 +3,9 @@ import { Button, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuItem, 
 import { useGetRootCategoriesQuery } from '../reducers';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { styled, alpha } from '@mui/material/styles';
+import { DeleteOutline } from '@mui/icons-material';
 
-const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory }) => {
+const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory, showClearButton = false }) => {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
     const [selectedIndex, setSelectedIndex] = React.useState(selectedIndexExt);
@@ -15,7 +16,7 @@ const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory
 
     const handleMenuItemClick = (event, index) => {
         setSelectedIndex(index);
-        onSetCategory(elements[index]);
+        onSetCategory(index < 0 ? undefined : elements[index]);
         setOpen(false);
     };
 
@@ -32,8 +33,8 @@ const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory
 
     return (
         <React.Fragment>
-            <ButtonGroup variant="contained" ref={anchorRef} aria-label="split button">
-                <Button onClick={handleClick}>{selectedIndex >= 0 ? elements[selectedIndex].render : <></>}</Button>
+            <ButtonGroup sx={{width:"100%"}} variant="contained" ref={anchorRef} aria-label="split button">
+                <Button onClick={handleClick} sx={{width:"100%"}}>{selectedIndex >= 0 ? elements[selectedIndex].render : <></>}</Button>
                 <Button
                     size="small"
                     aria-controls={open ? 'split-button-menu' : undefined}
@@ -44,6 +45,16 @@ const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory
                 >
                     <ArrowDropDownIcon />
                 </Button>
+                {
+                    showClearButton ?
+                        <Button
+                            size="small"
+                            onClick={() => handleMenuItemClick(undefined, -1)}
+                        >
+                            <DeleteOutline />
+                        </Button>
+                        : <></>
+                }
             </ButtonGroup>
             <Popper
                 sx={{
@@ -69,7 +80,6 @@ const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory
                                     {elements.map((element, index) => (
                                         <MenuItem
                                             key={element.key}
-                                            disabled={index === 2}
                                             selected={index === selectedIndex}
                                             onClick={(event) => handleMenuItemClick(event, index)}
                                         >
@@ -112,12 +122,16 @@ const wrapToTreeItems = (cats, parentCat = undefined, currentLevelPrefix = '', c
     return catTreeItems;
 }
 
-export const CCategoryDropDownListUnstyled = ({ currentCat, onSetCategory }) => {
+export const CCategoryDropDownListUnstyled = ({ currentCat, onSetCategory, showClearButton }) => {
     const { isLoading, data } = useGetRootCategoriesQuery(true);
     let cats = data?.CategoryFind;
     if (!isLoading && cats) {
-        let selectedIndex = cats.findIndex(c => c._id == currentCat?._id);
-        return <DropDownList elements={wrapToTreeItems(cats)} selectedIndex={selectedIndex} onSetCategory={onSetCategory} />
+        cats = wrapToTreeItems(cats);
+        if(cats[10].subCategories?.lenght > 1){
+            let a = '';
+        }
+        let selectedIndex = cats.findIndex(c => c.key == currentCat?._id);
+        return <DropDownList elements={cats} selectedIndex={selectedIndex} onSetCategory={onSetCategory} showClearButton={showClearButton} />
     }
 }
 

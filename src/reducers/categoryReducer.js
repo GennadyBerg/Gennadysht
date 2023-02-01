@@ -26,7 +26,7 @@ export const categoryApi = createApi({
                 document: gql`
                 query GetCategories{
                     CategoryFind(query: "[{\\"parent\\": null}]") {
-                        _id name ${withChildren ? 'subCategories { _id name } ' : ''}
+                        _id name ${withChildren ? 'subCategories { _id name } ' : ''} image { _id url }
                         }
                     }
                 `}),
@@ -43,7 +43,7 @@ export const categoryApi = createApi({
                     document: gql`
                     query GetCategories($q: String){
                         CategoryFind(query: $q) {
-                            _id name ${withChildren ? 'subCategories { _id name } ' : ''}
+                            _id name ${withChildren ? 'subCategories { _id name } ' : ''} image { _id url }
                             ${withParent ? 'parent { _id name } ' : ''}
                             ${withOwner ? 'owner { _id login nick} ' : ''}
                             }
@@ -75,7 +75,7 @@ export const categoryApi = createApi({
                 document: gql`
                     query GetCategory($q: String) {
                         CategoryFindOne(query: $q) {
-                            _id name
+                            _id name image { _id url }
                             parent { _id name }
                             subCategories { _id name }
                             goods { _id name price description 
@@ -86,6 +86,27 @@ export const categoryApi = createApi({
                     `,
                 variables: { q: JSON.stringify([{ _id }]) }
             }),
+            providesTags: (result, error, arg) => {
+                return result
+                    ? [{ type: 'Category', _id: result.CategoryFindOne._id }, 'Category']
+                    : ['Category'];
+            },
+        }),
+        saveCategory: builder.mutation({
+            query: ({ category }) => (
+                {
+                    document: gql`
+                    mutation SaveCategory($category: CategoryInput ) {
+                        CategoryUpsert(category: $category) {
+                           _id
+                          name
+                           parent { _id name }
+                           }
+                       }
+                        `,
+                    variables: { category: { ...category } }
+                }
+            ),
             invalidatesTags: (result, error, arg) => {
                 if (!error) {
                     let catInv = { type: 'Category', _id: arg.category._id };
@@ -96,5 +117,5 @@ export const categoryApi = createApi({
     }),
 })
 
-export const { useGetRootCategoriesQuery, useGetCategoryByIdQuery, useGetCategoriesQuery, useGetCategoriesCountQuery } = categoryApi;
+export const { useGetRootCategoriesQuery, useGetCategoryByIdQuery, useGetCategoriesQuery, useGetCategoriesCountQuery, useSaveCategoryMutation } = categoryApi;
 

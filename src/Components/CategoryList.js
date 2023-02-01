@@ -81,7 +81,7 @@ const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
                                                 <StyledTableCell  >
                                                     <MyLink to={`/category/${entity._id}`}>
                                                         <Typography >
-                                                            {entity.name}
+                                                            <ReferenceLink entity={entity} path='editablecategory' getText={ref => ref?.name || "<no name>"} />
                                                         </Typography>
                                                     </MyLink>
                                                 </StyledTableCell>
@@ -92,7 +92,7 @@ const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
                                                 </StyledTableCell>
                                                 <StyledTableCell align="right" >
                                                     {
-                                                        <ReferenceLink entity={entity} refName='parent' path='editableCategory' getText={ref => ref ? ref.name : "ROOT"} />
+                                                        <ReferenceLink entity={entity} refName='parent' path='editablecategory' getText={ref => ref ? ref.name : "ROOT"} />
                                                     }
                                                 </StyledTableCell>
                                             </StyledTableRow>

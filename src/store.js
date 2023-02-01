@@ -20,11 +20,11 @@ const persistConfig = {
   blacklist: [
     //authSlice.name,
     //authApi.reducerPath,
-    /*cartSlice.name,
+    cartSlice.name,
     categoryApi.reducerPath,
     goodsApi.reducerPath,
     ordersApi.reducerPath,
-    frontEndSlice.name,*/
+    frontEndSlice.name,
   ]
 };
 const combineReducer = combineReducers({

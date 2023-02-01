@@ -1,7 +1,7 @@
 import { Router, Route, Switch } from 'react-router-dom';
 import { store, persistedStore } from './store';
 import { Provider } from 'react-redux';
-import { CCategoriesList, CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CRegisterForm, CUser, CUsersList } from "./Components";
+import { CCategoriesList, CEditableCategory, CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CRegisterForm, CUser, CUsersList } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -49,6 +49,7 @@ function App() {
                 <Route path="/editgood/:_id" component={CEditableGood} />
                 <Route path="/editgood" component={CEditableGood} />
                 <Route path="/category/:_id" component={CCategory} />
+                <Route path="/editablecategory/:_id" component={CEditableCategory} />
                 <Route path="/order/:_id" component={COrder} />
                 <Route path="/cart" component={CCart} />
                 <Route path="/login" component={CLoginForm} />

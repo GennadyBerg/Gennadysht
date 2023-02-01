@@ -6,7 +6,8 @@ import { useSelector } from "react-redux";
 export const ReferenceLink = ({ entity, refName, getText, path, typeName }) => {
     let state = useSelector(state => state);
     let isAdmin = isCurrentUserAdmin(state);
-    let refEntity = { ...entity[refName] };
+    let refEntity = { ...(refName ? entity[refName] : entity) };
+    
 
     if (!path) {
         if (typeName === frontEndNames.users) {
@@ -21,7 +22,7 @@ export const ReferenceLink = ({ entity, refName, getText, path, typeName }) => {
         if (typeName === frontEndNames.orders)
             path = "order";
         if (typeName === frontEndNames.goods)
-            path = isAdmin ? 'editableGood' : "good";
+            path = isAdmin ? 'editablegood' : "good";
     }
     return (
         refEntity ?
