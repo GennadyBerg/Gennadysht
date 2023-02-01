@@ -41,7 +41,7 @@ const Cart = () => {
                                 <MyLink to='/login'>Please login</MyLink>
 
                             </> :
-                            <Button size='small' color='primary' disabled={isOrderAdding}
+                            <Button size='small' color='primary' disabled={isOrderAdding || goodsData.length === 0}
                                 onClick={() => addOrderMutation({ order })}
                             >
                                 Place Order

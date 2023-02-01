@@ -27,6 +27,7 @@ const CartGoodsList = ({ goods = [], tax_rate = 0 }) => {
                             <StyledTableCell align="right">Price ($)</StyledTableCell>
                             <StyledTableCell align="right">Count</StyledTableCell>
                             <StyledTableCell align="right">Total</StyledTableCell>
+                            <StyledTableCell align="right"></StyledTableCell>
                         </TableRow>
                     </TableHead>
                     <TableBody>

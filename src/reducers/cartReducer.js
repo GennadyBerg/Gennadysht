@@ -1,4 +1,4 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice, current } from "@reduxjs/toolkit"
 import { v4 } from "uuid";
 import { history } from "../App";
 import { findObjectIndexById } from "../utills";
@@ -53,7 +53,8 @@ const cartSlice = createSlice({ //promiseReducer
             let goods = state.goods;
             let goodIdx = findObjectIndexById(goods, _id);
             if (goodIdx >= 0) {
-                state.goods = goods.slice(goodIdx, 1);
+                goods.splice(goodIdx, 1);
+                state.goods = goods;
                 state.uniqueId = v4()
             }
             return state;

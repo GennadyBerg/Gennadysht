@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { CSS } from "@dnd-kit/utilities";
 import { FileDropZone } from "./FileDropZone";
 import { getFullImageUrl } from "../utills";
+import { Avatar, Box, CardMedia, Paper } from "@mui/material";
 
 const SortableItem = (props) => {
     const {
@@ -66,15 +67,15 @@ function CSortedFileDropZone(props) {
         file = file.item ?? file;
         return (
             <div>
-                <img key={file.name} src={file._id ? getFullImageUrl(file) : file.url} {...props.itemProp} />
+                <CardMedia component="img" key={file.name} src={file._id ? getFullImageUrl(file) : file.url} {...props.itemProp} />
             </div>
         );
     }
-    props = { ...props, render: render, keyField: "name", itemProp: { width: "100px" } }
+    props = { itemProp: { width: "100px" }, ...props, render: render, keyField: "name" }
     return <SortedFileDropZone {...props} />
 }
 
-function SortedFileDropZone({ items: startItems, render, itemProp, keyField, onChange, horizontal }) {
+function SortedFileDropZone({ sx, items: startItems, render, itemProp, keyField, onChange, horizontal }) {
     const [items, setItems] = useState(
         startItems ?? []
     );
@@ -124,21 +125,23 @@ function SortedFileDropZone({ items: startItems, render, itemProp, keyField, onC
 
     return (
         <>
-            <FileDropZone onDropFiles={onDropFiles}>
-            </FileDropZone>
-            <DndContext
-                sensors={sensors}
-                onDragEnd={handleDragEnd}
-            >
-                <div style={containerStyle}>
-                    <Droppable id="aaa"
-                        items={items}
-                        itemProp={itemProp}
-                        keyField={keyField}
-                        render={render} >
-                    </Droppable>
-                </div>
-            </DndContext>
+            <Paper sx={sx}>
+                <FileDropZone onDropFiles={onDropFiles}>
+                </FileDropZone>
+                <DndContext
+                    sensors={sensors}
+                    onDragEnd={handleDragEnd}
+                >
+                    <div style={containerStyle}>
+                        <Droppable id="aaa"
+                            items={items}
+                            itemProp={itemProp}
+                            keyField={keyField}
+                            render={render} >
+                        </Droppable>
+                    </div>
+                </DndContext>
+            </Paper>
         </>
     );
 }

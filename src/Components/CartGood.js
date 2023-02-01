@@ -5,10 +5,11 @@ import { StyledTableCell, StyledTableRow } from "./StyledTableElements";
 import "./cartGood.css"
 import { MyLink } from "./MyLink";
 import { connect } from "react-redux";
-import { actionAddGoodToCart } from "../reducers";
+import { actionAddGoodToCart, actionDeleteGoodFromCart } from "../reducers";
 import Button from '@mui/material/Button';
+import { DeleteOutline } from "@mui/icons-material";
 
-const CartGood = ({ good, goodNum, addToCart = undefined }) => {
+const CartGood = ({ good, goodNum, addToCart, deleteFromCart }) => {
     return (
         <>
             <StyledTableRow>
@@ -40,7 +41,7 @@ const CartGood = ({ good, goodNum, addToCart = undefined }) => {
                         {good.price}
                     </Typography>
                 </StyledTableCell>
-                <StyledTableCell item align="right" xs={2}>
+                <StyledTableCell item align="right" xs={1}>
                     <Button size='small' color='primary'
                         onClick={() => addToCart(good, -1)}
                     >
@@ -55,15 +56,23 @@ const CartGood = ({ good, goodNum, addToCart = undefined }) => {
                         +
                     </Button>
                 </StyledTableCell>
-                <StyledTableCell item align="right" xs={2}>
+                <StyledTableCell item align="right" xs={1}>
                     <Typography>
                         {good.price * good.count}
                     </Typography>
+                </StyledTableCell>
+                <StyledTableCell item align="right" xs={2}>
+                    <Button
+                        size="small"
+                        onClick={() => deleteFromCart(good)}
+                    >
+                        <DeleteOutline />
+                    </Button>
                 </StyledTableCell>
             </StyledTableRow>
         </>
     )
 }
 const CCartGood = connect(state => ({}),
-    { addToCart: actionAddGoodToCart })(CartGood);
+    { addToCart: actionAddGoodToCart, deleteFromCart: actionDeleteGoodFromCart })(CartGood);
 export { CCartGood };

@@ -2,7 +2,7 @@ const getFullImageUrl = (image) =>
         `/${image?.url}`;
 
 const findObjectIndexById = (objs, goodId) => {
-    return (objs.findIndex(g => g._id === goodId))
+    return +(objs.findIndex(g => g._id === goodId))
 }
 
 function saveImage(image) {

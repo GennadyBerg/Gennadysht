@@ -1,32 +1,47 @@
+import { Paper } from '@mui/material';
 import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
 
 function FileDropZone({ onDropFiles }) {
-    const [paths, setPaths] = useState([]);
-    const onDrop = useCallback(acceptedFiles => {
-        // Do something with the files
-        acceptedFiles = acceptedFiles.map(f => {
-            let url = URL.createObjectURL(f)
-            return { _id: null, name: f.path, url, data: f }
+  const [paths, setPaths] = useState([]);
+  const onDrop = useCallback(acceptedFiles => {
+    // Do something with the files
+    acceptedFiles = acceptedFiles.map(f => {
+      let url = URL.createObjectURL(f)
+      return { _id: null, name: f.path, url, data: f }
+    }
+    );
+    setPaths(acceptedFiles);
+    onDropFiles(acceptedFiles);
+  }, [setPaths])
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
+  console.log(paths);
+  return (
+    <>
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        <div style={{backgroundColor: 'lightgrey', minHeight: '100px', margin:'auto', display: 'inline-block'}} >
+          {
+            <p>Drop the files here ...</p>
+            /*isDragActive ?
+              <p>Drop the files here ...</p> :
+              <p>Drag 'n' drop some files here, or click to select files</p>*/
         }
-        );
-        setPaths(acceptedFiles);
-        onDropFiles(acceptedFiles);
-    }, [setPaths])
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-    console.log(paths);
-    return (
-        <>
-            <div {...getRootProps()}>
-                <input {...getInputProps()} />
-                {
-                    isDragActive ?
-                        <p>Drop the files here ...</p> :
-                        <p>Drag 'n' drop some files here, or click to select files</p>
-                }
-            </div>
-        </>
-    )
+        </div>
+      </div>
+    </>
+  )
+}
+
+const DropZone = ({ isDragActive }) => {
+  <Paper>
+    {
+      isDragActive ?
+        <p>Drop the files here ...</p> :
+        <p>Drag 'n' drop some files here, or click to select files</p>
+    }
+  </Paper>
+
 }
 /*
               {
