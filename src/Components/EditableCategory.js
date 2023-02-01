@@ -12,10 +12,6 @@ const EditableCategory = ({ category: categoryExt, maxWidth = 'md', saveCategory
 
     let [category, setCategory] = useState(copyCategory(categoryExt));
 
-    useEffect(() => {
-        setCategory(copyCategory(categoryExt));
-    }, [categoryExt]);
-
     const onSetParentCategory = (parentCat) => {
         let cat = parentCat?.cat;
         return setCategoryData({ parent: cat ? { _id: cat._id, name: cat.name } : undefined });
@@ -27,13 +23,14 @@ const EditableCategory = ({ category: categoryExt, maxWidth = 'md', saveCategory
         return categoryData;
     }
     const saveFullCategory = async () => {
-        saveCategory({ category: { _id: category._id, name: category.name, parent: category.parent ?? null } });
+        saveCategory({ category: { _id: category._id, name: category.name, parent: category.parent ?? null, image: { _id: category.image?._id } ?? null } });
     }
 
     const uploadAvatar = async param => {
         let image = await saveImage({ data: param.target.files[0] }, false);
-        let categoryToSave = { _id: category._id, name: categoryExt.name, image: { _id: image._id } };
-        saveCategory({ category: categoryToSave });
+        setCategoryData({ image });
+        /*let categoryToSave = { _id: category._id, name: categoryExt.name || category.name, image: { _id: image._id } };
+        saveCategory({ category: categoryToSave });*/
     }
 
     return category && (
@@ -113,8 +110,11 @@ const CEditableCategory = ({ maxWidth = 'md' }) => {
     let state = useSelector(state => state)
     let isAdmin = isCurrentUserAdmin(state);
 
+    if (!_id && isAdmin) {
+        category = { _id: undefined, name: undefined, parent: null };
+    }
 
-    return !isLoading && category && isAdmin ? (
+    return (!isLoading || !_id) && category && isAdmin ? (
         <EditableCategory category={category} maxWidth={maxWidth} saveCategory={saveCategoryMutation} />) :
         isLoading ? <Typography>Loading</Typography> : <Typography>Permission denied</Typography>;
 }

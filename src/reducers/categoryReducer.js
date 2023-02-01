@@ -70,6 +70,9 @@ export const categoryApi = createApi({
             },
             providesTags: ['CategoryCount'],
         }),
+        /*forceRefetch(arg) {
+            return JSON.stringify(arg.currentArg) !== JSON.stringify(arg.previousArg);
+        },*/
         getCategoryById: builder.query({
             query: (_id) => ({
                 document: gql`
@@ -116,6 +119,15 @@ export const categoryApi = createApi({
         }),
     }),
 })
+
+/*export const categoryApi = categoryApiInt.enhanceEndpoints({
+    endpoints: {
+        getCategoriesCount(endpoint) {
+            endpoint.refetchOnMountOrArgChange = true;
+        }
+    }
+})*/
+
 
 export const { useGetRootCategoriesQuery, useGetCategoryByIdQuery, useGetCategoriesQuery, useGetCategoriesCountQuery, useSaveCategoryMutation } = categoryApi;
 

@@ -1,17 +1,20 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Button, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList, Typography } from "@mui/material";
 import { useGetRootCategoriesQuery } from '../reducers';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import { styled, alpha } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import { DeleteOutline } from '@mui/icons-material';
 
 const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory, showClearButton = false }) => {
     const [open, setOpen] = React.useState(false);
     const anchorRef = React.useRef(null);
     const [selectedIndex, setSelectedIndex] = React.useState(selectedIndexExt);
+    useEffect(() =>{
+        setSelectedIndex(selectedIndexExt);
+    }, [selectedIndexExt])
 
     const handleClick = () => {
-        console.info(`You clicked ${elements[selectedIndex].render}`);
+        handleToggle();
     };
 
     const handleMenuItemClick = (event, index) => {
@@ -33,8 +36,8 @@ const DropDownList = ({ elements, selectedIndex: selectedIndexExt, onSetCategory
 
     return (
         <React.Fragment>
-            <ButtonGroup sx={{width:"100%"}} variant="contained" ref={anchorRef} aria-label="split button">
-                <Button onClick={handleClick} sx={{width:"100%"}}>{selectedIndex >= 0 ? elements[selectedIndex].render : <></>}</Button>
+            <ButtonGroup sx={{ width: "100%" }} variant="contained" ref={anchorRef} aria-label="split button">
+                <Button onClick={handleClick} sx={{ width: "100%" }}>{selectedIndex >= 0 ? elements[selectedIndex].render : <></>}</Button>
                 <Button
                     size="small"
                     aria-controls={open ? 'split-button-menu' : undefined}
@@ -127,7 +130,7 @@ export const CCategoryDropDownListUnstyled = ({ currentCat, onSetCategory, showC
     let cats = data?.CategoryFind;
     if (!isLoading && cats) {
         cats = wrapToTreeItems(cats);
-        if(cats[10].subCategories?.lenght > 1){
+        if (cats[10].subCategories?.lenght > 1) {
             let a = '';
         }
         let selectedIndex = cats.findIndex(c => c.key == currentCat?._id);

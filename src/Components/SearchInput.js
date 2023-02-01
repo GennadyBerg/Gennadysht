@@ -7,6 +7,7 @@ import InputBase from '@mui/material/InputBase';
 import SearchIcon from '@mui/icons-material/Search';
 import { useDispatch } from 'react-redux';
 import { actionSetSearch } from '../reducers/frontEndReducer';
+import { useEffect } from 'react';
 
 const Search = styled('div')(({ theme }) => ({
   position: 'relative',
@@ -51,6 +52,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 function SearchInput({ onChange, entitiesTypeName }) {
+  useEffect(() => {
+    return () => {
+      onChange(entitiesTypeName, '');
+    }
+  }, []);
   return (
     <Box sx={{ flexGrow: 1 }}>
       <Toolbar>

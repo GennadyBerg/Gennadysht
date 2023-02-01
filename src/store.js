@@ -18,8 +18,8 @@ const persistConfig = {
   key: 'root',
   storage,
   blacklist: [
-    //authSlice.name,
-    //authApi.reducerPath,
+    authSlice.name,
+    authApi.reducerPath,
     cartSlice.name,
     categoryApi.reducerPath,
     goodsApi.reducerPath,

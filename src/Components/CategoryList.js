@@ -1,5 +1,5 @@
-import React from 'react';
-import { Container, Typography, Paper, Avatar } from '@mui/material';
+import React, { useEffect } from 'react';
+import { Container, Typography, Paper, Avatar, Button } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
 import { CPagination } from './Pagination';
@@ -10,7 +10,7 @@ import { frontEndNames, getCurrentUser, getEntitiesListShowParams, useGetCategor
 import { UserEntity } from '../Entities';
 import { getFullImageUrl } from '../utills';
 
-const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
+const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize, isAdmin }) => {
 
     let headCells = [
         {
@@ -52,6 +52,15 @@ const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
     return (
         <>
             <Container maxWidth="lg">
+                {
+                    isAdmin && (
+                        <MyLink to="/editcategory">
+                            <Button size='small' variant="contained" >
+                                Add Category
+                            </Button>
+                        </MyLink>
+                    )
+                }
                 <CSearchInput entitiesTypeName={entitiesTypeName} />
                 <TableContainer component={Paper} >
                     <Table sx={{ overflow: 'scroll' }} >
@@ -81,7 +90,7 @@ const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
                                                 <StyledTableCell  >
                                                     <MyLink to={`/category/${entity._id}`}>
                                                         <Typography >
-                                                            <ReferenceLink entity={entity} path='editablecategory' getText={ref => ref?.name || "<no name>"} />
+                                                            <ReferenceLink entity={entity} path='editcategory' getText={ref => ref?.name || "<no name>"} />
                                                         </Typography>
                                                     </MyLink>
                                                 </StyledTableCell>
@@ -116,11 +125,16 @@ const CCategoriesList = () => {
     let currentUser = useSelector(state => new UserEntity(getCurrentUser(state)));
 
     const categoriesResult = useGetCategoriesQuery({ withParent: true, withChildren: true, withOwner: true, fromPage, pageSize, searchStr, owner: currentUser });
-    const categoriesCountResult = useGetCategoriesCountQuery({ searchStr, owner: currentUser });
+    const categoriesCountResult = useGetCategoriesCountQuery({ searchStr, owner: currentUser }, { refetchOnMountOrArgChange: true });
     let isLoading = categoriesResult.isLoading || categoriesCountResult.isLoading;
 
+    /*useEffect(() => {
+        categoriesCountResult.refetch();
+    }, [searchStr]);*/
+
+
     let entities = !isLoading && categoriesResult.data?.CategoryFind;
-    return !isLoading && <CategoriesList entities={entities} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />
+    return !isLoading && <CategoriesList entities={entities} isAdmin={currentUser.isAdminRole} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />
 }
 
 export { CCategoriesList };

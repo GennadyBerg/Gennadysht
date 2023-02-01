@@ -49,7 +49,8 @@ function App() {
                 <Route path="/editgood/:_id" component={CEditableGood} />
                 <Route path="/editgood" component={CEditableGood} />
                 <Route path="/category/:_id" component={CCategory} />
-                <Route path="/editablecategory/:_id" component={CEditableCategory} />
+                <Route path="/editcategory/:_id" component={CEditableCategory} />
+                <Route path="/editcategory" component={CEditableCategory} />
                 <Route path="/order/:_id" component={COrder} />
                 <Route path="/cart" component={CCart} />
                 <Route path="/login" component={CLoginForm} />
