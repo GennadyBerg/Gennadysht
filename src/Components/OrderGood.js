@@ -1,8 +1,6 @@
-import { Paper, Avatar, Box, Container, Grid, Table, TableBody, TableContainer, TableHead, TableRow, TableCell, tableCellClasses, Typography } from "@mui/material";
-import { Good } from "./Good";
+import { Typography } from "@mui/material";
 import { getFullImageUrl } from "./../utills";
 import { AvatarImage } from "./AvatarAnimated";
-import { styled } from '@mui/material/styles';
 import { StyledTableCell, StyledTableRow } from "./StyledTableElements";
 import "./orderGood.css"
 import { MyLink } from "./MyLink";
@@ -51,7 +49,6 @@ const OrderGood = ({ orderGood, orderGoodNum }) => {
                     </Typography>
                 </StyledTableCell>
             </StyledTableRow>
-            {/*<Good good={{ ...orderGood.good, ...orderGood }} showAddToCard={false} />*/}
         </>
     )
 }

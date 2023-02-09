@@ -1,12 +1,11 @@
 import { gql } from "graphql-request";
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from '@rtk-query/graphql-request-base-query' //npm install
-import { jwtDecode } from "../utills";
-import { createSlice, current } from "@reduxjs/toolkit";
+import { getFullBackendUrl, jwtDecode } from "../utills";
+import { createSlice } from "@reduxjs/toolkit";
 import { history } from "../App";
 import { UserEntity } from "../Entities";
-import { createFullQuery } from "../gql";
-//import { prepareHeaders } from "./index";
+import { createFullQuery } from "../utills";
 
 const getUsersSearchParams = (searchStr, queryExt) => (
     {
@@ -26,7 +25,7 @@ export const prepareHeaders = (headers, { getState }) => {
 const authApi = createApi({
     reducerPath: "authApi",
     baseQuery: graphqlRequestBaseQuery({
-        url: '/graphql',
+        url: getFullBackendUrl('/graphql'),
         prepareHeaders
     }),
     endpoints: (builder) => ({
@@ -115,8 +114,7 @@ const authSlice = createSlice({
     name: 'auth',
     initialState: {},
     reducers: {
-        logout(state) { //type - auth/logout
-            // state.token = undefined
+        logout(state) { 
             history.push('/');
             return {}
         }
@@ -137,16 +135,6 @@ const authSlice = createSlice({
                 let retrievedUser = payload?.UserFindOne;
                 if (retrievedUser?._id === state.currentUser?._id)
                     state.currentUser = retrievedUser;
-            });
-        builder.addMatcher(authApi.endpoints.saveUser.matchFulfilled,
-            (state, { payload }) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(authApi.endpoints.saveUser.matchRejected,
-            (state, data) => {
-                let a = '';
-                let b = '';
             });
     }
 })

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Container, Typography, Paper, Avatar, Button } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
@@ -6,7 +6,7 @@ import { CPagination } from './Pagination';
 import { CSearchInput } from './SearchInput';
 import { MyLink, ReferenceLink } from '.';
 import { useSelector } from 'react-redux';
-import { frontEndNames, getCurrentUser, getEntitiesListShowParams, useGetCategoriesCountQuery, useGetCategoriesQuery, useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
+import { frontEndNames, getCurrentUser, getEntitiesListShowParams, useGetCategoriesCountQuery, useGetCategoriesQuery } from '../reducers';
 import { UserEntity } from '../Entities';
 import { getFullImageUrl } from '../utills';
 
@@ -51,7 +51,7 @@ const CategoriesList = ({ entities, entitiesTypeName, fromPage, pageSize, isAdmi
     ]
     return (
         <>
-            <Container maxWidth="lg">
+            <Container maxWidth="lg" sx={{marginTop: "1vh"}}>
                 {
                     isAdmin && (
                         <MyLink to="/editcategory">
@@ -127,11 +127,6 @@ const CCategoriesList = () => {
     const categoriesResult = useGetCategoriesQuery({ withParent: true, withChildren: true, withOwner: true, fromPage, pageSize, searchStr, owner: currentUser });
     const categoriesCountResult = useGetCategoriesCountQuery({ searchStr, owner: currentUser }, { refetchOnMountOrArgChange: true });
     let isLoading = categoriesResult.isLoading || categoriesCountResult.isLoading;
-
-    /*useEffect(() => {
-        categoriesCountResult.refetch();
-    }, [searchStr]);*/
-
 
     let entities = !isLoading && categoriesResult.data?.CategoryFind;
     return !isLoading && <CategoriesList entities={entities} isAdmin={currentUser.isAdminRole} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />

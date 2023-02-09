@@ -1,14 +1,15 @@
-import { List, ListItem, ListItemButton, ListItemText, Breadcrumbs, Button } from "@mui/material"
-import { Typography } from "@mui/material"
+import { List, ListItem, ListItemButton, ListItemText, Button } from "@mui/material"
+import { Typography, Grid } from "@mui/material"
 import { Box, Container } from "@mui/system"
-import { useState } from "react"
 import { useEffect } from "react"
 import { connect, useDispatch, useSelector } from "react-redux"
 import { useParams } from "react-router-dom"
 import { MyLink } from "."
 import { isCurrentUserAdmin, useGetCategoryByIdQuery } from "../reducers"
 import { actionSetCurrentEntity, frontEndNames, getCurrentEntity } from "../reducers/frontEndReducer"
+import { CategoryBreadcrumbs } from "./CategoryBreadcrumbs"
 import { CGoodsList } from "./GoodsList"
+import { LoadingState } from "./LoadingState"
 import { CatsList } from "./RootCats"
 
 const CSubCategories = connect(state => ({ cats: getCurrentEntity(frontEndNames.category, state)?.subCategories }),
@@ -22,41 +23,40 @@ const Category = () => {
     const dispatch = useDispatch();
     let state = useSelector(state => state);
     useEffect(() => {
-        if (getCurrentEntity(frontEndNames.category, state)?._id != _id) 
+        if (getCurrentEntity(frontEndNames.category, state)?._id !== _id)
             dispatch(actionSetCurrentEntity(frontEndNames.category, { _id }));
         if (!isLoading)
             dispatch(actionSetCurrentEntity(frontEndNames.category, data.CategoryFindOne));
     }, [_id, isLoading, data]);
     let isAdmin = isCurrentUserAdmin(state);
-    return isLoading ? <Typography>Loading</Typography> : (
+    return isLoading ? <LoadingState /> : (
         <>
             <Container>
                 <Box>
-                    <Breadcrumbs aria-label="breadcrumb">
-                        <MyLink underline="hover" color="inherit" to="/">
-                            Home
-                        </MyLink>
-                        {cat.parent?._id && (
-                            <MyLink
-                                underline="hover"
-                                color="inherit"
-                                to={`/category/${cat.parent?._id}`}
-                            >
-                                {cat.parent?.name}
-                            </MyLink>
-                        )}
-                        <Typography color="text.primary">{cat.name}</Typography>
-                    </Breadcrumbs>
+                    <CategoryBreadcrumbs category={cat} />
                     {
                         isAdmin && (
-                            <MyLink to="/editgood">
-                                <Button size='small' variant="contained" >
-                                    Add Good
-                                </Button>
-                            </MyLink>
+                            <>
+                                <Grid container spacing={2} justifyContent="center">
+                                    <Grid item>
+                                        <MyLink to="/editgood">
+                                            <Button size='small' variant="contained" >
+                                                Add Good
+                                            </Button>
+                                        </MyLink>
+                                    </Grid>
+                                    <Grid item>
+                                        <MyLink to={`/editcategory/${cat._id}`}>
+                                            <Button size='small' variant="contained" >
+                                                Edit Category
+                                            </Button>
+                                        </MyLink>
+                                    </Grid>
+                                </Grid>
+                            </>
                         )
                     }
-                    <Typography paragraph gutterBottom component={'h3'} variant={'h3'}>
+                    <Typography paragraph gutterBottom component={'h3'} variant={'h3'} sx={{ marginTop: "1vh" }} >
                         {cat.name}
                     </Typography>
                     {csubCats && <CSubCategories />}
@@ -65,8 +65,15 @@ const Category = () => {
                             {cat.subCategories.map(scat => (
                                 <ListItem key={scat._id} disablePadding>
                                     <ListItemButton>
-                                        <MyLink to={`/category/${scat._id}`}>
-                                            <ListItemText primary={scat.name} />
+                                        <MyLink to={`/category/${scat._id}`} >
+                                            <ListItemText
+                                                disableTypography
+                                                primary={
+                                                    <Typography paragraph gutterBottom component={'h4'} variant={'h4'} sx={{ marginTop: "1vh", marginLeft: "18vh" }} >
+                                                        {scat.name}
+                                                    </Typography>
+                                                }
+                                            />
                                         </MyLink>
                                     </ListItemButton>
                                 </ListItem>

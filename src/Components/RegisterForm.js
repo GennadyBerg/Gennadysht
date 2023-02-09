@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
+import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Button } from '@mui/material';
 import { Box } from '@mui/system';
 import { connect, useDispatch } from 'react-redux';
 import { MyLink } from './MyLink';
-import { actionAboutMe, useLoginMutation, useRegisterMutation, useSaveUserMutation } from '../reducers/authReducer';
-import { UserEntity } from '../Entities';
+import { actionAboutMe, useLoginMutation, useRegisterMutation } from '../reducers/authReducer';
 
 const RegisterForm = () => {
     const [onRegister, { isLoading: isLoadingReg }] = useRegisterMutation();
-    const [onSaveUser, { data, isLoading }] = useSaveUserMutation();
 
     const [onLogin, { }] = useLoginMutation();
     const dispatch = useDispatch()
@@ -19,7 +17,7 @@ const RegisterForm = () => {
     const [password, setPassword] = useState('');
     const [passwordRetype, setPasswordRetype] = useState('');
     const arePasswordsEqual = password === passwordRetype;
-    const isButtonActive = !isLoading && !isLoadingReg && arePasswordsEqual && login?.length > 3 && password?.length > 3;
+    const isButtonActive = !isLoadingReg && arePasswordsEqual && login?.length > 3 && password?.length > 3;
     return (
         <Container component="main" maxWidth="xs">
             <CssBaseline />
@@ -87,7 +85,7 @@ const RegisterForm = () => {
                     control={<Checkbox value="remember" color="primary" />}
                     label="Remember me"
                 />
-                <MyLink
+                <Button
                     component="button"
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
@@ -100,7 +98,7 @@ const RegisterForm = () => {
                             .then(() => dispatch(actionAboutMe()))
                     )}>
                     Register...
-                </MyLink>
+                </Button>
             </Box>
         </Container >
     )

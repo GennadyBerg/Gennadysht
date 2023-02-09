@@ -2,7 +2,7 @@ import React from 'react';
 import { Container, Typography, Paper, Link } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
-import { CPagination, CUsersPagination } from './Pagination';
+import { CPagination } from './Pagination';
 import { CSearchInput } from './SearchInput';
 import { MyLink } from '.';
 import { useSelector } from 'react-redux';

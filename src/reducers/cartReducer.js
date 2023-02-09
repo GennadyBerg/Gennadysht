@@ -1,17 +1,16 @@
-import { createSlice, current } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import { v4 } from "uuid";
 import { history } from "../App";
 import { findObjectIndexById } from "../utills";
 import { ordersApi } from "./ordersReducer";
-//import { clearCartData, getCartData } from "./cartGoodsReducer";
 
-const cartSlice = createSlice({ //promiseReducer
+const cartSlice = createSlice({ 
     name: 'cart', //префикс типа наподобие AUTH_
     initialState: {
         goods: []
     },
     reducers: {
-        restoreCart(state, action) {
+        restoreCart(state) {
             let goods = localStorage.cart?.goods ?? [];
             if (!goods) {
                 goods = [];
@@ -20,10 +19,10 @@ const cartSlice = createSlice({ //promiseReducer
             setStateData(state, goods, v4());
             return state;
         },
-        cleanCart(state, action) {
+        cleanCart(state) {
             return cleanCartInt(state);
         },
-        refreshCart(state, action) {
+        refreshCart(state) {
             state.uniqueId = v4();
             return state;
         },
@@ -69,6 +68,11 @@ const cartSlice = createSlice({ //promiseReducer
             });
     }
 })
+
+const getCartItemsCount = state => {
+    return state.cart?.goods?.reduce((sum, g) => sum + g.count, 0);
+}
+
 function cleanCartInt(state) {
     localStorage.cart = { goods: [] };
     setStateData(state, [], v4());
@@ -105,7 +109,8 @@ const setStateData = (state, goods, uniqueId = undefined) => {
 
 
 export {
-    cartSlice, /*getCart,*/
+    cartSlice, 
     actionAddGoodToCart, actionDeleteGoodFromCart, actionRestoreCart,
-    actionClearCart/*, actionClearCartData*/
+    actionClearCart,
+    getCartItemsCount
 };

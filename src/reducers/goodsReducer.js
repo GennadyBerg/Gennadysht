@@ -1,8 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
 import { gql } from "graphql-request";
-import { createFullQuery } from '../gql';
-//import { prepareHeaders } from "./index";
+import { createFullQuery, getFullBackendUrl } from '../utills';
 
 export const prepareHeaders = (headers, { getState }) => {
     const token = getState().auth.token;
@@ -21,7 +20,7 @@ const getGoodsSearchParams = (searchStr, queryExt) => (
 export const goodsApi = createApi({
     reducerPath: 'goods',
     baseQuery: graphqlRequestBaseQuery({
-        url: '/graphql',
+        url: getFullBackendUrl('/graphql'),
         prepareHeaders
     }),
     tagTypes: ['Good', 'GoodCount'],
@@ -43,7 +42,7 @@ export const goodsApi = createApi({
                     variables: params
                 }
             },
-            providesTags: (result, error, arg) => {
+            providesTags: (result) => {
                 return result
                     ? [...result.GoodFind.map(obj => ({ type: 'Good', _id: obj._id })), 'Good']
                     : ['Good'];
@@ -77,9 +76,9 @@ export const goodsApi = createApi({
                     variables: params
                 }
             },
-            providesTags: (result, error, arg) => {
+            providesTags: (result) => {
                 return result
-                    ? [{ type: 'Good', _id: result.GoodFindOne._id }, 'Good']
+                    ? [{ type: 'Good', _id: result.GoodFindOne?._id }, 'Good']
                     : ['Good'];
             }
         }),
@@ -98,7 +97,7 @@ export const goodsApi = createApi({
                     variables: params
                 }
             },
-            providesTags: (result, error, arg) => {
+            providesTags: (result) => {
                 return result
                     ? [...result.GoodFind.map(obj => ({ type: 'Good', _id: obj._id })), 'Good']
                     : ['Good'];

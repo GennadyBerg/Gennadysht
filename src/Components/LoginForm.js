@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
-import Button from '@mui/material/Button';
-import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link } from '@mui/material';
+import { Container, CssBaseline, TextField, Avatar, Typography, FormControlLabel, Checkbox, Grid, Link, Button } from '@mui/material';
 import { Box } from '@mui/system';
 import { connect, useDispatch } from 'react-redux';
 import { MyLink } from './MyLink';
@@ -57,7 +56,7 @@ const LoginForm = () => {
                     control={<Checkbox value="remember" color="primary" />}
                     label="Remember me"
                 />
-                <MyLink
+                <Button
                     component="button"
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
@@ -66,7 +65,7 @@ const LoginForm = () => {
                     disabled={!isButtonActive}
                     onClick={() => onLogin({ login, password }).then(() => dispatch(actionAboutMe()))}>
                     Login...
-                </MyLink>
+                </Button>
                 <Grid container>
                     <Grid item xs>
                         <Link href="#" variant='body2'>

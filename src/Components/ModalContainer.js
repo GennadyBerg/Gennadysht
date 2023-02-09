@@ -33,7 +33,7 @@ const ModalContainer = ({ children, onCloseClick }) =>
   <ModalOverlay>
     <Modal>
       <ModalClose onClick={onCloseClick}>
-        &#10005; {/* HTML code for a multiplication sign */}
+        &#10005; {}
       </ModalClose>
       {children}
     </Modal>

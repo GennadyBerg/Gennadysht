@@ -1,9 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
 import { gql } from "graphql-request";
-import { useSelector } from 'react-redux';
-import { frontEndNames, getCurrentEntity } from '.';
-import { createFullQuery } from '../gql';
+import { createFullQuery, getFullBackendUrl } from '../utills';
 
 const getOrderSearchParams = (query, queryExt) => ({ searchStr: query, searchFieldNames: ["_id"], queryExt });
 const prepareHeaders = (headers, { getState }) => {
@@ -13,10 +11,11 @@ const prepareHeaders = (headers, { getState }) => {
     }
     return headers;
 }
+
 const ordersApi = createApi({
     reducerPath: 'orders',
     baseQuery: graphqlRequestBaseQuery({
-        url: '/graphql',
+        url: getFullBackendUrl('/graphql'),
         prepareHeaders
     }),
     tagTypes: ['Order', 'OrderCount'],
@@ -46,11 +45,17 @@ const ordersApi = createApi({
                     variables: params
                 }
             },
-            providesTags: (result, error, arg) => {
+            providesTags: (result) => {
                 return result
                     ? [...result.OrderFind.map(obj => ({ type: 'Order', _id: obj._id })), 'Order']
                     : ['Order'];
-            }
+            },
+            transformResponse: (response) => {
+                return response;
+            },
+            transformErrorResponse: (response, meta) => {
+                return {...response, ...meta.response?.data} ;
+            },
         }),
         getOrdersCount: builder.query({
             query: ({ owner, searchStr = '' }) => {
@@ -91,11 +96,17 @@ const ordersApi = createApi({
                     variables: params
                 }
             },
-            providesTags: (result, error, arg) => {
+            providesTags: (result) => {
                 return result
                     ? [{ type: 'Order', _id: result.OrderFindOne._id }, 'Order']
                     : ['Order'];
-            }
+            },
+            transformResponse: (response) => {
+                return response;
+            },
+            transformErrorResponse: (response, meta) => {
+                return {...response, ...meta.response?.data} ;
+            },
         }),
         addOrder: builder.mutation({
             query: ({ order, id = null }) => (

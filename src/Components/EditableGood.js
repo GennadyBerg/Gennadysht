@@ -12,16 +12,19 @@ import { ModalContainer } from './ModalContainer';
 import { history } from "../App";
 import { LackPermissions } from './LackPermissions';
 import { CCategoryDropDownList } from './DropDownList';
+import { CategoryBreadcrumbs } from './CategoryBreadcrumbs';
 
 
-const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) => {
-    const copyGood = goodExt => ({ ...goodExt, images: [ ...goodExt.images ] });
+const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood }) => {
+    const copyGood = goodExt => ({ ...goodExt, images: [...(goodExt.images ?? [])] });
     let [good, setGood] = useState(copyGood(goodExt));
     let [showPreview, setShowPreview] = useState(false);
-    let [imagesContainer, setImagesContainer] = useState({ images: [...goodExt.images] });
+    let [imagesContainer, setImagesContainer] = useState({ images: [...(goodExt.images ?? [])] });
 
     const onSetCategory = (catItem) => {
-        good.categories = catItem.cat ? [{ _id: catItem.cat._id }] : [];
+        if (!catItem.cat.name)
+            throw new Error("Category must have name.");
+        good.categories = catItem.cat ? [{ _id: catItem.cat._id, name: catItem.cat.name }] : [];
     }
     const setGoodData = (data) => {
         let goodData = { ...good, ...data };
@@ -58,9 +61,11 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
     }
     if (good)
         good.categories ??= [];
+    const currentCategory = good.categories?.length > 0 ? good.categories[0] : undefined;
     return good && (
         <>
             <Container maxWidth={maxWidth}>
+                <CategoryBreadcrumbs category={currentCategory} showLeafAsLink={true} />
                 <Card variant='outlined'>
                     <Grid container spacing={maxWidth === 'xs' ? 7 : 5} rowSpacing={2}>
                         <Grid item xs={12}>
@@ -78,7 +83,7 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
                                         <Grid container rowSpacing={2}>
                                             <Grid item width="100%">
                                                 {
-                                                    <CCategoryDropDownList currentCat={good.categories?.length > 0 ? good.categories[0] : undefined} onSetCategory={onSetCategory} />
+                                                    <CCategoryDropDownList currentCat={currentCategory} onSetCategory={onSetCategory} />
                                                 }
                                             </Grid>
                                             <Grid item width="100%">
@@ -152,8 +157,9 @@ const EditableGood = ({ good: goodExt, maxWidth = 'md', saveGood, uploadFile }) 
 
 const CEditableGood = ({ maxWidth = 'md' }) => {
     const { _id } = useParams();
-    const { isLoading, data } = useGetGoodByIdQuery(_id || 'fwkjelnfvkjwe');
-    let good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
+    let { isLoading, data } = useGetGoodByIdQuery(_id || 'fwkjelnfvkjwe');
+    isLoading = _id ? isLoading : false;
+    let good = isLoading ? { name: 'loading', categories: [] } : data?.GoodFindOne;
     const [saveGoodMutation, { }] = useSaveGoodMutation();
     const state = useSelector(state => state);
     let currentCategory = getCurrentEntity(frontEndNames.category, state)
@@ -162,7 +168,7 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
 
     if (!isLoading && !good && isAdmin) {
         let categories = currentCategory ? [{ _id: currentCategory._id, name: currentCategory.name }] : [];
-        good = { _id: undefined, categories };
+        good = { _id: undefined, categories, images: [] };
     }
 
     return !isLoading &&
@@ -171,19 +177,3 @@ const CEditableGood = ({ maxWidth = 'md' }) => {
 
 
 export { CEditableGood }
-
-
-/*-good.categories.map(cat => (
-    <Grid item width="100%">
-        <TextField
-            required
-            id="outlined-required"
-            label="Categories"
-            value={cat.name}
-            onChange={event => setGoodData({ description: event.target.value })}
-            multiline={true}
-            rows={1}
-            fullWidth
-        />
-    </Grid>
-))*/

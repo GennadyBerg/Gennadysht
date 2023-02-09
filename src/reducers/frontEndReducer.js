@@ -1,4 +1,4 @@
-import { createSlice, current } from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit"
 import { categoryApi } from "./categoryReducer";
 import { goodsApi } from "./goodsReducer";
 import { ordersApi } from "./ordersReducer";
@@ -68,66 +68,6 @@ const frontEndSlice = createSlice({ //promiseReducer
         builder.addMatcher(categoryApi.endpoints.getCategoriesCount.matchFulfilled,
             (state, { payload }) => {
                 setEntitiesCount(frontEndNames.category, state, payload.CategoryCount);
-            });
-        builder.addMatcher(ordersApi.endpoints.getOrders.matchFulfilled,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(ordersApi.endpoints.getOrders.matchRejected,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(ordersApi.endpoints.getOrderById.matchFulfilled,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(ordersApi.endpoints.getOrderById.matchRejected,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(goodsApi.endpoints.saveGood.matchFulfilled,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(goodsApi.endpoints.saveGood.matchRejected,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(goodsApi.endpoints.getGoodById.matchFulfilled,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(goodsApi.endpoints.getGoodById.matchRejected,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(goodsApi.endpoints.getGoods.matchFulfilled,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(goodsApi.endpoints.getGoods.matchRejected,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(categoryApi.endpoints.saveCategory.matchFulfilled,
-            (state, data) => {
-                let a = '';
-                let b = '';
-            });
-        builder.addMatcher(categoryApi.endpoints.saveCategory.matchRejected,
-            (state, data) => {
-                let a = '';
-                let b = '';
             });
     }
 })

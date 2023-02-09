@@ -7,10 +7,10 @@ import { StyledTableCell } from './StyledTableElements';
 
 const OrderGoodsList = ({ orderGoods = [], tax_rate = 0 }) => {
     function ccyFormat(num) {
-        return `${num.toFixed(2)}`;
+        return `${(num ?? 0).toFixed(2)}`;
     }
     function subtotal(items) {
-        return items.map(({ price, count }) => price * count).reduce((sum, i) => sum + i, 0);
+        return items?.map(({ price, count }) => price * count).reduce((sum, i) => sum + i, 0) ?? 0;
     }
     const invoiceSubtotal = subtotal(orderGoods);
     const invoiceTaxes = tax_rate * invoiceSubtotal;
@@ -32,7 +32,7 @@ const OrderGoodsList = ({ orderGoods = [], tax_rate = 0 }) => {
                     </TableHead>
                     <TableBody>
                         {
-                            orderGoods.map((orderGood, index) => {
+                            orderGoods?.map((orderGood, index) => {
                                 return (
                                     <OrderGood key={orderGood._id} orderGood={orderGood} orderGoodNum={index} maxWidth='xs' />
                                 )

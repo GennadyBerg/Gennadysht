@@ -17,8 +17,6 @@ export const AvatarAnimated = styled((props) => {
     const { selected, ...other } = props;
     return <AvatarImage {...other} />;
 })(({ theme, selected }) => ({
-    //width: theme.spacing(10),
-    //height: theme.spacing(10),
     transition: theme.transitions.create('transform', {
         duration: theme.transitions.duration.shortest,
     }),

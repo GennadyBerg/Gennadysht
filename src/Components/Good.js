@@ -5,12 +5,14 @@ import { Container, Typography, Grid, CardActionArea, Card, CardContent, CardMed
 import { getFullImageUrl } from "./../utills";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { AvatarAnimated } from './AvatarAnimated';
-import { actionAddGoodToCart, actionSetCurrentEntity, frontEndNames, getCurrentUser, isCurrentUserAdmin } from '../reducers';
+import { actionAddGoodToCart, isCurrentUserAdmin } from '../reducers';
 import { useDispatch, useSelector } from 'react-redux';
 import { useGetGoodByIdQuery } from '../reducers';
 import { useParams } from 'react-router-dom';
 import { MyLink } from './MyLink';
 import { ModalContainer } from './ModalContainer';
+import { CategoryBreadcrumbs } from './CategoryBreadcrumbs';
+import { LoadingState } from './LoadingState';
 
 
 export const ExpandMore = styled(props => {
@@ -36,7 +38,7 @@ export const AvatarGroupOriented = styled((props) => {
         marginLeft: 1,
         marginTop: theme.spacing(1),
     },
-    ".MuiAvatar-root": { /*width: 20, height: 20,*/ marginLeft: 1 }
+    ".MuiAvatar-root": { marginLeft: 1 }
 }));
 
 
@@ -45,7 +47,7 @@ const Good = ({ good, maxWidth = 'md', isAdmin, showAddToCard = true, actionAddG
     let [expanded, setExpanded] = useState(true);
     let [previewMedia, setPreviewMedia] = useState(false);
     const handleExpandClick = () => setExpanded(!expanded);
-
+    const currentCategory = good?.categories?.length > 0 ? good.categories[0] : undefined;
     return good && (
         <>
             {
@@ -62,6 +64,7 @@ const Good = ({ good, maxWidth = 'md', isAdmin, showAddToCard = true, actionAddG
                     <></>
             }
             <Container maxWidth={maxWidth}>
+                <CategoryBreadcrumbs category={currentCategory} showLeafAsLink={true} />
                 <Card variant='outlined'>
                     <Grid container spacing={maxWidth === 'xs' ? 7 : 5}>
                         <Grid item xs={1}>
@@ -152,7 +155,6 @@ const CGood = ({ good, maxWidth = 'md', showAddToCard = true, editable = true })
         good = isLoading ? { name: 'loading', goods: [] } : data?.GoodFindOne;
     let state = useSelector(state => state);
     let isAdmin = isCurrentUserAdmin(state);
-    return <Good good={good} isAdmin={isAdmin} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
+    return isLoading ? <LoadingState /> : <Good good={good} isAdmin={isAdmin} maxWidth={maxWidth} showAddToCard={showAddToCard} editable={editable} actionAddGoodToCart={() => dispatch(actionAddGoodToCart(good))} />
 }
-let a = '';
 export { CGood };

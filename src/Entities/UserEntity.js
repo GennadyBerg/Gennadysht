@@ -16,13 +16,10 @@ export class UserEntity {
     #fixRoles = () => {
         let _id = this._id;
         let acl = this.#acl;
-        if( this.login === 'berg'){
-            let a = '';
-        }
         let onlyAllowedAcls = acl.filter(a => a === this._id || a === "user" || a === "admin");
-        if (onlyAllowedAcls.length != acl.length) {
+        if (onlyAllowedAcls.length !== acl.length) {
             let uniqueRoles = new Set(onlyAllowedAcls);
-            if (uniqueRoles.length != acl.length) {
+            if (uniqueRoles.length !== acl.length) {
                 this.#acl = acl = [...uniqueRoles];
             }
         }
@@ -58,7 +55,6 @@ export class UserEntity {
     #isRole = (role) => this.#getRoleIdx(role) >= 0;
     get isAdminRole() { return this.#isRole("admin"); }
     get isUserRole() {
-        let a = '';
         return this.#isRole("user");
     }
     onSetRoleInt = () => {

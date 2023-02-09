@@ -1,7 +1,7 @@
 import { Router, Route, Switch } from 'react-router-dom';
 import { store, persistedStore } from './store';
 import { Provider } from 'react-redux';
-import { CCategoriesList, CEditableCategory, CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CRegisterForm, CUser, CUsersList } from "./Components";
+import { CCategoriesList, CCategoryTree, CEditableCategory, CEditableGood, CGood, CGoodsList, CLoginForm, CMainAppBar, COrder, COrdersList, CRegisterForm, CUser, CUsersList } from "./Components";
 import { CLogout } from './Components';
 import { CSidebar } from './Components/Sidebar';
 import { CRootCats } from './Components';
@@ -10,14 +10,11 @@ import { CCategory } from './Components/Category';
 import { CCart } from './Components/Cart';
 import { createBrowserHistory } from "history";
 import { PersistGate } from 'redux-persist/integration/react';
-import { Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
+import backImage from "./images/theme_main.png"
+
 export const history = createBrowserHistory();
 
-
-//import { cartReducer, actionRestoreCart } from './reducers';
-//store.dispatch(actionAuthLogin(localStorage.authToken));
-//store.dispatch(actionRootCats());
-//store.dispatch(actionRestoreCart());
 
 const NotFound = () =>
   <div>
@@ -26,11 +23,10 @@ const NotFound = () =>
 
 
 const Main = () =>
-  <div>
+  <Box height="100vh" sx={{ backgroundImage: `url(${backImage})`, backgroundSize: "cover", backgroundRepeat: "no-repeat", backgroundPosition: "center center", marginTop: "-2.5vh" }}>
     <h1>Main page</h1>
-  </div>
+  </Box>
 
-//<EditPost onSave={post => console.log(post)}/>
 function App() {
   return (
     <>
@@ -58,7 +54,8 @@ function App() {
                 <Route path="/user/:_id" component={CUser} />
                 <Route path="/user" component={CUser} />
                 <Route path="/logout" component={CLogout} />
-                <Route path="/catree" component={CCategoriesList} />
+                <Route path="/catree" component={CCategoryTree} />
+                <Route path="/categories" component={CCategoriesList} />
                 <Route path="*" component={NotFound} />
               </Switch>
             </div>

@@ -1,109 +1,122 @@
 import React, { useState } from "react";
-import { Typography } from "@mui/material"
 import { DndProvider } from "react-dnd";
 import {
     Tree,
     MultiBackend,
     getBackendOptions
 } from "@minoru/react-dnd-treeview";
-import { useGetRootCategoriesQuery } from "../reducers";
+import { DefaultSubCategoriesTreeDepth, useGetRootCategoriesQuery, useSaveCategoryMutation } from "../reducers";
+import { CategoryTreeItem } from "./CategoryTreeItem";
+import { ThemeProvider, CssBaseline } from "@mui/material";
+import { createTheme } from "@mui/material/styles";
+import styles from "./CategoryTree.module.css";
 
-const SampleData = [
-    {
-        "id": 1,
-        "parent": 0,
-        "droppable": true,
-        "text": "Folder 1"
-    },
-    {
-        "id": 2,
-        "parent": 1,
-        "droppable": false,
-        "text": "File 1-1"
-    },
-    {
-        "id": 3,
-        "parent": 1,
-        "droppable": false,
-        "text": "File 1-2"
-    },
-    {
-        "id": 4,
-        "parent": 0,
-        "droppable": true,
-        "text": "Folder 2"
-    },
-    {
-        "id": 5,
-        "parent": 4,
-        "droppable": true,
-        "text": "Folder 2-1"
-    },
-    {
-        "id": 6,
-        "parent": 5,
-        "droppable": false,
-        "text": "File 2-1-1"
-    },
-    {
-        "id": 7,
-        "parent": 0,
-        "droppable": false,
-        "text": "File 3"
+export const theme = createTheme({
+    components: {
+        MuiCssBaseline: {
+            styleOverrides: {
+                "*": {
+                    margin: 0,
+                    padding: 0
+                },
+                "html, body, #root": {
+                    height: "100%"
+                },
+                ul: {
+                    listStyle: "none"
+                }
+            }
+        },
+        MuiSvgIcon: {
+            styleOverrides: {
+                root: { verticalAlign: "middle" }
+            }
+        }
     }
-];
+});
 
 
-
-const logTree = (treeData) => {
-    console.log(treeData.map(el => { return { id: el.id, parent: el.parent, text: el.text } }));
-}
-
-const CategoryTree = ({ elements }) => {
+const CategoryTree = ({ elements, saveCategory }) => {
     console.log(elements);
     const [treeData, setTreeData] = useState(elements);
-    const handleDrop = (newTree) => {
-        let a = '';
-        setTreeData(newTree);
-        logTree(newTree)
-    }
 
+    const handleDrop = (newTree, params) => {
+        let targetCat = params.dropTarget?.cat;
+        let sourceCat = params.dragSource?.cat;
+        if (!sourceCat)
+            throw new Error("No source");
+
+        if (sourceCat.parent?._id !== targetCat?._id) {
+            let parentCat = params.dragSource.parentCat;
+            if (parentCat)
+                parentCat.subCategories = parentCat.subCategories.filter(sc => sc?.cat._id !== sourceCat._id);
+            if (!params.dropTarget.subCategories)
+                params.dropTarget.subCategories = [];
+            params.dropTarget.subCategories.push(params.dragSource);
+            params.dragSource.parentCat = params.dropTarget;
+
+            sourceCat.parent = targetCat ?? null;
+            saveCategory(sourceCat);
+            setTreeData(newTree);
+        }
+    }
     return (
-        <div>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
             <DndProvider backend={MultiBackend} options={getBackendOptions()}>
-                <Tree
-                    tree={treeData}
-                    rootId={0}
-                    render={(node, { depth, isOpen, onToggle }) => (
-                        <div style={{ marginInlineStart: depth * 10 }}>
-                            {node.droppable && (
-                                <span onClick={onToggle}>{isOpen ? "[-]" : "[+]"}</span>
-                            )}
-                            {node.text}
-                        </div>
-                    )}
-                    dragPreviewRender={(monitorProps) => (
-                        <div>{monitorProps.item.text}</div>
-                    )}
-                    onDrop={handleDrop}
-                />
+                <div className={styles.app}>
+                    <Tree
+                        style={{ listStyleType: 'none', paddingLeft: '0px', height: 240, flexGrow: 1, maxWidth: 400, overflowY: 'auto' }}
+                        tree={treeData}
+                        rootId={0}
+                        initialOpen={[1]}
+                        render={(node, { depth, isOpen, onToggle }) => (
+                            <CategoryTreeItem
+                                node={node}
+                                depth={depth}
+                                isOpen={isOpen}
+                                onToggle={onToggle}
+                                saveCategoryName={(node, name) => {
+                                    if (!node?.cat || node.cat.name === name)
+                                        return;
+                                    node.text = node.cat.name = name;
+                                    saveCategory(node.cat);
+                                }}
+                            />
+                        )}
+                        dragPreviewRender={(monitorProps) => (
+                            <CategoryTreeItem node={monitorProps.item} depth={0} isOpen={false}/>
+                        )}
+                        onDrop={handleDrop}
+                        classes={{
+                            root: styles.treeRoot,
+                            draggingSource: styles.draggingSource,
+                            dropTarget: styles.dropTarget
+                        }}
+                    />
+                </div>
             </DndProvider>
-        </div>
+        </ThemeProvider>
     );
 }
 
-let index = 1;
-function wrapToTreeItems(cats, parentCat = undefined, catTreeItems = undefined) {
+let index = 2;
+function wrapToTreeItems(cats, parentCat = null, catTreeItems = undefined) {
     catTreeItems ??= [];
     if (cats) {
         for (let cat of cats) {
             let catTreeItem = {
                 "id": index++,
-                "parent": parentCat?.id ?? 0,
+                "parent": parentCat?.id ?? 1,
+                "parentCat": parentCat,
                 "droppable": true,
                 "text": cat.name,
-                "cat": cat
+                "image": cat.image ?? {},
+                "cat": { _id: cat._id, name: cat.name, parent: parentCat?.cat ?? null },
             };
+            if (!parentCat.subCategories)
+                parentCat.subCategories = [];
+            parentCat.subCategories.push(catTreeItem);
             catTreeItems.push(catTreeItem);
             wrapToTreeItems(cat.subCategories, catTreeItem, catTreeItems)
         }
@@ -112,9 +125,26 @@ function wrapToTreeItems(cats, parentCat = undefined, catTreeItems = undefined) 
 }
 
 const CCategoryTree = () => {
-    const { isLoading, data } = useGetRootCategoriesQuery(true);
+    const { isLoading, data } = useGetRootCategoriesQuery(DefaultSubCategoriesTreeDepth);
     let cats = data?.CategoryFind;
-    return !isLoading && cats && <CategoryTree elements={wrapToTreeItems(cats)} />
+
+    let catTreeItems = [];
+    let rootCat = {
+        id: 1,
+        parent: 0,
+        droppable: true,
+        text: "...",
+        cat: null
+    }
+    catTreeItems.push(rootCat);
+
+    const [saveCategoryMutation] = useSaveCategoryMutation(true);
+
+    const saveCategory = async (category) => {
+        await saveCategoryMutation({ category });
+    }
+
+    return !isLoading && cats && <CategoryTree elements={wrapToTreeItems(cats, rootCat, catTreeItems)} saveCategory={saveCategory} />
 }
 
 export { CCategoryTree };

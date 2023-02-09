@@ -1,8 +1,7 @@
 import { createApi } from '@reduxjs/toolkit/query/react'
 import { graphqlRequestBaseQuery } from "@rtk-query/graphql-request-base-query"
 import { gql } from "graphql-request";
-import { createFullQuery } from '../gql';
-//import { prepareHeaders } from "./index";
+import { createFullQuery, getFullBackendUrl, repeatQuery } from '../utills';
 
 const getCategorySearchParams = (query, queryExt) => ({ searchStr: query, searchFieldNames: ["name"], queryExt });
 export const prepareHeaders = (headers, { getState }) => {
@@ -13,28 +12,43 @@ export const prepareHeaders = (headers, { getState }) => {
     return headers;
 }
 
+let placeHolder = '|--|';
 export const categoryApi = createApi({
     reducerPath: 'category',
     baseQuery: graphqlRequestBaseQuery({
-        url: '/graphql',
+        url: getFullBackendUrl('/graphql'),
         prepareHeaders
     }),
     tagTypes: ['Category', 'CategoryCount'],
     endpoints: (builder) => ({
         getRootCategories: builder.query({
-            query: (withChildren = false) => ({
-                document: gql`
-                query GetCategories{
-                    CategoryFind(query: "[{\\"parent\\": null}]") {
-                        _id name ${withChildren ? 'subCategories { _id name } ' : ''} image { _id url }
+            query: (childrenDepth = 0) => {
+                let params = createFullQuery({ queryExt: {parent: null } }, { sort: { name: 1 } });
+                return (
+                    {
+                        document: gql`
+                        query GetCategories($q: String){
+                            CategoryFind(query: $q) {
+                                _id name image { _id url }
+                                ${repeatQuery(childrenDepth, ` subCategories { _id name image { _id url } ${placeHolder} } `, placeHolder)}
+                            }
                         }
+                    `,
+                        variables: params
                     }
-                `}),
-            providesTags: (result, error, arg) => {
+                )
+            },
+            providesTags: (result) => {
                 return result
                     ? [...result.CategoryFind.map(obj => ({ type: 'Category', _id: obj._id })), 'Category']
                     : ['Category'];
-            }
+            },
+            transformResponse: (response) => {
+                return response;
+            },
+            transformErrorResponse: (response, meta) => {
+                return response;
+            },
         }),
         getCategories: builder.query({
             query: ({ withOwner = false, withChildren = false, withParent = false, queryExt = {}, fromPage, pageSize, searchStr = '' }) => {
@@ -52,7 +66,7 @@ export const categoryApi = createApi({
                     variables: params
                 }
             },
-            providesTags: (result, error, arg) => {
+            providesTags: (result) => {
                 return result
                     ? [...result.CategoryFind.map(obj => ({ type: 'Category', _id: obj._id })), 'Category']
                     : ['Category'];
@@ -70,9 +84,6 @@ export const categoryApi = createApi({
             },
             providesTags: ['CategoryCount'],
         }),
-        /*forceRefetch(arg) {
-            return JSON.stringify(arg.currentArg) !== JSON.stringify(arg.previousArg);
-        },*/
         getCategoryById: builder.query({
             query: (_id) => ({
                 document: gql`
@@ -89,10 +100,16 @@ export const categoryApi = createApi({
                     `,
                 variables: { q: JSON.stringify([{ _id }]) }
             }),
-            providesTags: (result, error, arg) => {
+            providesTags: (result) => {
                 return result
                     ? [{ type: 'Category', _id: result.CategoryFindOne._id }, 'Category']
                     : ['Category'];
+            },
+            transformResponse: (response) => {
+                return response;
+            },
+            transformErrorResponse: (response) => {
+                return response;
             },
         }),
         saveCategory: builder.mutation({
@@ -110,6 +127,12 @@ export const categoryApi = createApi({
                     variables: { category: { ...category } }
                 }
             ),
+            transformResponse: (response) => {
+                return response;
+            },
+            transformErrorResponse: (response) => {
+                return response;
+            },
             invalidatesTags: (result, error, arg) => {
                 if (!error) {
                     let catInv = { type: 'Category', _id: arg.category._id };
@@ -119,15 +142,6 @@ export const categoryApi = createApi({
         }),
     }),
 })
-
-/*export const categoryApi = categoryApiInt.enhanceEndpoints({
-    endpoints: {
-        getCategoriesCount(endpoint) {
-            endpoint.refetchOnMountOrArgChange = true;
-        }
-    }
-})*/
-
 
 export const { useGetRootCategoriesQuery, useGetCategoryByIdQuery, useGetCategoriesQuery, useGetCategoriesCountQuery, useSaveCategoryMutation } = categoryApi;
 

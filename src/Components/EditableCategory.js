@@ -1,10 +1,9 @@
 import { useSelector } from "react-redux"
 import { useParams } from "react-router-dom";
 import { Button, Card, CardActions, CardContent, CardMedia, Container, Grid, TextField, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { getFullImageUrl, saveImage } from "../utills/utils";
 import { isCurrentUserAdmin, useGetCategoryByIdQuery, useSaveCategoryMutation } from "../reducers";
-import { DeleteOutline, UndoRounded } from "@mui/icons-material";
 import { CCategoryDropDownList } from "./DropDownList";
 
 const EditableCategory = ({ category: categoryExt, maxWidth = 'md', saveCategory }) => {
@@ -29,8 +28,6 @@ const EditableCategory = ({ category: categoryExt, maxWidth = 'md', saveCategory
     const uploadAvatar = async param => {
         let image = await saveImage({ data: param.target.files[0] }, false);
         setCategoryData({ image });
-        /*let categoryToSave = { _id: category._id, name: categoryExt.name || category.name, image: { _id: image._id } };
-        saveCategory({ category: categoryToSave });*/
     }
 
     return category && (

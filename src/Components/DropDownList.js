@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Button, ButtonGroup, ClickAwayListener, Grow, Paper, Popper, MenuItem, MenuList, Typography } from "@mui/material";
-import { useGetRootCategoriesQuery } from '../reducers';
+import { DefaultSubCategoriesTreeDepth, useGetRootCategoriesQuery } from '../reducers';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
 import { styled } from '@mui/material/styles';
 import { DeleteOutline } from '@mui/icons-material';
@@ -126,13 +126,10 @@ const wrapToTreeItems = (cats, parentCat = undefined, currentLevelPrefix = '', c
 }
 
 export const CCategoryDropDownListUnstyled = ({ currentCat, onSetCategory, showClearButton }) => {
-    const { isLoading, data } = useGetRootCategoriesQuery(true);
+    const { isLoading, data } = useGetRootCategoriesQuery(DefaultSubCategoriesTreeDepth);
     let cats = data?.CategoryFind;
     if (!isLoading && cats) {
         cats = wrapToTreeItems(cats);
-        if (cats[10].subCategories?.lenght > 1) {
-            let a = '';
-        }
         let selectedIndex = cats.findIndex(c => c.key == currentCat?._id);
         return <DropDownList elements={cats} selectedIndex={selectedIndex} onSetCategory={onSetCategory} showClearButton={showClearButton} />
     }

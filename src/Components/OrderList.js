@@ -1,13 +1,15 @@
 import React from 'react';
-import { Container, Typography, Paper, Link } from '@mui/material';
+import { Container, Typography, Paper } from '@mui/material';
 import { Table, TableBody, TableContainer, TableHead, TableRow } from "@mui/material";
 import { StyledTableCell, StyledTableRow } from './StyledTableElements';
-import { COrdersPagination, CPagination } from './Pagination';
+import { CPagination } from './Pagination';
 import { CSearchInput } from './SearchInput';
 import { MyLink, ReferenceLink } from '.';
 import { useSelector } from 'react-redux';
 import { frontEndNames, getCurrentUser, getEntitiesListShowParams, useGetOrdersCountQuery, useGetOrdersQuery } from '../reducers';
 import { UserEntity } from '../Entities';
+import { fixBackendDataError } from '../utills';
+
 
 const OrderList = ({ entities, entitiesTypeName, fromPage, pageSize }) => {
 
@@ -128,8 +130,9 @@ const COrdersList = () => {
     const ordersCountResult = useGetOrdersCountQuery({ searchStr, owner: currentUser });
     let isLoading = ordersResult.isLoading || ordersCountResult.isLoading;
 
-    let entities = !isLoading && ordersResult.data?.OrderFind;
+    let entities = !isLoading && fixBackendDataError(ordersResult, "OrderFind");
     return !isLoading && <OrderList entities={entities} entitiesTypeName={entitiesTypeName} fromPage={fromPage} pageSize={pageSize} />
 }
+
 
 export { COrdersList };

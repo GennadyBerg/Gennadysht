@@ -19,13 +19,10 @@ function Sidebar(props) {
         openSidebar(false);
         setOpenedComp(undefined)
     };
-    const handleClickAwayListener = () => {
-        if (openedComp === undefined) {
-            setOpenedComp(true)
-        }
-        else if (openedComp === true)
-            handleDrawerClose();
-
+    const handleClickAwayListener = event => {
+        if (event.target.closest('#burger'))
+            return;
+        handleDrawerClose();
     };
     const DrawerHeader = styled('div')(({ theme }) => ({
         display: 'flex',
@@ -35,9 +32,10 @@ function Sidebar(props) {
         ...theme.mixins.toolbar,
         justifyContent: 'flex-end',
     }));
+
     return (
         <>
-            <ClickAwayListener onClickAway={handleClickAwayListener}>
+            <ClickAwayListener onClickAway={event => handleClickAwayListener(event)}>
                 <Drawer
                     sx={{
                         width: drawerWidth,

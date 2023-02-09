@@ -19,13 +19,12 @@ const Cart = () => {
     let goods = useSelector(state => state.cart?.goods) ?? [];
     let { isLoading, data } = useGetGoodsByIdQuery({ goods });
     let goodsData = data?.GoodFind?.map(gd => ({ ...gd, count: mapCountToGood(gd, goods) })) ?? [];
-    let state = useSelector(state => state);
     let order = [];
     for (let good of Object.values(goods)) {
         order.push({ good: { _id: good._id }, count: good.count });
     }
     let currentUser = useSelector(state => getCurrentUser(state));
-    const [addOrderMutation, { isLoading: isOrderAdding, data: orderAddingData }] = useAddOrderMutation();
+    const [addOrderMutation, { isLoading: isOrderAdding }] = useAddOrderMutation();
     return !isLoading && (
         <>
             <Container>
@@ -53,11 +52,6 @@ const Cart = () => {
     )
 }
 const CCart = connect(state => ({
-    /*goods: state.cart.goods,
-    goodsData: state.goods?.goods?.payload,
-    uniqueId: state.cart.uniqueId,*/
-    //...getCart(state)
-    //cart: getCart(state) 
 }),
     {})(Cart);
 
